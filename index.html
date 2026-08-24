@@ -1,0 +1,710 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LeukLogic — the task that eats your week, gone by next week</title>
+<meta name="description" content="Automations, Discord and Slack bots, internal tools and fast websites, built by one person in days. Most projects $100–$500. Email tim@leuklogic.com.">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#FAF7F2">
+<style>
+/* ---------- tokens: complete light palette on bare :root ---------- */
+:root{
+  --paper:#FAF7F2;
+  --surface:#FFFFFF;
+  --ink:#12161B;
+  --body:#3D454E;
+  --muted:#6E7883;
+  --line:#E4DED4;
+  --line-strong:#CFC7B9;
+  --accent:#D9502B;          /* brand persimmon: rules, strike, decoration */
+  --accent-text:#B03D1D;     /* AA-safe persimmon for small text (5.5:1 on paper) */
+  --accent-hover:#BF4021;
+  --btn-bg:#BF4021;          /* 5.3:1 with white label */
+  --btn-bg-hover:#A5361B;
+  --accent-ink:#FFFFFF;
+  --teal:#10574F;
+  --moss:#4B6B3A;
+  --tooth:rgba(18,22,27,.02);
+  --halo:rgba(217,80,43,.14);
+  --btn-shadow:0 1px 0 rgba(18,22,27,.25);
+
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+
+  --pad:clamp(20px,5vw,48px);
+  --rhythm:clamp(72px,11vh,132px);
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --paper:#0C0F13;
+    --surface:#141A20;
+    --ink:#F1EDE6;
+    --body:#B9C0C8;
+    --muted:#838C96;
+    --line:#242C34;
+    --line-strong:#333B44;
+    --accent:#FF7448;
+    --accent-text:#FF7448;
+    --accent-hover:#FF8C67;
+    --btn-bg:#FF7448;
+    --btn-bg-hover:#FF8C67;
+    --accent-ink:#12161B;
+    --teal:#45B9A6;
+    --moss:#8FBF6A;
+    --tooth:rgba(241,237,230,.02);
+    --halo:rgba(255,116,72,.13);
+    --btn-shadow:0 1px 0 rgba(0,0,0,.5);
+  }
+}
+
+/* ---------- base ---------- */
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  background-color:var(--paper);
+  color:var(--body);
+  font-family:var(--sans);
+  font-size:1.0625rem;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+  font-variant-numeric:tabular-nums;
+  overflow-x:hidden;
+}
+h1,h2,h3{color:var(--ink);line-height:1.1;margin:0}
+p{margin:0}
+a{color:inherit}
+img,svg{max-width:100%}
+
+.wrap{width:100%;max-width:1080px;margin:0 auto;padding-left:var(--pad);padding-right:var(--pad)}
+.measure{max-width:62ch}
+
+.skip{
+  position:absolute;left:-9999px;top:0;z-index:99;
+  background:var(--btn-bg);color:var(--accent-ink);
+  font-family:var(--mono);font-size:.8rem;
+  padding:12px 18px;border-radius:0 0 8px 0;text-decoration:none;
+}
+.skip:focus{left:0}
+
+:focus-visible{
+  outline:3px solid var(--accent);
+  outline-offset:2px;
+  box-shadow:0 0 0 1px var(--ink);
+  border-radius:3px;
+}
+
+/* ---------- shared type ---------- */
+.eyebrow{
+  font-family:var(--mono);
+  font-size:.72rem;
+  text-transform:uppercase;
+  letter-spacing:.15em;
+  color:var(--muted);
+  margin:0;
+}
+.smallprint{
+  font-family:var(--mono);
+  font-size:.72rem;
+  text-transform:uppercase;
+  letter-spacing:.14em;
+  color:var(--muted);
+}
+h2{font-size:clamp(1.75rem,3.6vw,2.6rem);letter-spacing:-.02em}
+.sublead{color:var(--muted);margin-top:12px;max-width:52ch;font-size:1.02rem}
+.section{padding-top:var(--rhythm);padding-bottom:var(--rhythm)}
+.rule{border:0;border-top:1px solid var(--line);margin:0}
+
+/* ---------- buttons ---------- */
+.btn{
+  display:inline-flex;align-items:center;gap:.5em;
+  background:var(--btn-bg);color:var(--accent-ink);
+  font-weight:650;font-size:1rem;
+  text-decoration:none;
+  padding:14px 28px;border-radius:8px;
+  min-height:48px;
+  box-shadow:var(--btn-shadow);
+  transition:background-color .12s ease,transform .12s ease;
+}
+.btn:hover{background:var(--btn-bg-hover)}
+.btn--lg{font-size:1.075rem;padding:18px 34px;min-height:56px}
+.btn .arw{transition:transform .12s ease}
+.btn:hover .arw{transform:translateX(2px)}
+@media (prefers-reduced-motion:no-preference){
+  .btn:hover{transform:translateY(-1px)}
+}
+.plainmail{
+  font-family:var(--mono);
+  font-size:.9rem;
+  color:var(--body);
+  text-decoration:underline;
+  text-decoration-color:var(--accent);
+  text-underline-offset:3px;
+}
+.plainmail:hover{color:var(--accent-text)}
+
+/* ---------- header ---------- */
+.masthead{
+  padding-top:26px;padding-bottom:6px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+}
+.wordmark{
+  display:inline-flex;align-items:center;gap:10px;
+  text-decoration:none;color:var(--ink);
+  font-weight:700;letter-spacing:-.02em;font-size:1.06rem;
+}
+.wordmark .mk{display:block}
+.masthead .plainmail{font-size:.82rem}
+
+/* ---------- hero ---------- */
+.hero{
+  position:relative;
+  padding-top:clamp(48px,8vh,84px);
+  padding-bottom:clamp(56px,9vh,96px);
+}
+.hero::before{
+  content:"";position:absolute;inset:-140px 0 0 0;z-index:-2;
+  background:radial-gradient(120% 90% at 20% 0%,var(--halo),transparent 60%);
+  pointer-events:none;
+}
+.hero::after{
+  content:"";position:absolute;inset:-140px 0 0 0;z-index:-1;
+  background:repeating-linear-gradient(135deg,var(--tooth) 0 2px,transparent 2px 5px);
+  pointer-events:none;
+}
+h1{
+  font-size:clamp(2.35rem,6.2vw,4.4rem);
+  font-weight:700;letter-spacing:-.035em;line-height:1.02;
+  max-width:16ch;
+  margin-top:22px;
+}
+.strikeword{position:relative;display:inline-block;white-space:nowrap}
+.strikeword .strike{
+  position:absolute;left:-2%;right:-2%;top:50%;width:104%;height:.5em;
+  transform:translateY(-46%);
+  overflow:visible;pointer-events:none;
+}
+.strikeword .strike path{
+  stroke:var(--accent);stroke-width:7;fill:none;
+  stroke-linecap:round;stroke-linejoin:round;
+  opacity:.92;
+}
+@media (prefers-reduced-motion:no-preference){
+  .strikeword .strike path{
+    stroke-dasharray:520;stroke-dashoffset:520;
+    animation:draw .7s cubic-bezier(.6,.05,.35,1) .4s forwards;
+  }
+  @keyframes draw{to{stroke-dashoffset:0}}
+}
+.subhead{
+  font-size:clamp(1.1rem,2.2vw,1.4rem);
+  font-weight:400;color:var(--body);
+  max-width:46ch;line-height:1.5;
+  margin-top:24px;
+}
+
+/* price strip */
+.strip{
+  margin-top:32px;
+  max-width:58ch;
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  padding:4px 0;
+}
+.striprow{
+  display:flex;align-items:baseline;gap:8px;
+  font-family:var(--mono);font-size:.82rem;
+  padding:11px 0;
+  color:var(--ink);
+}
+.striprow + .striprow{border-top:1px dashed var(--line)}
+.striprow .lbl{color:var(--body);white-space:nowrap}
+.striprow .dots{
+  flex:1 1 auto;min-width:14px;height:1px;
+  transform:translateY(-3px);
+  border-bottom:2px dotted var(--line-strong);
+}
+.striprow .val{color:var(--accent-text);font-weight:650;white-space:nowrap;text-align:right}
+@media (max-width:430px){
+  .striprow{flex-wrap:wrap;font-size:.78rem}
+  .striprow .dots{min-width:20px}
+  .striprow .val{flex:1 0 100%;text-align:left;margin-top:2px}
+}
+
+.ctablock{margin-top:34px}
+.trustline{
+  margin-top:16px;font-size:.92rem;color:var(--muted);max-width:50ch;
+}
+
+/* ---------- pain rows ---------- */
+.painlist{list-style:none;margin:34px 0 0;padding:0;border-top:1px solid var(--line);max-width:60ch}
+.painlist li{
+  border-bottom:1px solid var(--line);
+  padding:22px 0 22px 1.9em;
+  position:relative;
+  font-size:1.25rem;line-height:1.45;font-style:italic;
+  color:var(--ink);
+}
+.painlist li::before{
+  content:"\201C";
+  position:absolute;left:0;top:.28em;
+  font-style:normal;font-weight:700;
+  font-size:2.1rem;line-height:1;color:var(--accent);
+}
+@media (max-width:520px){.painlist li{font-size:1.1rem}}
+.paincloser{margin-top:26px;max-width:56ch;color:var(--body)}
+
+/* ---------- outcomes ---------- */
+.outcomes{
+  display:grid;grid-template-columns:1fr;
+  gap:clamp(28px,4vw,56px);
+  margin-top:44px;
+}
+@media (min-width:721px){.outcomes{grid-template-columns:1.15fr 1fr}}
+.outcome h3{font-size:1.28rem;letter-spacing:-.015em;line-height:1.25;margin-bottom:10px}
+.outcome p{max-width:46ch}
+.glyph{display:block;width:34px;height:34px;margin-bottom:14px}
+.glyph .st{fill:none;stroke:var(--teal);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.glyph .st--moss{stroke:var(--moss)}
+.outcome .smallprint{display:block;margin-top:14px;line-height:1.6}
+.outcome-wide{
+  grid-column:1/-1;
+  border-top:1px solid var(--line);
+  padding-top:26px;margin-top:4px;
+  color:var(--muted);max-width:70ch;font-size:1rem;
+}
+.aftercta{margin-top:44px}
+
+/* ---------- steps ---------- */
+.steps{margin-top:40px;border-top:1px solid var(--line)}
+.step{
+  display:grid;grid-template-columns:auto 1fr;gap:20px;
+  padding:28px 0;border-bottom:1px solid var(--line);
+  align-items:start;
+}
+.num{
+  width:46px;height:46px;border-radius:50%;
+  border:1px solid var(--line-strong);
+  display:grid;place-items:center;
+  font-family:var(--mono);font-size:1rem;color:var(--accent-text);
+  flex:none;
+}
+.step h3{font-size:1.2rem;letter-spacing:-.01em;margin-bottom:8px}
+.step p{max-width:58ch}
+@media (max-width:520px){
+  .step{grid-template-columns:1fr;gap:14px}
+}
+
+/* ---------- pricing ---------- */
+.prices{margin-top:40px;border-top:1px solid var(--line)}
+.price{
+  display:grid;grid-template-columns:1fr;gap:6px;
+  padding:26px 0;border-bottom:1px solid var(--line);
+}
+@media (min-width:721px){
+  .price{grid-template-columns:minmax(190px,.7fr) 1.4fr;gap:12px 32px;align-items:baseline}
+}
+.price .fig{
+  font-family:var(--mono);
+  font-size:clamp(1.6rem,4vw,2.05rem);
+  color:var(--ink);letter-spacing:-.02em;line-height:1.1;
+}
+.price .fig--sm{font-size:clamp(1.15rem,2.6vw,1.4rem)}
+.price .desc{max-width:52ch}
+.pricefoot{margin-top:24px;color:var(--muted);max-width:56ch;font-size:.95rem}
+
+/* ---------- proof note ---------- */
+.proof{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:clamp(26px,4vw,44px);
+  max-width:64ch;
+}
+.proof p{max-width:54ch}
+.proof p + p{margin-top:16px}
+.proof .kicker{
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--accent-text);margin-bottom:14px;
+}
+
+/* ---------- won't do ---------- */
+.wont{list-style:none;margin:34px 0 0;padding:0;max-width:62ch;border-top:1px solid var(--line)}
+.wont li{
+  border-bottom:1px solid var(--line);
+  padding:18px 0 18px 30px;position:relative;
+}
+.wont li::before{
+  content:"";position:absolute;left:2px;top:1.55em;
+  width:14px;height:2px;background:var(--accent);border-radius:2px;
+}
+
+/* ---------- faq ---------- */
+.faq{margin-top:36px;max-width:64ch;border-top:1px solid var(--line)}
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{
+  list-style:none;cursor:pointer;
+  padding:20px 34px 20px 0;position:relative;
+  font-weight:620;color:var(--ink);font-size:1.05rem;
+  min-height:44px;
+}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{
+  content:"";position:absolute;right:6px;top:50%;
+  width:10px;height:10px;
+  border-right:2px solid var(--accent);border-bottom:2px solid var(--accent);
+  transform:translateY(-70%) rotate(45deg);
+  transition:transform .15s ease;
+}
+.faq details[open] summary::after{transform:translateY(-20%) rotate(225deg)}
+.faq .ans{padding:0 0 22px;max-width:58ch;color:var(--body)}
+
+/* ---------- final cta ---------- */
+.final{text-align:center}
+.final .measure{margin-left:auto;margin-right:auto}
+.final h2{max-width:18ch;margin:0 auto}
+.final .lede{margin:20px auto 0;max-width:52ch;color:var(--body)}
+.mailcard{
+  margin:36px auto 0;max-width:56ch;text-align:left;
+  background:var(--surface);border:1px solid var(--line);border-radius:12px;
+  font-family:var(--mono);font-size:.82rem;line-height:1.7;
+  color:var(--body);
+  overflow-x:auto;
+}
+.mailcard .hd{
+  border-bottom:1px solid var(--line);
+  padding:14px 20px;color:var(--muted);
+}
+.mailcard .hd b{color:var(--ink);font-weight:600}
+.mailcard .bd{padding:16px 20px;white-space:pre-wrap;color:var(--ink)}
+.final .btn{margin-top:32px}
+.finalfoot{margin-top:18px;color:var(--muted);font-size:.92rem}
+.finalfoot .plainmail{display:inline-block;margin-bottom:6px}
+
+/* ---------- footer ---------- */
+footer{border-top:1px solid var(--line);padding:30px 0 calc(30px + env(safe-area-inset-bottom))}
+.footline{
+  font-family:var(--mono);font-size:.78rem;color:var(--muted);
+  display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;
+}
+
+/* ---------- sticky mobile bar ---------- */
+.sticky{
+  position:fixed;left:0;right:0;bottom:0;z-index:40;
+  display:none;
+  align-items:center;justify-content:center;
+  min-height:56px;
+  padding:0 16px env(safe-area-inset-bottom);
+  background:var(--btn-bg);color:var(--accent-ink);
+  text-decoration:none;font-weight:650;
+  box-shadow:0 -1px 0 rgba(18,22,27,.2);
+  transform:translateY(110%);
+  transition:transform .2s ease;
+}
+.sticky span{display:block;padding:16px 0}
+@media (max-width:719px){
+  .sticky{display:flex}
+  body{padding-bottom:0}
+  .sticky.on{transform:translateY(0)}
+  footer{padding-bottom:calc(86px + env(safe-area-inset-bottom))}
+}
+@media (prefers-reduced-motion:reduce){.sticky{transition:none}}
+
+/* ---------- scroll reveal: visible by default ---------- */
+.reveal{opacity:1;transform:none}
+@media (prefers-reduced-motion:no-preference){
+  .js .reveal{opacity:0;transform:translateY(8px);transition:opacity .5s ease,transform .5s ease}
+  .js .reveal.shown{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="wrap masthead">
+  <a class="wordmark" href="#main">
+    <svg class="mk" width="22" height="22" viewBox="0 0 22 22" role="img" aria-label="LeukLogic mark: a square bracket around a filled dot">
+      <title>LeukLogic mark</title>
+      <path d="M7 2H3v18h4M15 2h4v18h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="11" cy="11" r="3" fill="var(--accent)"/>
+    </svg>
+    LeukLogic
+  </a>
+  <a class="plainmail" href="mailto:tim@leuklogic.com?subject=Something%27s%20eating%20my%20week&amp;body=What%20eats%20my%20week%3A%0D%0A%0D%0AHow%20it%20happens%20today%3A%0D%0A%0D%0ARough%20budget%3A%0D%0A%0D%0A">tim@leuklogic.com</a>
+</header>
+
+<main id="main">
+
+  <!-- ============ HERO ============ -->
+  <section class="wrap hero">
+    <p class="eyebrow">LeukLogic — automation, bots and small tools, built fast</p>
+
+    <h1>The task that <span class="strikeword">eats your week<svg class="strike" viewBox="0 0 300 26" preserveAspectRatio="none" role="img" aria-label="crossed out"><title>crossed out</title><path d="M4 17 C 60 9, 108 20, 152 12 S 246 7, 296 14"/></svg></span> — gone by next week.</h1>
+
+    <p class="subhead">Answering the same question for the fortieth time. Rebuilding the same report every Monday. A workflow that breaks whenever one person is on vacation. I build the bot, the automation, or the small tool that takes it off your plate — usually in days, often for a few hundred dollars.</p>
+
+    <div class="strip">
+      <p class="striprow"><span class="lbl">A bot, an automation, a scheduled report</span><span class="dots" aria-hidden="true"></span><span class="val">$100–$500 · days, not weeks</span></p>
+      <p class="striprow"><span class="lbl">Anything larger</span><span class="dots" aria-hidden="true"></span><span class="val">fixed price, quoted before I start</span></p>
+    </div>
+
+    <div class="ctablock">
+      <a class="btn btn--lg" href="mailto:tim@leuklogic.com?subject=Something%27s%20eating%20my%20week&amp;body=What%20eats%20my%20week%3A%0D%0A%0D%0AHow%20it%20happens%20today%3A%0D%0A%0D%0ARough%20budget%3A%0D%0A%0D%0A">Email me the task <span class="arw" aria-hidden="true">&rarr;</span></a>
+      <p class="trustline">Tell me what the task is. You get a straight yes-or-no, a fixed price, and a date — not a discovery call. Or just write to <a class="plainmail" href="mailto:tim@leuklogic.com?subject=Something%27s%20eating%20my%20week&amp;body=What%20eats%20my%20week%3A%0D%0A%0D%0AHow%20it%20happens%20today%3A%0D%0A%0D%0ARough%20budget%3A%0D%0A%0D%0A">tim@leuklogic.com</a>.</p>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- ============ SOUND FAMILIAR ============ -->
+  <section class="wrap section reveal" aria-labelledby="familiar">
+    <h2 id="familiar">Sound familiar?</h2>
+    <p class="sublead">If any of these is your week, you're in the right place.</p>
+
+    <ul class="painlist">
+      <li>I answer the same five questions in our Discord every single day. Sometimes I answer them at midnight.</li>
+      <li>Every Monday I open six tabs, copy numbers into a spreadsheet, and email it to four people. It takes two hours and I dread it.</li>
+      <li>Someone has to read the inbox and decide where each message goes. That someone is me, and it's most of my morning.</li>
+      <li>The thing I need is simple. Every agency I ask wants a six-week engagement and a call on Tuesday.</li>
+    </ul>
+
+    <p class="paincloser">None of these are hard problems. They're just problems nobody has had a spare week to delete.</p>
+  </section>
+
+  <hr class="rule">
+
+  <!-- ============ WHAT YOU GET BACK ============ -->
+  <section class="wrap section reveal" aria-labelledby="getback">
+    <h2 id="getback">What you get back</h2>
+    <p class="sublead">You don't buy a bot. You buy the hour back.</p>
+
+    <div class="outcomes">
+
+      <article class="outcome">
+        <svg class="glyph" viewBox="0 0 32 32" role="img" aria-labelledby="g1t">
+          <title id="g1t">A chat bubble with a check mark inside</title>
+          <path class="st" d="M4 8a3 3 0 0 1 3-3h18a3 3 0 0 1 3 3v11a3 3 0 0 1-3 3H13l-6 5v-5H7a3 3 0 0 1-3-3z"/>
+          <path class="st" d="M11 13.5 14.5 17 21 10.5"/>
+        </svg>
+        <h3>Nobody asks you that question again.</h3>
+        <p>The bot answers your community's repeat questions instantly, welcomes new members, handles tickets and keeps the rule-breakers in check while you sleep.</p>
+        <span class="smallprint">Discord or Slack bot — FAQ, moderation, tickets, onboarding</span>
+      </article>
+
+      <article class="outcome">
+        <svg class="glyph" viewBox="0 0 32 32" role="img" aria-labelledby="g2t">
+          <title id="g2t">A calendar with an arrow leaving it</title>
+          <path class="st" d="M4 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/>
+          <path class="st" d="M4 12h18M9 3v5M17 3v5"/>
+          <path class="st st--moss" d="M20 18h8m-3.5-3.5L28 18l-3.5 3.5"/>
+        </svg>
+        <h3>Monday's report is already in your inbox.</h3>
+        <p>It pulls the numbers, does the arithmetic and sends the summary on a schedule. You read it. You don't build it.</p>
+        <span class="smallprint">Scheduled data pulls, scrapers, automated reports</span>
+      </article>
+
+      <article class="outcome">
+        <svg class="glyph" viewBox="0 0 32 32" role="img" aria-labelledby="g3t">
+          <title id="g3t">An inbox splitting into three lanes</title>
+          <path class="st" d="M3 6h11v8H3z"/>
+          <path class="st" d="M14 10h5"/>
+          <path class="st st--moss" d="M19 10h3M22 10c3 0 3-6 6-6M22 10h6M22 10c3 0 3 6 6 6"/>
+        </svg>
+        <h3>The inbox sorts itself before you open it.</h3>
+        <p>Every message read, categorised, routed and summarised, so you start the morning at the top of a short list instead of the bottom of a long one.</p>
+        <span class="smallprint">AI triage and routing workflows</span>
+      </article>
+
+      <article class="outcome">
+        <svg class="glyph" viewBox="0 0 32 32" role="img" aria-labelledby="g4t">
+          <title id="g4t">A dashboard panel containing two bars</title>
+          <path class="st" d="M3 6a2 2 0 0 1 2-2h22a2 2 0 0 1 2 2v20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <path class="st" d="M3 11h26"/>
+          <path class="st st--moss" d="M10 23v-6M18 23v-9"/>
+        </svg>
+        <h3>The thing you keep tracking in a spreadsheet gets a real screen.</h3>
+        <p>A small internal tool or dashboard your team can actually open, with the numbers live instead of pasted.</p>
+        <span class="smallprint">Small web apps, dashboards, internal tools</span>
+      </article>
+
+      <p class="outcome-wide">And if you just need a site that loads instantly — I build those too. Static, fast, no plugins to break. This page is one of them: a single file, zero external requests, no cookies. That's the same way I'd build yours.</p>
+    </div>
+
+    <p class="aftercta">
+      <a class="btn" href="mailto:tim@leuklogic.com?subject=Discord%20bot&amp;body=What%20eats%20my%20week%3A%0D%0A%0D%0AHow%20it%20happens%20today%3A%0D%0A%0D%0ARough%20budget%3A%0D%0A%0D%0A">That's the one. Email me <span class="arw" aria-hidden="true">&rarr;</span></a>
+    </p>
+  </section>
+
+  <hr class="rule">
+
+  <!-- ============ HOW THIS GOES ============ -->
+  <section class="wrap section reveal" aria-labelledby="how">
+    <h2 id="how">How this actually goes</h2>
+    <p class="sublead">No calls unless you want one.</p>
+
+    <div class="steps">
+      <div class="step">
+        <span class="num" aria-hidden="true">01</span>
+        <div>
+          <h3>You email me the annoyance.</h3>
+          <p>Plain English. &ldquo;Every Monday I&hellip;&rdquo; is enough — no spec, no requirements document.</p>
+        </div>
+      </div>
+      <div class="step">
+        <span class="num" aria-hidden="true">02</span>
+        <div>
+          <h3>You get a fixed price and a delivery date.</h3>
+          <p>Usually within a day. If it's not worth building, or someone already sells it for $9 a month, I'll tell you that instead and it costs you nothing.</p>
+        </div>
+      </div>
+      <div class="step">
+        <span class="num" aria-hidden="true">03</span>
+        <div>
+          <h3>It ships, and it's yours.</h3>
+          <p>You use it, I fix what's off, and you keep the code, the repo and the accounts — in your name, on your infrastructure. If a vendor can hold your automation hostage, so can I. Neither should be possible. No retainer, no lock-in, no monthly fee to me.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- ============ WHAT IT COSTS ============ -->
+  <section class="wrap section reveal" aria-labelledby="costs">
+    <h2 id="costs">What it costs</h2>
+    <p class="sublead">Most of this is cheaper than you think, and I'd rather say so up front.</p>
+
+    <div class="prices">
+      <div class="price">
+        <p class="fig">$100–$500</p>
+        <p class="desc">A Discord or Slack bot, a scheduled report, an automation that reads and routes. Days, not weeks.</p>
+      </div>
+      <div class="price">
+        <p class="fig fig--sm">Larger builds</p>
+        <p class="desc">Internal tools, dashboards, multi-step workflows, anything with a real interface. Scoped and quoted flat before anything starts.</p>
+      </div>
+      <div class="price">
+        <p class="fig fig--sm">Fixed price, quoted first.</p>
+        <p class="desc">You approve a number before I begin. It doesn't move unless you ask for something new. Running costs, if any, are yours and go straight to the provider — never to me.</p>
+      </div>
+    </div>
+
+    <p class="pricefoot">If your problem is bigger than one person should take on, I'll say so rather than take the work.</p>
+  </section>
+
+  <hr class="rule">
+
+  <!-- ============ PROOF NOTE ============ -->
+  <section class="wrap section reveal" aria-labelledby="proofnote">
+    <div class="proof">
+      <p class="kicker" id="proofnote">A note on proof</p>
+      <p>LeukLogic is new. There are no client logos on this page, no testimonials, and no case studies — because inventing them would be the fastest possible way to tell you what my word is worth.</p>
+      <p>So judge the specificity instead. Read what I'll turn down, read what it costs, and ask me a hard technical question in your first email. That's a better filter than a testimonial anyway.</p>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- ============ WHAT I WON'T DO ============ -->
+  <section class="wrap section reveal" aria-labelledby="wontdo">
+    <h2 id="wontdo">What I won't do</h2>
+    <p class="sublead">Small and fast has edges. Here they are.</p>
+
+    <ul class="wont">
+      <li>I'm one person. If you need a team, a signed SLA and 24/7 on-call, I'm the wrong call and I'll tell you in the first email.</li>
+      <li>I don't build mobile apps.</li>
+      <li>I don't do six-month platform rebuilds, or take over someone else's abandoned codebase sight unseen.</li>
+      <li>I won't sell you AI for a problem that needs a checklist. Sometimes the honest answer is &ldquo;that's a $9/month tool.&rdquo;</li>
+      <li>I don't do retainers. If nothing needs building, you shouldn't be paying me.</li>
+    </ul>
+  </section>
+
+  <hr class="rule">
+
+  <!-- ============ FAQ ============ -->
+  <section class="wrap section reveal" aria-labelledby="faqh">
+    <h2 id="faqh">Questions people actually ask</h2>
+
+    <div class="faq">
+      <details>
+        <summary>Why is this cheaper and faster than an agency?</summary>
+        <p class="ans">No account manager, no bench, no office. One person who leans on AI tooling for the typing and keeps the architecture, the review and the responsibility. You're paying for the work, not the org chart.</p>
+      </details>
+      <details>
+        <summary>How is a bot only a few hundred dollars?</summary>
+        <p class="ans">Because it's a few days of tightly-scoped work, and I'm not padding the estimate against scope creep. Agreeing the scope up front is what makes the low number safe for both of us.</p>
+      </details>
+      <details>
+        <summary>What if it takes longer than you said?</summary>
+        <p class="ans">The price doesn't move. If the scope moves, we agree on a new number before anything else happens.</p>
+      </details>
+      <details>
+        <summary>Do you maintain it afterwards?</summary>
+        <p class="ans">Per change, if you want it. Nothing is required. It's your code and any competent developer can pick it up — that's deliberate.</p>
+      </details>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- ============ FINAL CTA ============ -->
+  <section class="wrap section final reveal" aria-labelledby="finalh">
+    <h2 id="finalh">Tell me what's eating your week.</h2>
+    <p class="lede">One email. Two or three sentences is genuinely enough — what the task is, how it happens now, and roughly what you'd want to spend. You'll get a real answer from me, not a form confirmation.</p>
+
+    <div class="mailcard">
+      <div class="hd">To: <b>tim@leuklogic.com</b><br>Subject: <b>Discord bot</b></div>
+      <div class="bd">We run a 900-member Discord and our mods are drowning in ticket DMs. Can you build something that opens a thread instead?</div>
+    </div>
+
+    <p><a class="btn btn--lg" href="mailto:tim@leuklogic.com?subject=Project%20%E2%80%94%20LeukLogic&amp;body=What%20eats%20my%20week%3A%0D%0A%0D%0AHow%20it%20happens%20today%3A%0D%0A%0D%0ARough%20budget%3A%0D%0A%0D%0A">Email tim@leuklogic.com <span class="arw" aria-hidden="true">&rarr;</span></a></p>
+
+    <p class="finalfoot">
+      <a class="plainmail" href="mailto:tim@leuklogic.com?subject=Project%20%E2%80%94%20LeukLogic&amp;body=What%20eats%20my%20week%3A%0D%0A%0D%0AHow%20it%20happens%20today%3A%0D%0A%0D%0ARough%20budget%3A%0D%0A%0D%0A">tim@leuklogic.com</a><br>
+      No form, no funnel, no newsletter. It goes to Tim, and Tim answers it.
+    </p>
+  </section>
+
+</main>
+
+<footer class="wrap">
+  <p class="footline">
+    <span>LeukLogic — Tim McGirl</span><span aria-hidden="true">·</span>
+    <a class="plainmail" href="mailto:tim@leuklogic.com?subject=LeukLogic&amp;body=What%20eats%20my%20week%3A%0D%0A%0D%0AHow%20it%20happens%20today%3A%0D%0A%0D%0ARough%20budget%3A%0D%0A%0D%0A">tim@leuklogic.com</a><span aria-hidden="true">·</span>
+    <span>leuklogic.com</span>
+  </p>
+</footer>
+
+<a class="sticky" id="stickybar" href="mailto:tim@leuklogic.com?subject=Something%27s%20eating%20my%20week&amp;body=What%20eats%20my%20week%3A%0D%0A%0D%0AHow%20it%20happens%20today%3A%0D%0A%0D%0ARough%20budget%3A%0D%0A%0D%0A"><span>Email me the task &rarr;</span></a>
+
+<script>
+(function(){
+  var d=document.documentElement;
+  d.className+=" js";
+
+  // scroll reveal — CSS default is fully visible, so no-JS is correct
+  var reveals=document.querySelectorAll(".reveal");
+  if("IntersectionObserver" in window){
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(e.isIntersecting){e.target.classList.add("shown");io.unobserve(e.target);}
+      });
+    },{rootMargin:"0px 0px -8% 0px",threshold:.05});
+    for(var i=0;i<reveals.length;i++){io.observe(reveals[i]);}
+  }else{
+    for(var j=0;j<reveals.length;j++){reveals[j].classList.add("shown");}
+  }
+
+  // mobile sticky bar appears once the hero has scrolled past
+  var bar=document.getElementById("stickybar");
+  var hero=document.querySelector(".hero");
+  if(bar&&hero&&"IntersectionObserver" in window){
+    new IntersectionObserver(function(es){
+      bar.classList.toggle("on",!es[0].isIntersecting);
+    },{threshold:0}).observe(hero);
+  }
+})();
+</script>
+</body>
+</html>
