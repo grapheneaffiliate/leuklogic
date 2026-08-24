@@ -1,0 +1,65 @@
+<meta charset="utf-8">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{width:1200px;height:630px;overflow:hidden}
+  body{
+    background:#FAF7F2;
+    color:#12161B;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    padding:72px 80px;
+    display:flex;flex-direction:column;justify-content:space-between;
+    position:relative;
+  }
+  body::after{
+    content:"";position:absolute;right:-140px;top:-140px;width:520px;height:520px;border-radius:50%;
+    background:radial-gradient(circle at 30% 30%, rgba(217,80,43,.14), rgba(217,80,43,0) 68%);
+  }
+  .top{display:flex;align-items:center;gap:16px}
+  .mk{width:38px;height:38px;flex:0 0 auto}
+  .brand{font-size:30px;font-weight:700;letter-spacing:-.01em}
+  h1{
+    font-size:78px;line-height:1.04;font-weight:800;letter-spacing:-.03em;max-width:980px;
+  }
+  .strike{position:relative;white-space:nowrap}
+  .strike svg{position:absolute;left:-6px;right:-6px;top:52%;width:calc(100% + 12px);height:14px}
+  .sub{font-size:29px;line-height:1.45;color:#3D454E;max-width:880px;margin-top:26px}
+  .foot{display:flex;align-items:baseline;justify-content:space-between;gap:24px}
+  .price{
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    font-size:26px;font-weight:600;color:#B03D1D;letter-spacing:-.01em;
+  }
+  .url{
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    font-size:25px;color:#6E7883;
+  }
+  .rule{height:2px;background:#E4DED4;margin:0 0 26px}
+</style>
+<div class="top">
+  <svg class="mk" viewBox="0 0 22 22" aria-hidden="true">
+    <path d="M7 2H3v18h4M15 2h4v18h-4" fill="none" stroke="#12161B" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="11" cy="11" r="3" fill="#D9502B"/>
+  </svg>
+  <div class="brand">LeukLogic</div>
+</div>
+
+<div>
+  <h1>The task that
+    <span class="strike">eats your week
+      <svg viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M1 5 C 26 2, 62 7, 99 3" fill="none" stroke="#D9502B" stroke-width="3.4"
+              stroke-linecap="round"/>
+      </svg>
+    </span>
+    — gone by next week.</h1>
+  <p class="sub">Discord and Slack bots, automations, internal tools and fast websites.
+    Built in days, not months.</p>
+</div>
+
+<div>
+  <div class="rule"></div>
+  <div class="foot">
+    <div class="price">$100–$500 · days, not weeks</div>
+    <div class="url">leuklogic.com</div>
+  </div>
+</div>
