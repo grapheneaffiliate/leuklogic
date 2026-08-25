@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="LeukLogic — the task that eats your week, gone by next week">
   <meta name="twitter:description" content="Discord and Slack bots, automations, internal tools and fast websites. Built in days, not months. Most projects $100-$500.">
   <meta name="twitter:image" content="https://leuklogic.com/og.png">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"LeukLogic","url":"https://leuklogic.com/","email":"tim@leuklogic.com","description":"Discord and Slack bots, automations, internal tools and fast websites. Built in days, not months. Most projects $100-$500.","founder":{"@type":"Person","name":"Tim McGirl"},"priceRange":"$100-$500","areaServed":{"@type":"Country","name":"United States"},"image":"https://leuklogic.com/og.png","hasOfferCatalog":{"@type":"OfferCatalog","name":"Services","itemListElement":[{"@type":"Offer","itemOffered":{"@type":"Service","name":"Discord and Slack bots"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Automations and scheduled reports"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Internal tools and dashboards"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Fast static websites"}}]}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"LeukLogic","url":"https://leuklogic.com/","email":"tim@leuklogic.com","description":"Discord and Slack bots, automations, internal tools and fast websites. Built in days, not months. Most projects $100-$500.","founder":{"@type":"Person","name":"Tim McGirl"},"priceRange":"$100-$500","paymentAccepted":"Credit card, debit card, Apple Pay, Google Pay (via Stripe)","areaServed":{"@type":"Country","name":"United States"},"image":"https://leuklogic.com/og.png","hasOfferCatalog":{"@type":"OfferCatalog","name":"Services","itemListElement":[{"@type":"Offer","itemOffered":{"@type":"Service","name":"Discord and Slack bots"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Automations and scheduled reports"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Internal tools and dashboards"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Fast static websites"}}]}}</script>
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#FAF7F2">
 <style>
@@ -345,6 +345,10 @@ h1{
 .price .fig--sm{font-size:clamp(1.15rem,2.6vw,1.4rem)}
 .price .desc{max-width:52ch}
 .pricefoot{margin-top:24px;color:var(--muted);max-width:56ch;font-size:.95rem}
+.paynote{margin-top:34px;padding:22px 24px;border:1px solid var(--line);border-radius:12px;max-width:62ch}
+.paynote p{margin:0 0 12px}.paynote p:last-child{margin-bottom:0}
+.paybtn{margin-top:16px}
+.payfine{color:var(--muted);font-size:.85rem}
 
 /* ---------- proof note ---------- */
 .proof{
@@ -629,6 +633,13 @@ footer{border-top:1px solid var(--line);padding:30px 0 calc(30px + env(safe-area
     </div>
 
     <p class="pricefoot">If your problem is bigger than one person should take on, I'll say so rather than take the work.</p>
+
+    <div class="paynote">
+      <p class="kicker">Payments</p>
+      <p>Card payments run through <strong>Stripe</strong> — credit and debit cards, Apple&nbsp;Pay, Google&nbsp;Pay, with your receipt emailed automatically. When you accept a quote, work starts with a <strong>$100 deposit</strong> that comes off the project price; the rest is due on delivery. Prefer an invoice instead? Just say so in your email.</p>
+      <p class="paybtn"><a class="btn" href="https://buy.stripe.com/bJeeV59s81TZarX2RXeME00" target="_blank" rel="noopener">Pay the $100 deposit <span class="arw" aria-hidden="true">&rarr;</span></a></p>
+      <p class="payfine">Only pay this after we've agreed a scope by email — a deposit with no agreed project attached just gets refunded.</p>
+    </div>
   </section>
 
   <hr class="rule">
