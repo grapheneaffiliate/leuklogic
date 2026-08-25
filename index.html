@@ -181,6 +181,18 @@ h2{font-size:clamp(1.75rem,3.6vw,2.6rem);letter-spacing:-.02em}
   padding-top:clamp(48px,8vh,84px);
   padding-bottom:clamp(56px,9vh,96px);
 }
+
+/* ---------- hero float: the ad's world, faint (CSS-only, zero requests) ---------- */
+.heroFloat{position:absolute;inset:-140px 0 0 0;z-index:-1;overflow:hidden;pointer-events:none;perspective:900px}
+.heroFloat i{position:absolute;display:block;border-radius:14px;background:var(--line-strong);opacity:.12;
+  animation:cardDrift var(--fd,26s) ease-in-out var(--fdel,0s) infinite alternate;
+  transform:rotateX(55deg) rotateZ(-14deg) translate3d(0,0,0)}
+.heroFloat i.acc{background:var(--accent);opacity:.16;box-shadow:0 0 34px var(--halo)}
+@keyframes cardDrift{
+  from{transform:rotateX(55deg) rotateZ(-14deg) translate3d(0,0,0)}
+  to{transform:rotateX(48deg) rotateZ(-10deg) translate3d(var(--fx,18px),var(--fy,-26px),60px)}
+}
+@media (prefers-reduced-motion:reduce){.heroFloat i{animation:none}}
 .hero::before{
   content:"";position:absolute;inset:-140px 0 0 0;z-index:-2;
   background:radial-gradient(120% 90% at 20% 0%,var(--halo),transparent 60%);
@@ -477,6 +489,15 @@ footer{border-top:1px solid var(--line);padding:30px 0 calc(30px + env(safe-area
 
   <!-- ============ HERO ============ -->
   <section class="wrap hero">
+    <div class="heroFloat" aria-hidden="true">
+      <i style="width:120px;height:74px;top:8%;left:63%;--fd:24s;--fx:22px;--fy:-30px"></i>
+      <i style="width:86px;height:54px;top:30%;left:78%;--fd:31s;--fdel:-8s;--fx:-16px;--fy:-22px"></i>
+      <i style="width:150px;height:92px;top:56%;left:70%;--fd:27s;--fdel:-14s;--fx:26px;--fy:-18px"></i>
+      <i style="width:70px;height:44px;top:16%;left:88%;--fd:22s;--fdel:-4s;--fx:-12px;--fy:-28px"></i>
+      <i style="width:100px;height:62px;top:70%;left:86%;--fd:34s;--fdel:-20s;--fx:18px;--fy:-24px"></i>
+      <i style="width:60px;height:38px;top:44%;left:60%;--fd:29s;--fdel:-11s;--fx:-20px;--fy:-16px"></i>
+      <i class="acc" style="width:56px;height:56px;top:38%;left:83%;--fd:26s;--fdel:-6s;--fx:14px;--fy:-34px;border-radius:16px"></i>
+    </div>
     <p class="eyebrow">LeukLogic — automation, bots and small tools, built fast</p>
 
     <h1>The task that <span class="strikeword">eats your week<svg class="strike" viewBox="0 0 300 26" preserveAspectRatio="none" role="img" aria-label="crossed out"><title>crossed out</title><path d="M3 14.5 C 62 10.5, 104 18, 150 13 S 244 10.5, 297 13.5"/></svg></span> — gone by next week.</h1>
