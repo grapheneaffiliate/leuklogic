@@ -1,0 +1,7 @@
+{
+  "name": "crontext",
+  "private": true,
+  "description": "Cron expression explainer + next-run times — pure ESM engine + self-contained page. The page inlines src/*; run the suite with npm test.",
+  "type": "module",
+  "scripts": { "test": "node --test test/engine.test.mjs" }
+}
