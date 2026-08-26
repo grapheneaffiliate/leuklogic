@@ -1,0 +1,7 @@
+{
+  "name": "statement-csv",
+  "private": true,
+  "description": "SwiftStatement — pure ESM statement-text parser + self-contained page. Run: npm test.",
+  "type": "module",
+  "scripts": { "test": "node --test test/engine.test.mjs" }
+}

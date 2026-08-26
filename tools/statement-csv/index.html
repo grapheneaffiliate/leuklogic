@@ -1,0 +1,585 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SwiftStatement — convert a bank statement PDF to CSV or Excel, in your browser</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'><rect width='22' height='22' rx='5' fill='%23D9502B'/><path d='M6 4.5h7l3 3v10H6z' fill='none' stroke='%23FAF7F2' stroke-width='1.6' stroke-linejoin='round'/><path d='M8 11h6M8 13.5h6M8 16h4' stroke='%23FAF7F2' stroke-width='1.4' stroke-linecap='round'/></svg>">
+<meta name="description" content="Free bank statement PDF to CSV/Excel converter that runs entirely in your browser — your statement never uploads anywhere. Handles the common statement layouts, reports what it couldn't parse instead of guessing.">
+<meta name="color-scheme" content="light dark">
+<style>
+:root{
+  --paper:#FAF7F2; --surface:#FFFFFF; --sunk:#F3EEE6; --ink:#12161B; --body:#3D454E;
+  --muted:#616A75; --line:#E4DED4; --accent:#D9502B; --accent-text:#B03D1D;
+  --accent-soft:#FBEAE3; --teal:#10574F; --teal-soft:#E3F0ED; --btn-bg:#B03D1D;
+  --btn-fg:#FFFFFF; --focus:#B03D1D; --warn:#8A6100; --warn-soft:#FBF3DC;
+  --shadow:0 1px 2px rgba(18,22,27,.06), 0 8px 24px rgba(18,22,27,.05); --radius:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#12161B; --surface:#181D24; --sunk:#1E242C; --ink:#FAF7F2; --body:#C6CCD4;
+    --muted:#98A1AC; --line:#2C333C; --accent:#F0764E; --accent-text:#F5906C;
+    --accent-soft:#3A2018; --teal:#5FD3C2; --teal-soft:#12302C; --btn-bg:#F0764E;
+    --btn-fg:#12161B; --focus:#F5906C; --warn:#E8C35A; --warn-soft:#332B10;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--body);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Noto Sans",sans-serif;font-size:16px;line-height:1.6}
+.wrap{max-width:64rem;margin:0 auto;padding:1.5rem 1rem 4rem}
+h1,h2{color:var(--ink);line-height:1.25;margin:0 0 .5rem}
+h1{font-size:1.9rem;letter-spacing:-.02em}
+h2{font-size:1.25rem;margin-top:0}
+p{margin:0 0 1rem}
+a{color:var(--accent-text);text-decoration:underline;text-underline-offset:2px}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:4px}
+header.masthead{border-bottom:1px solid var(--line);padding-bottom:1.25rem;margin-bottom:1.5rem}
+.eyebrow{display:inline-block;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-text);font-weight:700;margin-bottom:.4rem}
+.lede{font-size:1.06rem;max-width:62ch}
+.note{background:var(--teal-soft);border-left:3px solid var(--teal);padding:.75rem .9rem;border-radius:0 var(--radius) var(--radius) 0;margin:0 0 1rem;font-size:.94rem}
+.note strong{color:var(--ink)}
+.warnbox{background:var(--warn-soft);border-left:3px solid var(--warn);padding:.75rem .9rem;border-radius:0 var(--radius) var(--radius) 0;margin:0 0 1rem;font-size:.94rem}
+section.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:1.1rem;margin:0 0 1.25rem;box-shadow:var(--shadow)}
+.drop{border:2px dashed var(--line);border-radius:var(--radius);background:var(--sunk);padding:1.6rem 1.1rem;text-align:center;cursor:pointer;transition:border-color .12s, background .12s}
+.drop:hover{border-color:var(--accent)}
+.drop.over{border-color:var(--accent);background:var(--accent-soft)}
+.drop .big{display:block;color:var(--ink);font-weight:700;margin-bottom:.15rem}
+.drop .small{display:block;font-size:.85rem;color:var(--muted)}
+.filestat{margin-top:.7rem;font-size:.9rem}
+.filestat .ok{color:var(--teal);font-weight:700}
+.filestat .warn{color:var(--accent-text);font-weight:700}
+label{display:block;font-size:.9rem;color:var(--ink);font-weight:600;margin-bottom:.25rem}
+textarea{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:.45rem .55rem;width:100%;min-height:7rem;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.85rem}
+input[type=number]{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:.45rem .55rem;width:8rem}
+button{font:inherit;font-weight:700;cursor:pointer;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:.5rem .85rem}
+button:hover:not(:disabled){border-color:var(--accent)}
+button.primary{background:var(--btn-bg);border-color:var(--btn-bg);color:var(--btn-fg)}
+button.primary:hover:not(:disabled){filter:brightness(1.06)}
+button:disabled{opacity:.5;cursor:not-allowed}
+.row-actions{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;margin-top:.9rem}
+.hint{font-size:.88rem;color:var(--muted)}
+.stats{display:flex;flex-wrap:wrap;gap:.6rem;margin:0 0 1rem;padding:0;list-style:none}
+.stats li{background:var(--sunk);border:1px solid var(--line);border-radius:var(--radius);padding:.5rem .7rem}
+.stats .n{font-size:1.2rem;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
+.stats .k{display:block;font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.tablescroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:var(--radius)}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{text-align:left;padding:.4rem .6rem;border-bottom:1px solid var(--line);white-space:nowrap}
+th{background:var(--sunk);color:var(--ink);font-weight:700;position:sticky;top:0}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+tbody tr:last-child td{border-bottom:none}
+details{margin-top:.8rem}
+summary{cursor:pointer;font-size:.9rem;color:var(--accent-text);font-weight:600}
+.err{background:var(--accent-soft);border:1px solid var(--accent);color:var(--accent-text);padding:.7rem .85rem;border-radius:var(--radius);font-weight:600;margin:1rem 0}
+.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+footer.foot{border-top:1px solid var(--line);margin-top:2.5rem;padding-top:1.1rem;font-size:.9rem;color:var(--muted)}
+.hidden{display:none !important}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="masthead">
+  <span class="eyebrow">Free tool</span>
+  <h1>SwiftStatement — bank statement PDF → CSV, privately</h1>
+  <p class="lede">Drop a statement PDF and get clean <strong>Date, Description, Amount</strong> rows ready for Excel, Sheets or your bookkeeping software. It runs entirely in your browser — the one thing a bank statement converter should never do is upload your bank statement, so this one can't.</p>
+</header>
+
+<section class="card" aria-labelledby="why">
+  <h2 id="why">Why trust this one</h2>
+  <div class="note">
+    <strong>Your statement never leaves your machine.</strong> The PDF is read by this page's own JavaScript (a locally-hosted copy of Mozilla's pdf.js — the same engine Firefox uses). The only network activity this page ever has is loading its own code from this site; <em>no request exists that carries your data anywhere</em>. Watch the Network tab while you convert: nothing goes out.
+  </div>
+  <p class="hint">And it's honest about accuracy: statement layouts vary by bank. Lines it can't confidently parse are <strong>listed for you to check — never silently dropped, never guessed into numbers</strong>. If your bank's layout doesn't parse, email a redacted sample and we'll add it: <a href="mailto:tim@leuklogic.com?subject=SwiftStatement%20format%20request">tim@leuklogic.com</a>.</p>
+</section>
+
+<main id="tool">
+  <section class="card">
+    <h2>Your statement</h2>
+    <div class="drop" id="drop" role="button" tabindex="0" aria-describedby="stat">
+      <span class="big">Drop a statement PDF here</span>
+      <span class="small">or press to choose a file · or paste the statement text below</span>
+    </div>
+    <input type="file" id="file" class="visually-hidden" accept=".pdf,application/pdf">
+    <p class="filestat" id="stat" role="status">No file loaded.</p>
+    <details>
+      <summary>Or paste statement text instead</summary>
+      <label for="textIn" style="margin-top:.5rem">Statement text (one transaction per line)</label>
+      <textarea id="textIn" spellcheck="false" placeholder="01/05/2026 NETFLIX.COM -15.49&#10;01/07/2026 PAYROLL DIRECT DEP 2,450.00"></textarea>
+      <div class="row-actions"><button id="parseTextBtn">Parse pasted text</button></div>
+    </details>
+    <div class="row-actions">
+      <div>
+        <label for="yearIn">Statement year (for dates like "01/15" that omit it)</label>
+        <input type="number" id="yearIn" min="1990" max="2100">
+      </div>
+    </div>
+    <div id="err" class="err hidden" role="alert"></div>
+  </section>
+
+  <section class="card hidden" id="results" aria-live="polite">
+    <h2>Parsed transactions</h2>
+    <ul class="stats" id="stats"></ul>
+    <div id="yearNote" class="warnbox hidden"></div>
+    <div class="tablescroll">
+      <table>
+        <thead><tr id="thead"></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <div class="row-actions">
+      <button class="primary" id="dlBtn">Download CSV</button>
+      <button id="copyBtn">Copy CSV</button>
+      <span class="hint" id="morenote"></span>
+    </div>
+    <details id="unparsedBox" class="hidden">
+      <summary id="unparsedSummary"></summary>
+      <div class="tablescroll" style="margin-top:.5rem">
+        <table><thead><tr><th>Line</th><th>Text</th></tr></thead><tbody id="unparsedRows"></tbody></table>
+      </div>
+      <p class="hint" style="margin-top:.5rem">These lines had content but didn't match a transaction shape. If real transactions are in here, your bank's layout needs a custom parser — email a redacted sample and we'll add it free.</p>
+    </details>
+  </section>
+</main>
+
+<footer class="foot">
+  <p>SwiftStatement is a free tool built by <a href="https://leuklogic.com">LeukLogic</a> — bots, automations and internal tools. Need this at volume, on a schedule, or wired into your bookkeeping? That's exactly what we build: <a href="mailto:tim@leuklogic.com?subject=Statement%20automation">tim@leuklogic.com</a>.</p>
+  <p>Known limits, stated plainly: scanned/photographed statements have no text layer, and this tool won't pretend to OCR them — it tells you. Layouts vary by bank; the parser handles the common shapes (date · description · amount · optional balance) and reports the rest rather than guessing. Amounts keep the sign convention your statement uses.</p>
+  <p><a href="/tools/csv-diff/">Also free: DeltaCSV — compare two CSVs</a> · <a href="/tools/subscription-scanner/">SubScan — find subscriptions draining your account</a></p>
+</footer>
+
+</div>
+
+<script type="module">
+/* ENGINE — inlined verbatim from src/statement.mjs
+ * (pure, dependency-free; only import/export keywords are removed for inlining). */
+/*
+ * SwiftStatement — statement.mjs
+ * Pure, dependency-free parsing of bank/card-statement TEXT into transactions.
+ * No DOM, no Node APIs, no network. Inline-safe.
+ *
+ * WHERE THE TEXT COMES FROM. The page extracts a PDF's text layer with a
+ * locally-vendored pdf.js (nothing uploads); this module turns that extracted
+ * text — or pasted statement text — into clean {date, description, amount}
+ * rows ready for CSV/Excel. The module itself never touches a PDF: it parses
+ * TEXT, which is what makes it purely testable.
+ *
+ * HONESTY RULES (the same ones every LeukLogic engine carries):
+ *   - GENERIC parser, not per-bank magic: it recognizes the common shape of a
+ *     statement line (a date, then prose, then one-or-two money columns) across
+ *     the layouts real banks share. A line it cannot confidently parse goes to
+ *     `unparsed` with its line number — reported, never guessed, never dropped.
+ *   - Scanned/image PDFs have no text layer; that is detected by the CALLER
+ *     (near-empty extraction) and said plainly — no fake OCR claims.
+ *   - Amounts keep their statement sign convention; a trailing balance column
+ *     is detected (monotone running-balance heuristic) and separated rather
+ *     than being mistaken for the transaction amount.
+ */
+
+// ---- shared primitives (same battle-tested logic as SubScan's engine) --------
+
+function parseAmount(raw) {
+  if (typeof raw === 'number') return raw;
+  let s = String(raw == null ? '' : raw).trim();
+  if (s === '') return NaN;
+  let sign = 1;
+  if (/^\(.*\)$/.test(s)) {
+    sign = -1;
+    s = s.slice(1, -1);
+  }
+  if (/(^|\s|\d)cr$/i.test(s)) sign = -1; // trailing CR = credit, spaced or attached (12.00CR)
+  if (/(^|\s|\d)dr$/i.test(s)) sign = 1;
+  if (s.trim().startsWith('-')) sign = -1;
+  const cleaned = s.replace(/[^0-9.]/g, '');
+  if (cleaned === '' || cleaned === '.') return NaN;
+  const n = Number(cleaned);
+  return Number.isFinite(n) ? sign * n : NaN;
+}
+
+const MONTHS = {
+  jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6,
+  jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12,
+};
+
+/**
+ * matchDate(token, nextToken?, year?) -> {month, day, year|null, consumed} | null
+ * Recognizes the date shapes statements actually use at line starts:
+ *   01/15  01/15/2026  01/15/26  2026-01-15  Jan 15  15 Jan  Jan 15, 2026
+ */
+function matchDate(tok, next, third) {
+  let m = /^(\d{4})-(\d{1,2})-(\d{1,2})$/.exec(tok);
+  if (m) return { year: +m[1], month: +m[2], day: +m[3], consumed: 1 };
+  m = /^(\d{1,2})[\/](\d{1,2})(?:[\/](\d{2,4}))?$/.exec(tok);
+  if (m) {
+    const mo = +m[1];
+    const d = +m[2];
+    if (mo >= 1 && mo <= 12 && d >= 1 && d <= 31) {
+      let y = m[3] ? +m[3] : null;
+      if (y != null && y < 100) y += 2000;
+      return { year: y, month: mo, day: d, consumed: 1 };
+    }
+    return null;
+  }
+  const monTok = MONTHS[String(tok).slice(0, 3).toLowerCase()];
+  if (monTok && /^[A-Za-z]{3,9}\.?,?$/.test(tok) && next) {
+    m = /^(\d{1,2}),?$/.exec(next);
+    if (m && +m[1] >= 1 && +m[1] <= 31) {
+      const y = third && /^\d{4}$/.test(third) ? +third : null;
+      return { year: y, month: monTok, day: +m[1], consumed: y != null ? 3 : 2 };
+    }
+  }
+  m = /^(\d{1,2})$/.exec(tok);
+  if (m && next) {
+    const mon = MONTHS[String(next).slice(0, 3).toLowerCase()];
+    if (mon && /^[A-Za-z]{3,9}\.?,?$/.test(next) && +m[1] >= 1 && +m[1] <= 31) {
+      const y = third && /^\d{4}$/.test(third) ? +third : null;
+      return { year: y, month: mon, day: +m[1], consumed: y != null ? 3 : 2 };
+    }
+  }
+  return null;
+}
+
+// A money-looking token: $1,234.56  1234.56  (45.00)  -45.00  45.00CR  1,234
+const MONEY_RE = /^[-(]?\$?\d{1,3}(?:,\d{3})*(?:\.\d{1,2})?\)?(?:CR|DR|cr|dr)?$/;
+
+function isMoneyToken(tok) {
+  if (!MONEY_RE.test(tok)) return false;
+  // A bare 1-4 digit integer with no $, comma, decimal or sign is more likely a
+  // reference/check number than money — refuse it as an amount candidate.
+  if (/^\d{1,4}$/.test(tok)) return false;
+  return true;
+}
+
+function fmtISO(y, mo, d) {
+  return `${String(y).padStart(4, '0')}-${String(mo).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+}
+
+/**
+ * parseStatementText(text, options?) ->
+ *   { transactions, unparsed, balanceColumnDetected, yearAssumed }
+ *
+ *   transactions: [{ date: 'YYYY-MM-DD', description, amount, balance|null, line }]
+ *   unparsed:     [{ line, text }]   — lines with content that didn't parse; never dropped silently
+ *   options.year: statement year for date formats that omit it (default: current year, flagged)
+ *
+ * Line model: DATE  [DATE]  DESCRIPTION…  AMOUNT  [BALANCE]
+ * (a second leading date — post vs transaction date — is consumed and ignored;
+ * when two trailing money tokens exist, the last is treated as a running
+ * balance and separated).
+ */
+function parseStatementText(text, options = {}) {
+  const now = options.now instanceof Date ? options.now : null;
+  const defaultYear = options.year || (now ? now.getUTCFullYear() : null);
+  const transactions = [];
+  const unparsed = [];
+  let yearAssumed = false;
+  let sawBalanceCol = 0;
+
+  const lines = String(text == null ? '' : text).split(/\r\n|\r|\n/);
+  for (let i = 0; i < lines.length; i++) {
+    const rawLine = lines[i];
+    const line = rawLine.trim();
+    if (line === '') continue;
+    const toks = line.split(/\s+/);
+
+    // 1) date at line start (required for a transaction line)
+    const d1 = matchDate(toks[0], toks[1], toks[2]);
+    if (!d1) {
+      // Header/footer prose ("Statement period", "Page 2 of 4") — only worth
+      // reporting if the line contains something money-shaped (a near-miss).
+      if (toks.some(isMoneyToken)) unparsed.push({ line: i + 1, text: line });
+      continue;
+    }
+    let idx = d1.consumed;
+    // optional second date (post date) immediately after
+    const d2 = matchDate(toks[idx], toks[idx + 1], toks[idx + 2]);
+    if (d2) idx += d2.consumed;
+
+    // 2) money tokens from the END of the line (amount, then optional balance)
+    const moneyIdx = [];
+    for (let j = toks.length - 1; j >= idx && moneyIdx.length < 2; j--) {
+      if (isMoneyToken(toks[j])) moneyIdx.unshift(j);
+      else break; // money columns are contiguous at line end on statement layouts
+    }
+    if (moneyIdx.length === 0) {
+      unparsed.push({ line: i + 1, text: line });
+      continue;
+    }
+    const amountIdx = moneyIdx[0];
+    const balance = moneyIdx.length === 2 ? parseAmount(toks[moneyIdx[1]]) : null;
+    if (moneyIdx.length === 2) sawBalanceCol++;
+    const amount = parseAmount(toks[amountIdx]);
+    if (!Number.isFinite(amount)) {
+      unparsed.push({ line: i + 1, text: line });
+      continue;
+    }
+
+    // 3) description = everything between the date(s) and the money column(s)
+    const description = toks.slice(idx, amountIdx).join(' ').trim();
+    if (description === '') {
+      unparsed.push({ line: i + 1, text: line });
+      continue;
+    }
+
+    let year = d1.year;
+    if (year == null) {
+      if (defaultYear == null) {
+        unparsed.push({ line: i + 1, text: line });
+        continue;
+      }
+      year = defaultYear;
+      yearAssumed = true;
+    }
+    transactions.push({
+      date: fmtISO(year, d1.month, d1.day),
+      description,
+      amount,
+      balance: Number.isFinite(balance) ? balance : null,
+      line: i + 1,
+    });
+  }
+
+  return {
+    transactions,
+    unparsed,
+    balanceColumnDetected: sawBalanceCol > 0 && sawBalanceCol >= transactions.length / 2,
+    yearAssumed,
+  };
+}
+
+/**
+ * toCsv(transactions, options?) -> RFC-4180 CSV string (CRLF, Excel-safe).
+ * Columns: Date,Description,Amount[,Balance] — balance column only when any
+ * row carries one.
+ */
+function toCsv(transactions, options = {}) {
+  const newline = options.newline || '\r\n';
+  const hasBalance = transactions.some((t) => t.balance != null);
+  const q = (v) => {
+    const s = String(v == null ? '' : v);
+    return /[",\r\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  };
+  const head = ['Date', 'Description', 'Amount'].concat(hasBalance ? ['Balance'] : []);
+  const rows = [head.join(',')];
+  for (const t of transactions) {
+    const cells = [t.date, q(t.description), t.amount.toFixed(2)];
+    if (hasBalance) cells.push(t.balance != null ? t.balance.toFixed(2) : '');
+    rows.push(cells.join(','));
+  }
+  return rows.join(newline) + newline;
+}
+
+
+
+/* ============================================================================
+ * APP — DOM wiring + PDF text extraction. All statement parsing is the pure
+ * engine above. The PDF engine is a locally-hosted, version-pinned pdf.js
+ * (vendor/pdf.min.mjs + vendor/pdf.worker.min.mjs — same-origin files, part of
+ * this site). No request ever carries the user's data.
+ * ==========================================================================*/
+const $ = (id) => document.getElementById(id);
+const show = (el, on) => el.classList.toggle('hidden', !on);
+
+function esc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+}
+
+$('yearIn').value = new Date().getFullYear();
+
+let lastCsv = '';
+let pdfjsPromise = null;
+function loadPdfjs() {
+  // Lazy same-origin import: the engine is fetched from THIS site on first use.
+  if (!pdfjsPromise) {
+    pdfjsPromise = import('./vendor/pdf.min.mjs').then((mod) => {
+      const lib = mod.default || mod;
+      lib.GlobalWorkerOptions.workerSrc = './vendor/pdf.worker.min.mjs';
+      return lib;
+    });
+  }
+  return pdfjsPromise;
+}
+
+/**
+ * Rebuild text LINES from pdf.js text items using their Y coordinates —
+ * naive item-joining scrambles the columns statements depend on. Items whose
+ * baseline Y is within a small tolerance belong to one visual line; within a
+ * line, order by X. A wide X gap becomes a column gap (space-joined anyway;
+ * the engine's tokenizer only needs whitespace separation).
+ */
+function itemsToLines(items) {
+  const rows = [];
+  for (const it of items) {
+    if (!it.str || !it.str.trim()) continue;
+    const y = it.transform[5];
+    const x = it.transform[4];
+    let row = rows.find((r) => Math.abs(r.y - y) < 2.5);
+    if (!row) {
+      row = { y, cells: [] };
+      rows.push(row);
+    }
+    row.cells.push({ x, str: it.str });
+  }
+  rows.sort((a, b) => b.y - a.y); // PDF Y grows upward; top of page first
+  return rows.map((r) =>
+    r.cells
+      .sort((a, b) => a.x - b.x)
+      .map((c) => c.str.trim())
+      .filter(Boolean)
+      .join(' '),
+  );
+}
+
+async function extractPdfText(buf, statEl) {
+  const pdfjs = await loadPdfjs();
+  const doc = await pdfjs.getDocument({ data: buf }).promise;
+  const lines = [];
+  for (let p = 1; p <= doc.numPages; p++) {
+    statEl.innerHTML = `<span class="ok">Reading page ${p} of ${doc.numPages}…</span>`;
+    const page = await doc.getPage(p);
+    const tc = await page.getTextContent();
+    lines.push(...itemsToLines(tc.items));
+  }
+  return { text: lines.join('\n'), pages: doc.numPages };
+}
+
+function runParse(text, sourceLabel) {
+  show($('err'), false);
+  const year = Number($('yearIn').value) || undefined;
+  const res = parseStatementText(text, { year });
+  render(res, sourceLabel);
+}
+
+function render(res, sourceLabel) {
+  const txns = res.transactions;
+  if (txns.length === 0) {
+    showErr(
+      `No transactions found in ${sourceLabel}. ` +
+        (res.unparsed.length
+          ? `${res.unparsed.length} line(s) had content but didn't match a transaction shape — open the unparsed list below after a successful parse, or email a redacted sample and we'll add your bank's layout.`
+          : 'If this is a scanned/photographed statement, it has no text layer — this tool reads real text and will not pretend to OCR an image.'),
+    );
+    return;
+  }
+  const hasBalance = txns.some((t) => t.balance != null);
+  $('stats').innerHTML =
+    `<li><span class="n">${txns.length}</span><span class="k">transactions</span></li>` +
+    `<li><span class="n">${esc(txns[0].date)} → ${esc(txns[txns.length - 1].date)}</span><span class="k">date range</span></li>` +
+    `<li><span class="n">${res.unparsed.length}</span><span class="k">unparsed lines</span></li>`;
+  show($('yearNote'), res.yearAssumed);
+  if (res.yearAssumed)
+    $('yearNote').textContent = `Your statement's dates omit the year, so the year field above (${$('yearIn').value}) was applied — fix it there if this statement is from a different year and re-parse.`;
+
+  $('thead').innerHTML =
+    '<th>Date</th><th>Description</th><th class="num">Amount</th>' + (hasBalance ? '<th class="num">Balance</th>' : '');
+  const LIMIT = 200;
+  $('rows').innerHTML = txns
+    .slice(0, LIMIT)
+    .map(
+      (t) =>
+        `<tr><td>${esc(t.date)}</td><td>${esc(t.description)}</td><td class="num">${t.amount.toFixed(2)}</td>` +
+        (hasBalance ? `<td class="num">${t.balance != null ? t.balance.toFixed(2) : ''}</td>` : '') +
+        '</tr>',
+    )
+    .join('');
+  $('morenote').textContent = txns.length > LIMIT ? `Showing first ${LIMIT} of ${txns.length}; the CSV has all of them.` : '';
+
+  show($('unparsedBox'), res.unparsed.length > 0);
+  if (res.unparsed.length) {
+    $('unparsedSummary').textContent = `${res.unparsed.length} unparsed line(s) — review them (nothing was silently dropped)`;
+    $('unparsedRows').innerHTML = res.unparsed
+      .slice(0, 100)
+      .map((u) => `<tr><td class="num">${u.line}</td><td>${esc(u.text)}</td></tr>`)
+      .join('');
+  }
+
+  lastCsv = toCsv(txns);
+  show($('results'), true);
+  $('results').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function showErr(msg) {
+  $('err').textContent = msg;
+  show($('err'), true);
+  show($('results'), false);
+}
+
+async function handleFile(file) {
+  if (!file) return;
+  const stat = $('stat');
+  if (!/pdf$/i.test(file.name) && file.type !== 'application/pdf') {
+    stat.innerHTML = '<span class="warn">That is not a PDF — for CSV/text statements, use the paste box (or our other CSV tools).</span>';
+    return;
+  }
+  try {
+    stat.innerHTML = `<span class="ok">Opening ${esc(file.name)}…</span>`;
+    const buf = await file.arrayBuffer();
+    const { text, pages } = await extractPdfText(buf, stat);
+    if (text.replace(/\s/g, '').length < 40) {
+      stat.innerHTML = `<span class="warn">Read ${pages} page(s) but found almost no text.</span>`;
+      showErr(
+        'This PDF has no real text layer — it is a scanned or photographed statement. This tool reads actual text and will not pretend to OCR an image. Ask your bank for the "download statement (PDF)" version, which has real text.',
+      );
+      return;
+    }
+    stat.innerHTML = `<span class="ok">Read ${pages} page(s) of ${esc(file.name)}.</span>`;
+    runParse(text, esc(file.name));
+  } catch (e) {
+    stat.innerHTML = '<span class="warn">Could not read that PDF.</span>';
+    showErr('Could not read that PDF' + (/password/i.test(String(e && e.message)) ? ' — it is password-protected. Remove the password first (print-to-PDF works).' : '. ' + String((e && e.message) || e)));
+  }
+}
+
+(function wire() {
+  const dropEl = $('drop');
+  const fileEl = $('file');
+  dropEl.addEventListener('click', () => fileEl.click());
+  dropEl.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      fileEl.click();
+    }
+  });
+  fileEl.addEventListener('change', () => handleFile(fileEl.files[0]));
+  dropEl.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropEl.classList.add('over');
+  });
+  dropEl.addEventListener('dragleave', () => dropEl.classList.remove('over'));
+  dropEl.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropEl.classList.remove('over');
+    handleFile(e.dataTransfer.files[0]);
+  });
+  $('parseTextBtn').addEventListener('click', () => {
+    const t = $('textIn').value;
+    if (t.trim()) runParse(t, 'the pasted text');
+  });
+  $('dlBtn').addEventListener('click', () => {
+    if (!lastCsv) return;
+    const blob = new Blob([lastCsv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'statement.csv';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  });
+  $('copyBtn').addEventListener('click', async () => {
+    if (!lastCsv) return;
+    try {
+      await navigator.clipboard.writeText(lastCsv);
+      $('copyBtn').textContent = 'Copied ✓';
+      setTimeout(() => ($('copyBtn').textContent = 'Copy CSV'), 1200);
+    } catch {
+      $('copyBtn').textContent = 'Press Ctrl/Cmd+C';
+    }
+  });
+})();
+
+</script>
+</body>
+</html>

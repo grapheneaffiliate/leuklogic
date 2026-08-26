@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SwiftStatement — convert a bank statement PDF to CSV or Excel, in your browser</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'><rect width='22' height='22' rx='5' fill='%23D9502B'/><path d='M6 4.5h7l3 3v10H6z' fill='none' stroke='%23FAF7F2' stroke-width='1.6' stroke-linejoin='round'/><path d='M8 11h6M8 13.5h6M8 16h4' stroke='%23FAF7F2' stroke-width='1.4' stroke-linecap='round'/></svg>">
+<meta name="description" content="Free bank statement PDF to CSV/Excel converter that runs entirely in your browser — your statement never uploads anywhere. Handles the common statement layouts, reports what it couldn't parse instead of guessing.">
+<meta name="color-scheme" content="light dark">
+<style>
+:root{
+  --paper:#FAF7F2; --surface:#FFFFFF; --sunk:#F3EEE6; --ink:#12161B; --body:#3D454E;
+  --muted:#616A75; --line:#E4DED4; --accent:#D9502B; --accent-text:#B03D1D;
+  --accent-soft:#FBEAE3; --teal:#10574F; --teal-soft:#E3F0ED; --btn-bg:#B03D1D;
+  --btn-fg:#FFFFFF; --focus:#B03D1D; --warn:#8A6100; --warn-soft:#FBF3DC;
+  --shadow:0 1px 2px rgba(18,22,27,.06), 0 8px 24px rgba(18,22,27,.05); --radius:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#12161B; --surface:#181D24; --sunk:#1E242C; --ink:#FAF7F2; --body:#C6CCD4;
+    --muted:#98A1AC; --line:#2C333C; --accent:#F0764E; --accent-text:#F5906C;
+    --accent-soft:#3A2018; --teal:#5FD3C2; --teal-soft:#12302C; --btn-bg:#F0764E;
+    --btn-fg:#12161B; --focus:#F5906C; --warn:#E8C35A; --warn-soft:#332B10;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--body);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Noto Sans",sans-serif;font-size:16px;line-height:1.6}
+.wrap{max-width:64rem;margin:0 auto;padding:1.5rem 1rem 4rem}
+h1,h2{color:var(--ink);line-height:1.25;margin:0 0 .5rem}
+h1{font-size:1.9rem;letter-spacing:-.02em}
+h2{font-size:1.25rem;margin-top:0}
+p{margin:0 0 1rem}
+a{color:var(--accent-text);text-decoration:underline;text-underline-offset:2px}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:4px}
+header.masthead{border-bottom:1px solid var(--line);padding-bottom:1.25rem;margin-bottom:1.5rem}
+.eyebrow{display:inline-block;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-text);font-weight:700;margin-bottom:.4rem}
+.lede{font-size:1.06rem;max-width:62ch}
+.note{background:var(--teal-soft);border-left:3px solid var(--teal);padding:.75rem .9rem;border-radius:0 var(--radius) var(--radius) 0;margin:0 0 1rem;font-size:.94rem}
+.note strong{color:var(--ink)}
+.warnbox{background:var(--warn-soft);border-left:3px solid var(--warn);padding:.75rem .9rem;border-radius:0 var(--radius) var(--radius) 0;margin:0 0 1rem;font-size:.94rem}
+section.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:1.1rem;margin:0 0 1.25rem;box-shadow:var(--shadow)}
+.drop{border:2px dashed var(--line);border-radius:var(--radius);background:var(--sunk);padding:1.6rem 1.1rem;text-align:center;cursor:pointer;transition:border-color .12s, background .12s}
+.drop:hover{border-color:var(--accent)}
+.drop.over{border-color:var(--accent);background:var(--accent-soft)}
+.drop .big{display:block;color:var(--ink);font-weight:700;margin-bottom:.15rem}
+.drop .small{display:block;font-size:.85rem;color:var(--muted)}
+.filestat{margin-top:.7rem;font-size:.9rem}
+.filestat .ok{color:var(--teal);font-weight:700}
+.filestat .warn{color:var(--accent-text);font-weight:700}
+label{display:block;font-size:.9rem;color:var(--ink);font-weight:600;margin-bottom:.25rem}
+textarea{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:.45rem .55rem;width:100%;min-height:7rem;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.85rem}
+input[type=number]{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:.45rem .55rem;width:8rem}
+button{font:inherit;font-weight:700;cursor:pointer;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:.5rem .85rem}
+button:hover:not(:disabled){border-color:var(--accent)}
+button.primary{background:var(--btn-bg);border-color:var(--btn-bg);color:var(--btn-fg)}
+button.primary:hover:not(:disabled){filter:brightness(1.06)}
+button:disabled{opacity:.5;cursor:not-allowed}
+.row-actions{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;margin-top:.9rem}
+.hint{font-size:.88rem;color:var(--muted)}
+.stats{display:flex;flex-wrap:wrap;gap:.6rem;margin:0 0 1rem;padding:0;list-style:none}
+.stats li{background:var(--sunk);border:1px solid var(--line);border-radius:var(--radius);padding:.5rem .7rem}
+.stats .n{font-size:1.2rem;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
+.stats .k{display:block;font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.tablescroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:var(--radius)}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{text-align:left;padding:.4rem .6rem;border-bottom:1px solid var(--line);white-space:nowrap}
+th{background:var(--sunk);color:var(--ink);font-weight:700;position:sticky;top:0}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+tbody tr:last-child td{border-bottom:none}
+details{margin-top:.8rem}
+summary{cursor:pointer;font-size:.9rem;color:var(--accent-text);font-weight:600}
+.err{background:var(--accent-soft);border:1px solid var(--accent);color:var(--accent-text);padding:.7rem .85rem;border-radius:var(--radius);font-weight:600;margin:1rem 0}
+.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+footer.foot{border-top:1px solid var(--line);margin-top:2.5rem;padding-top:1.1rem;font-size:.9rem;color:var(--muted)}
+.hidden{display:none !important}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="masthead">
+  <span class="eyebrow">Free tool</span>
+  <h1>SwiftStatement — bank statement PDF → CSV, privately</h1>
+  <p class="lede">Drop a statement PDF and get clean <strong>Date, Description, Amount</strong> rows ready for Excel, Sheets or your bookkeeping software. It runs entirely in your browser — the one thing a bank statement converter should never do is upload your bank statement, so this one can't.</p>
+</header>
+
+<section class="card" aria-labelledby="why">
+  <h2 id="why">Why trust this one</h2>
+  <div class="note">
+    <strong>Your statement never leaves your machine.</strong> The PDF is read by this page's own JavaScript (a locally-hosted copy of Mozilla's pdf.js — the same engine Firefox uses). The only network activity this page ever has is loading its own code from this site; <em>no request exists that carries your data anywhere</em>. Watch the Network tab while you convert: nothing goes out.
+  </div>
+  <p class="hint">And it's honest about accuracy: statement layouts vary by bank. Lines it can't confidently parse are <strong>listed for you to check — never silently dropped, never guessed into numbers</strong>. If your bank's layout doesn't parse, email a redacted sample and we'll add it: <a href="mailto:tim@leuklogic.com?subject=SwiftStatement%20format%20request">tim@leuklogic.com</a>.</p>
+</section>
+
+<main id="tool">
+  <section class="card">
+    <h2>Your statement</h2>
+    <div class="drop" id="drop" role="button" tabindex="0" aria-describedby="stat">
+      <span class="big">Drop a statement PDF here</span>
+      <span class="small">or press to choose a file · or paste the statement text below</span>
+    </div>
+    <input type="file" id="file" class="visually-hidden" accept=".pdf,application/pdf">
+    <p class="filestat" id="stat" role="status">No file loaded.</p>
+    <details>
+      <summary>Or paste statement text instead</summary>
+      <label for="textIn" style="margin-top:.5rem">Statement text (one transaction per line)</label>
+      <textarea id="textIn" spellcheck="false" placeholder="01/05/2026 NETFLIX.COM -15.49&#10;01/07/2026 PAYROLL DIRECT DEP 2,450.00"></textarea>
+      <div class="row-actions"><button id="parseTextBtn">Parse pasted text</button></div>
+    </details>
+    <div class="row-actions">
+      <div>
+        <label for="yearIn">Statement year (for dates like "01/15" that omit it)</label>
+        <input type="number" id="yearIn" min="1990" max="2100">
+      </div>
+    </div>
+    <div id="err" class="err hidden" role="alert"></div>
+  </section>
+
+  <section class="card hidden" id="results" aria-live="polite">
+    <h2>Parsed transactions</h2>
+    <ul class="stats" id="stats"></ul>
+    <div id="yearNote" class="warnbox hidden"></div>
+    <div class="tablescroll">
+      <table>
+        <thead><tr id="thead"></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <div class="row-actions">
+      <button class="primary" id="dlBtn">Download CSV</button>
+      <button id="copyBtn">Copy CSV</button>
+      <span class="hint" id="morenote"></span>
+    </div>
+    <details id="unparsedBox" class="hidden">
+      <summary id="unparsedSummary"></summary>
+      <div class="tablescroll" style="margin-top:.5rem">
+        <table><thead><tr><th>Line</th><th>Text</th></tr></thead><tbody id="unparsedRows"></tbody></table>
+      </div>
+      <p class="hint" style="margin-top:.5rem">These lines had content but didn't match a transaction shape. If real transactions are in here, your bank's layout needs a custom parser — email a redacted sample and we'll add it free.</p>
+    </details>
+  </section>
+</main>
+
+<footer class="foot">
+  <p>SwiftStatement is a free tool built by <a href="https://leuklogic.com">LeukLogic</a> — bots, automations and internal tools. Need this at volume, on a schedule, or wired into your bookkeeping? That's exactly what we build: <a href="mailto:tim@leuklogic.com?subject=Statement%20automation">tim@leuklogic.com</a>.</p>
+  <p>Known limits, stated plainly: scanned/photographed statements have no text layer, and this tool won't pretend to OCR them — it tells you. Layouts vary by bank; the parser handles the common shapes (date · description · amount · optional balance) and reports the rest rather than guessing. Amounts keep the sign convention your statement uses.</p>
+  <p><a href="/tools/csv-diff/">Also free: DeltaCSV — compare two CSVs</a> · <a href="/tools/subscription-scanner/">SubScan — find subscriptions draining your account</a></p>
+</footer>
+
+</div>
