@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QuickQuote — instant fixed-price quote for your bot, scraper, or automation</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'><rect width='22' height='22' rx='5' fill='%23D9502B'/><path d='M11 4.5v13M7.5 8.5c0-1.4 1.5-2.2 3.5-2.2s3.5.8 3.5 2.2-1.5 1.9-3.5 2.2-3.5.8-3.5 2.2 1.5 2.2 3.5 2.2 3.5-.8 3.5-2.2' fill='none' stroke='%23FAF7F2' stroke-width='1.8' stroke-linecap='round'/></svg>">
+<meta name="description" content="Get a real fixed-price quote for a Discord/Slack bot, web scraper, automation, dashboard, or website in ten seconds. Researched 2026 rates, price-lock guarantee, no email required to see the number.">
+<meta name="color-scheme" content="light dark">
+<style>
+:root{
+  --paper:#FAF7F2; --surface:#FFFFFF; --sunk:#F3EEE6; --ink:#12161B; --body:#3D454E;
+  --muted:#616A75; --line:#E4DED4; --accent:#D9502B; --accent-text:#B03D1D;
+  --accent-soft:#FBEAE3; --teal:#10574F; --teal-soft:#E3F0ED; --btn-bg:#B03D1D;
+  --btn-fg:#FFFFFF; --focus:#B03D1D;
+  --shadow:0 1px 2px rgba(18,22,27,.06), 0 8px 24px rgba(18,22,27,.05); --radius:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#12161B; --surface:#181D24; --sunk:#1E242C; --ink:#FAF7F2; --body:#C6CCD4;
+    --muted:#98A1AC; --line:#2C333C; --accent:#F0764E; --accent-text:#F5906C;
+    --accent-soft:#3A2018; --teal:#5FD3C2; --teal-soft:#12302C; --btn-bg:#F0764E;
+    --btn-fg:#12161B; --focus:#F5906C;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--body);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Noto Sans",sans-serif;font-size:16px;line-height:1.6}
+.wrap{max-width:60rem;margin:0 auto;padding:1.5rem 1rem 4rem}
+h1,h2,h3{color:var(--ink);line-height:1.25;margin:0 0 .5rem}
+h1{font-size:1.9rem;letter-spacing:-.02em}
+h2{font-size:1.25rem;margin-top:0}
+p{margin:0 0 1rem}
+a{color:var(--accent-text);text-decoration:underline;text-underline-offset:2px}
+a:hover{text-decoration-thickness:2px}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:4px}
+header.masthead{border-bottom:1px solid var(--line);padding-bottom:1.25rem;margin-bottom:1.5rem}
+.eyebrow{display:inline-block;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-text);font-weight:700;margin-bottom:.4rem}
+.lede{font-size:1.06rem;max-width:60ch}
+.note{background:var(--teal-soft);border-left:3px solid var(--teal);padding:.75rem .9rem;border-radius:0 var(--radius) var(--radius) 0;margin:0 0 1rem;font-size:.94rem}
+.note strong{color:var(--ink)}
+section.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:1.1rem;margin:0 0 1.25rem;box-shadow:var(--shadow)}
+label{display:block;font-size:.9rem;color:var(--ink);font-weight:600;margin-bottom:.25rem}
+.inline{display:flex;align-items:center;gap:.5rem;margin:.45rem 0}
+.inline label{display:inline;margin:0;font-weight:500;color:var(--body)}
+select,input[type=number]{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:.45rem .55rem;width:100%}
+input[type=checkbox]{width:1.05rem;height:1.05rem;accent-color:var(--accent);flex:none;margin:0}
+.controls{display:grid;gap:1rem;grid-template-columns:1fr}
+@media (min-width:640px){.controls{grid-template-columns:2fr 1fr 1fr}}
+.price{background:var(--accent-soft);border:1px solid var(--accent);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0}
+.price .band{font-size:2rem;font-weight:800;color:var(--accent-text);letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.2}
+.price .for{color:var(--ink);font-weight:600}
+.price .per{font-size:.9rem;color:var(--muted);margin-top:.2rem}
+.monthly{font-size:.95rem;color:var(--ink);font-weight:600;margin-top:.4rem}
+ul.applied{margin:.6rem 0 0;padding-left:1.1rem;font-size:.9rem}
+ul.applied li{margin-bottom:.2rem}
+.hint{font-size:.88rem;color:var(--muted)}
+.cta-row{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;margin-top:.9rem}
+a.button{display:inline-block;font-weight:700;border-radius:6px;background:var(--btn-bg);color:var(--btn-fg);padding:.55rem .95rem;text-decoration:none}
+a.button:hover{filter:brightness(1.06)}
+footer.foot{border-top:1px solid var(--line);margin-top:2.5rem;padding-top:1.1rem;font-size:.9rem;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="masthead">
+  <span class="eyebrow">Free tool</span>
+  <h1>QuickQuote — a real price, right now</h1>
+  <p class="lede">Pick what you need and get the same fixed-price band we'd quote you by email — in ten seconds, no address required. Rates researched across 2026 direct-client and marketplace data, not pulled from the air.</p>
+</header>
+
+<main id="tool">
+  <section class="card">
+    <h2>Your project</h2>
+    <div class="controls">
+      <div>
+        <label for="ptype">What are we building?</label>
+        <select id="ptype"></select>
+      </div>
+      <div>
+        <label for="ints">Integrations it must talk to</label>
+        <input type="number" id="ints" min="0" max="10" value="1" inputmode="numeric">
+        <span class="hint">APIs, CRMs, sheets, payment systems…</span>
+      </div>
+      <div>
+        <label for="count">How many do you need?</label>
+        <input type="number" id="count" min="1" max="20" value="1" inputmode="numeric">
+        <span class="hint">2+ earns a bundle rate</span>
+      </div>
+    </div>
+    <div class="inline" style="margin-top:.8rem">
+      <input type="checkbox" id="prepay">
+      <label for="prepay">I'd pay in full up front (10% off)</label>
+    </div>
+
+    <div class="price" id="priceBox" aria-live="polite">
+      <span class="for" id="priceLabel"></span>
+      <div class="band" id="priceBand"></div>
+      <div class="per" id="pricePer"></div>
+      <div class="monthly" id="priceMonthly"></div>
+      <ul class="applied" id="priceApplied"></ul>
+    </div>
+
+    <div class="note" id="priceNotes"></div>
+
+    <div class="cta-row">
+      <a class="button" id="ctaMail" href="#">Lock this quote in →</a>
+      <span class="hint">Emails us your exact configuration — the number you see is the number we confirm. $100 deposit starts the build; the rest on delivery.</span>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Why the number is trustworthy</h2>
+    <p><strong>Price lock:</strong> the quote you lock is the price you pay, as long as the scope doesn't change. Two revision rounds are included. Hosting runs on your own accounts — typically $0–50/mo — never silently billed through us.</p>
+    <p class="hint">Where the bands come from: researched 2026 rates across direct-client sources and 372 scraped marketplace gigs. The floor exists because work quoted below it gets abandoned mid-project — a fixed-scope build that starts under $500 is underpriced somewhere you can't see yet, and you'd pay for that later instead.</p>
+  </section>
+</main>
+
+<footer class="foot">
+  <p>QuickQuote is a free tool built by <a href="https://leuklogic.com">LeukLogic</a> — bots, scrapers, automations and internal tools, built solo and delivered fast. Questions before locking anything: <a href="mailto:tim@leuklogic.com">tim@leuklogic.com</a>.</p>
+  <p><a href="/tools/missed-call-calculator/">Also free: what missed calls cost your business</a> · <a href="/tools/subscription-scanner/">SubScan — find subscriptions draining your account</a></p>
+</footer>
+
+</div>

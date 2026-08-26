@@ -1,0 +1,7 @@
+{
+  "name": "quote",
+  "private": true,
+  "description": "QuickQuote — pure ESM instant-quote engine + self-contained page. Run: npm test.",
+  "type": "module",
+  "scripts": { "test": "node --test test/engine.test.mjs" }
+}
