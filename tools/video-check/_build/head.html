@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CheckClip — will your video pass on TikTok, Reels, Shorts and X?</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'><rect width='22' height='22' rx='5' fill='%23D9502B'/><path d='M8 6.5l7 4.5-7 4.5z' fill='%23FAF7F2'/><path d='M4.5 4.5h13v13h-13z' fill='none' stroke='%23FAF7F2' stroke-width='1.6' rx='2'/></svg>">
+<meta name="description" content="Free in-browser video checker: drop a video file and instantly see whether its length, aspect ratio and file size fit YouTube Shorts, TikTok, Instagram Reels and X — with the throttle rules most spec tables skip. Nothing is uploaded.">
+<meta name="color-scheme" content="light dark">
+<style>
+:root{
+  --paper:#FAF7F2; --surface:#FFFFFF; --sunk:#F3EEE6; --ink:#12161B; --body:#3D454E;
+  --muted:#616A75; --line:#E4DED4; --accent:#D9502B; --accent-text:#B03D1D;
+  --accent-soft:#FBEAE3; --teal:#10574F; --teal-soft:#E3F0ED; --btn-bg:#B03D1D;
+  --btn-fg:#FFFFFF; --focus:#B03D1D; --warn:#8A6100; --warn-soft:#FBF3DC;
+  --shadow:0 1px 2px rgba(18,22,27,.06), 0 8px 24px rgba(18,22,27,.05); --radius:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#12161B; --surface:#181D24; --sunk:#1E242C; --ink:#FAF7F2; --body:#C6CCD4;
+    --muted:#98A1AC; --line:#2C333C; --accent:#F0764E; --accent-text:#F5906C;
+    --accent-soft:#3A2018; --teal:#5FD3C2; --teal-soft:#12302C; --btn-bg:#F0764E;
+    --btn-fg:#12161B; --focus:#F5906C; --warn:#E8C35A; --warn-soft:#332B10;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--body);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Noto Sans",sans-serif;font-size:16px;line-height:1.6}
+.wrap{max-width:60rem;margin:0 auto;padding:1.5rem 1rem 4rem}
+h1,h2{color:var(--ink);line-height:1.25;margin:0 0 .5rem}
+h1{font-size:1.9rem;letter-spacing:-.02em}
+h2{font-size:1.25rem;margin-top:0}
+p{margin:0 0 1rem}
+a{color:var(--accent-text);text-decoration:underline;text-underline-offset:2px}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:4px}
+header.masthead{border-bottom:1px solid var(--line);padding-bottom:1.25rem;margin-bottom:1.5rem}
+.eyebrow{display:inline-block;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-text);font-weight:700;margin-bottom:.4rem}
+.lede{font-size:1.06rem;max-width:62ch}
+.note{background:var(--teal-soft);border-left:3px solid var(--teal);padding:.75rem .9rem;border-radius:0 var(--radius) var(--radius) 0;margin:0 0 1rem;font-size:.94rem}
+.note strong{color:var(--ink)}
+section.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:1.1rem;margin:0 0 1.25rem;box-shadow:var(--shadow)}
+.drop{border:2px dashed var(--line);border-radius:var(--radius);background:var(--sunk);padding:1.6rem 1.1rem;text-align:center;cursor:pointer;transition:border-color .12s, background .12s}
+.drop:hover{border-color:var(--accent)}
+.drop.over{border-color:var(--accent);background:var(--accent-soft)}
+.drop .big{display:block;color:var(--ink);font-weight:700;margin-bottom:.15rem}
+.drop .small{display:block;font-size:.85rem;color:var(--muted)}
+.filestat{margin-top:.7rem;font-size:.9rem}
+.filestat .ok{color:var(--teal);font-weight:700}
+.filestat .warn{color:var(--accent-text);font-weight:700}
+.meta{display:flex;flex-wrap:wrap;gap:.6rem;margin:.8rem 0 0;padding:0;list-style:none}
+.meta li{background:var(--sunk);border:1px solid var(--line);border-radius:6px;padding:.3rem .6rem;font-size:.9rem}
+.meta li b{color:var(--ink)}
+.platform{border:1px solid var(--line);border-radius:var(--radius);padding:.8rem .9rem;margin-bottom:.7rem}
+.platform h3{margin:0 0 .3rem;font-size:1rem;display:flex;align-items:center;gap:.5rem}
+.platform ul{margin:.2rem 0 0;padding-left:1.15rem;font-size:.9rem}
+.platform li{margin-bottom:.15rem}
+.badge{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:.12rem .45rem;border-radius:4px;border:1px solid var(--line)}
+.badge.pass{border-color:var(--teal);color:var(--teal);background:var(--teal-soft)}
+.badge.warn{border-color:var(--warn);color:var(--warn);background:var(--warn-soft)}
+.badge.fail{border-color:var(--accent);color:var(--accent-text);background:var(--accent-soft)}
+.platform.pass{border-left:3px solid var(--teal)}
+.platform.warn{border-left:3px solid var(--warn)}
+.platform.fail{border-left:3px solid var(--accent)}
+.err{background:var(--accent-soft);border:1px solid var(--accent);color:var(--accent-text);padding:.7rem .85rem;border-radius:var(--radius);font-weight:600;margin:1rem 0 0}
+.hint{font-size:.88rem;color:var(--muted)}
+.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+footer.foot{border-top:1px solid var(--line);margin-top:2.5rem;padding-top:1.1rem;font-size:.9rem;color:var(--muted)}
+.hidden{display:none !important}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="masthead">
+  <span class="eyebrow">Free tool</span>
+  <h1>CheckClip — will your video pass on each platform?</h1>
+  <p class="lede">Drop a video file and instantly see whether its <strong>length, aspect ratio and file size</strong> fit YouTube Shorts, TikTok, Instagram Reels and X — including the throttle rules the spec tables skip (a Reel can <em>upload</em> at 20 minutes and still never be shown to new viewers past 3).</p>
+</header>
+
+<main id="tool">
+  <section class="card">
+    <div class="drop" id="drop" role="button" tabindex="0" aria-describedby="stat">
+      <span class="big">Drop a video file here</span>
+      <span class="small">or press to choose one · MP4, MOV, WebM · it never leaves your browser</span>
+    </div>
+    <input type="file" id="file" class="visually-hidden" accept="video/*,.mp4,.mov,.webm,.mkv">
+    <p class="filestat" id="stat" role="status">No file loaded.</p>
+    <ul class="meta hidden" id="meta"></ul>
+    <div id="err" class="err hidden" role="alert"></div>
+  </section>
+
+  <section class="card hidden" id="results" aria-live="polite">
+    <h2>Platform fit</h2>
+    <div id="platforms"></div>
+    <p class="hint">Limits verified August 2026 against current platform documentation — platform rules drift, so re-check before a big launch. X figures are for a <em>standard</em> (non-Premium) account.</p>
+  </section>
+
+  <section class="card">
+    <h2>What this can and can't tell you</h2>
+    <div class="note"><strong>Your video never leaves your machine.</strong> The page reads the file's metadata with your browser's own video engine and makes no network request after it loads — check the Network tab while you use it.</div>
+    <p>This checks everything a machine can measure. What it can't judge is whether the video is any <em>good</em> — hook strength, pacing, whether the first two seconds earn the next ten. That's a human read. If you want honest, scored notes on the content itself, that's a thing we do: <a href="mailto:tim@leuklogic.com?subject=Video%20review">email the link to tim@leuklogic.com</a>.</p>
+  </section>
+</main>
+
+<footer class="foot">
+  <p>CheckClip is a free tool built by <a href="https://leuklogic.com">LeukLogic</a>. No account, no upload, no tracking. If a platform changes a limit and we're stale, tell us: <a href="mailto:tim@leuklogic.com">tim@leuklogic.com</a>.</p>
+  <p>Known limits, stated plainly: the browser's video engine can't read every codec — when duration or dimensions come back unreadable, the affected checks say so instead of silently passing; bitrate and codec-profile rules aren't checked (browsers don't expose them reliably); platform limits are re-verified by hand, and the verification date is shown above.</p>
+  <p><a href="/tools/subscription-scanner/">Also free: SubScan — find subscriptions draining your account</a> · <a href="/tools/quote/">QuickQuote — instant project quote</a></p>
+</footer>
+
+</div>
