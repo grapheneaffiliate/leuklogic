@@ -1,0 +1,7 @@
+{
+  "name": "missed-call-calculator",
+  "private": true,
+  "description": "Missed-call cost calculator — pure ESM engine + self-contained page. Run: npm test.",
+  "type": "module",
+  "scripts": { "test": "node --test test/engine.test.mjs" }
+}

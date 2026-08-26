@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Missed-Call Cost Calculator — how much are missed calls costing your business?</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'><rect width='22' height='22' rx='5' fill='%23D9502B'/><path d='M6.5 5.5c-1 0-1.6.8-1.5 1.7C5.4 12 10 16.6 14.8 17c.9.1 1.7-.5 1.7-1.5v-1.6l-3-1-1.2 1.4c-1.7-.8-3-2.1-3.8-3.8L6 9.5l-.5-4z' fill='none' stroke='%23FAF7F2' stroke-width='1.6' stroke-linejoin='round'/><path d='M15 5l3 3M18 5l-3 3' stroke='%23FAF7F2' stroke-width='1.6' stroke-linecap='round'/></svg>">
+<meta name="description" content="Free calculator: see how much revenue your service business loses to missed and unanswered calls each month — and how much a text-back could recover. Runs in your browser.">
+<meta name="color-scheme" content="light dark">
+<style>
+:root{
+  --paper:#FAF7F2;
+  --surface:#FFFFFF;
+  --sunk:#F3EEE6;
+  --ink:#12161B;
+  --body:#3D454E;
+  --muted:#616A75;
+  --line:#E4DED4;
+  --accent:#D9502B;
+  --accent-text:#B03D1D;
+  --accent-soft:#FBEAE3;
+  --teal:#10574F;
+  --teal-soft:#E3F0ED;
+  --btn-bg:#B03D1D;
+  --btn-fg:#FFFFFF;
+  --focus:#B03D1D;
+  --shadow:0 1px 2px rgba(18,22,27,.06), 0 8px 24px rgba(18,22,27,.05);
+  --radius:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#12161B;
+    --surface:#181D24;
+    --sunk:#1E242C;
+    --ink:#FAF7F2;
+    --body:#C6CCD4;
+    --muted:#98A1AC;
+    --line:#2C333C;
+    --accent:#F0764E;
+    --accent-text:#F5906C;
+    --accent-soft:#3A2018;
+    --teal:#5FD3C2;
+    --teal-soft:#12302C;
+    --btn-bg:#F0764E;
+    --btn-fg:#12161B;
+    --focus:#F5906C;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--body);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Noto Sans",sans-serif;
+  font-size:16px;
+  line-height:1.6;
+}
+.wrap{max-width:74rem;margin:0 auto;padding:1.5rem 1rem 4rem}
+h1,h2,h3{color:var(--ink);line-height:1.25;margin:0 0 .5rem}
+h1{font-size:1.9rem;letter-spacing:-.02em}
+h2{font-size:1.25rem;margin-top:0}
+h3{font-size:1rem}
+p{margin:0 0 1rem}
+a{color:var(--accent-text);text-decoration:underline;text-underline-offset:2px}
+a:hover{text-decoration-thickness:2px}
+code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;font-size:.92em}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:4px}
+.skip{position:absolute;left:-9999px;top:0;background:var(--surface);color:var(--ink);padding:.6rem 1rem;z-index:20}
+.skip:focus{left:.5rem;top:.5rem}
+header.masthead{border-bottom:1px solid var(--line);padding-bottom:1.25rem;margin-bottom:1.5rem}
+.eyebrow{
+  display:inline-block;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--accent-text);font-weight:700;margin-bottom:.4rem;
+}
+.lede{font-size:1.06rem;max-width:60ch}
+.note{
+  background:var(--teal-soft);border-left:3px solid var(--teal);
+  padding:.75rem .9rem;border-radius:0 var(--radius) var(--radius) 0;margin:0 0 1rem;
+  font-size:.94rem;
+}
+.note strong{color:var(--ink)}
+section.card{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+  padding:1.1rem;margin:0 0 1.25rem;box-shadow:var(--shadow);
+}
+.grid2{display:grid;gap:1rem;grid-template-columns:1fr}
+@media (min-width:720px){.grid2{grid-template-columns:1fr 1fr}}
+fieldset{border:1px solid var(--line);border-radius:var(--radius);padding:.9rem;margin:0}
+legend{font-weight:700;color:var(--ink);padding:0 .35rem;font-size:.95rem}
+.drop{
+  border:2px dashed var(--line);border-radius:var(--radius);background:var(--sunk);
+  padding:1.1rem;text-align:center;cursor:pointer;transition:border-color .12s, background .12s;
+}
+.drop:hover{border-color:var(--accent)}
+.drop.over{border-color:var(--accent);background:var(--accent-soft)}
+.drop .big{display:block;color:var(--ink);font-weight:700;margin-bottom:.15rem}
+.drop .small{display:block;font-size:.85rem;color:var(--muted)}
+.filestat{margin-top:.7rem;font-size:.9rem}
+.filestat .ok{color:var(--teal);font-weight:700}
+.filestat .warn{color:var(--accent-text);font-weight:700}
+label{display:block;font-size:.9rem;color:var(--ink);font-weight:600;margin-bottom:.25rem}
+.inline{display:flex;align-items:center;gap:.5rem;margin-bottom:.45rem}
+.inline label{display:inline;margin:0;font-weight:500;color:var(--body)}
+select,input[type=text],input[type=number],textarea{
+  font:inherit;color:var(--ink);background:var(--surface);
+  border:1px solid var(--line);border-radius:6px;padding:.45rem .55rem;width:100%;
+}
+textarea{min-height:7rem;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.85rem}
+input[type=checkbox]{width:1.05rem;height:1.05rem;accent-color:var(--accent);flex:none;margin:0}
+button{
+  font:inherit;font-weight:700;cursor:pointer;border-radius:6px;
+  border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:.5rem .85rem;
+}
+button:hover:not(:disabled){border-color:var(--accent)}
+button.primary{background:var(--btn-bg);border-color:var(--btn-bg);color:var(--btn-fg)}
+button.primary:hover:not(:disabled){filter:brightness(1.06)}
+button:disabled{opacity:.5;cursor:not-allowed}
+.row-actions{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;margin-top:.9rem}
+.hint{font-size:.88rem;color:var(--muted)}
+details{margin-top:.7rem}
+summary{cursor:pointer;font-size:.9rem;color:var(--accent-text);font-weight:600}
+.tablescroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:var(--radius)}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{text-align:left;padding:.45rem .6rem;border-bottom:1px solid var(--line);vertical-align:top;white-space:nowrap}
+th{background:var(--sunk);color:var(--ink);font-weight:700;position:sticky;top:0}
+tbody tr:last-child td{border-bottom:none}
+td.wrapcell{white-space:pre-wrap;max-width:34rem}
+.keycol{font-weight:700;color:var(--ink)}
+.keyparts{display:block;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-weight:600}
+.old{text-decoration:line-through;color:var(--muted)}
+.new{color:var(--ink);font-weight:600}
+.arrow{color:var(--accent-text);font-weight:700;padding:0 .35rem}
+.uniq{font-variant-numeric:tabular-nums}
+.badge{
+  display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+  padding:.1rem .4rem;border-radius:4px;border:1px solid var(--line);color:var(--body);background:var(--sunk);
+}
+.badge.good{border-color:var(--teal);color:var(--teal);background:var(--teal-soft)}
+.badge.flag{border-color:var(--accent);color:var(--accent-text);background:var(--accent-soft)}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:.6rem;margin:0 0 1rem;padding:0;list-style:none}
+@media (min-width:560px){.stats{grid-template-columns:repeat(3,1fr)}}
+@media (min-width:900px){.stats{grid-template-columns:repeat(5,1fr)}}
+.stats li{background:var(--sunk);border:1px solid var(--line);border-radius:var(--radius);padding:.55rem .65rem}
+.stats .n{display:block;font-size:1.35rem;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1.2}
+.stats .k{display:block;font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.stats li.hot{border-color:var(--accent);background:var(--accent-soft)}
+.stats li.hot .n{color:var(--accent-text)}
+[role=tablist]{display:flex;flex-wrap:wrap;gap:.4rem;border-bottom:1px solid var(--line);margin-bottom:.9rem}
+[role=tab]{
+  background:none;border:1px solid transparent;border-bottom:none;border-radius:6px 6px 0 0;
+  padding:.45rem .7rem;color:var(--body);font-weight:600;margin-bottom:-1px;
+}
+[role=tab][aria-selected=true]{
+  background:var(--surface);border-color:var(--line);color:var(--ink);
+  box-shadow:inset 0 3px 0 var(--accent);
+}
+.toolbar{display:flex;flex-wrap:wrap;gap:.6rem;align-items:end;margin-bottom:.8rem}
+.toolbar .grow{flex:1 1 14rem}
+.pager{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin-top:.7rem;font-size:.9rem}
+.empty{color:var(--muted);padding:.9rem;background:var(--sunk);border-radius:var(--radius);border:1px solid var(--line)}
+.problem-block{margin-bottom:1.4rem}
+.err{
+  background:var(--accent-soft);border:1px solid var(--accent);color:var(--accent-text);
+  padding:.7rem .85rem;border-radius:var(--radius);font-weight:600;margin-bottom:1rem;
+}
+.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+footer.foot{border-top:1px solid var(--line);margin-top:2.5rem;padding-top:1.1rem;font-size:.9rem;color:var(--muted)}
+.hidden{display:none !important}
+ul.plain{margin:0 0 1rem;padding-left:1.1rem}
+ul.plain li{margin-bottom:.3rem}
+</style>
+</head>
+<body>
+<a class="skip" href="#tool">Skip to the calculator</a>
+<div class="wrap">
+
+<header class="masthead">
+  <span class="eyebrow">Free tool for service businesses</span>
+  <h1>What are missed calls costing you?</h1>
+  <p class="lede">Every unanswered call is a customer who's already dialing your competitor. Put in three numbers and see the real annual figure.</p>
+</header>
+
+<main id="tool">
+  <section class="card">
+    <h2>Your numbers</h2>
+    <div class="grid2">
+      <div>
+        <label for="missed">Missed / unanswered calls in a typical week</label>
+        <input type="number" id="missed" min="0" step="1" value="10" inputmode="numeric">
+        <p class="hint">Rings that go to voicemail, after-hours, or while you're on a job.</p>
+      </div>
+      <div>
+        <label for="value">Average value of one job ($)</label>
+        <input type="number" id="value" min="0" step="10" value="300" inputmode="numeric">
+      </div>
+    </div>
+    <div class="grid2" style="margin-top:.6rem">
+      <div>
+        <label for="close">Of leads you actually answer, what % become a job?</label>
+        <input type="number" id="close" min="0" max="100" step="1" value="40" inputmode="numeric">
+        <p class="hint">Your close rate on live calls. Be honest — half is common in the trades.</p>
+      </div>
+      <div>
+        <label for="recover">% a fast auto-text would win back <span class="hint">(conservative default 30%)</span></label>
+        <input type="number" id="recover" min="0" max="100" step="1" value="30" inputmode="numeric">
+      </div>
+    </div>
+  </section>
+
+  <section class="card" aria-live="polite">
+    <ul class="stats">
+      <li class="hot"><span class="n" id="perYear">—</span><span class="k">Lost per year</span></li>
+      <li><span class="n" id="perMonth">—</span><span class="k">Lost per month</span></li>
+      <li><span class="n" id="jobsWk">—</span><span class="k">Lost jobs / week</span></li>
+      <li class="hot"><span class="n" id="recYear">—</span><span class="k">Text-back could recover / yr</span></li>
+    </ul>
+    <p id="summary" style="font-size:1.05rem;color:var(--ink)"></p>
+  </section>
+
+  <section class="card">
+    <h2>Stop the bleed automatically</h2>
+    <p>The fix is boring and it works: the moment a call goes unanswered, an automatic text goes out — <em>"Sorry we missed you! What do you need? We'll be right with you."</em> — and you get an alert. The caller stops dialing around because someone (looked like you) answered in seconds.</p>
+    <p><strong>LeukLogic sets this up for your business</strong> — your number, your wording, done for you. No app for you to run. Typical setup is a one-time fee plus a small monthly, and if it wins back even one job a month it's paid for many times over.</p>
+    <p><a href="mailto:tim@leuklogic.com?subject=Missed-call%20text-back%20setup&amp;body=My%20business%3A%0D%0A%0D%0AMissed%20calls%2Fweek%20(roughly)%3A%0D%0A%0D%0ABest%20number%20to%20text%20back%20from%3A%0D%0A" style="display:inline-block;background:var(--btn-bg);color:var(--btn-fg);font-weight:700;padding:.6rem 1rem;border-radius:6px;text-decoration:none">Get missed-call text-back → tim@leuklogic.com</a></p>
+    <p class="hint">You'll get a real reply from a person (Tim), not a sales bot.</p>
+  </section>
+</main>
+
+<footer class="foot">
+  <p>Built by <a href="https://leuklogic.com">LeukLogic</a> — we build the bots, automations and internal tools that stop small businesses from leaking money. Runs entirely in your browser: nothing you type here is uploaded or stored.</p>
+  <p>Honest about the math: this is an estimate from YOUR inputs — lost revenue = missed calls × your close rate × your job value, and recovery applies your chosen win-back %. No hidden multipliers; change any number and watch it update.</p>
+  <p><a href="/tools/csv-diff/">DeltaCSV</a> · <a href="/tools/csv-json/">FlipCSV</a> · <a href="/tools/cron/">CronText</a></p>
+</footer>
+
+</div>
+<script type="module">
+/* ============================================================================
+ * ENGINE — inlined verbatim from src/calc.mjs (export keywords removed)
+ * ==========================================================================*/
+/*
+ * Missed-Call Cost Calculator — calc.mjs
+ * Pure, dependency-free. No DOM, no Node APIs, no network. Inline-safe.
+ *
+ * The persuasion is arithmetic, kept honest: it shows what missed calls cost a
+ * service business, and what a text-back that recovers SOME of them saves — with
+ * every assumption an explicit, editable input, never a hidden multiplier.
+ */
+
+/**
+ * missedCallCost(input) -> breakdown
+ *   input.missedPerWeek  missed/unanswered calls in a typical week
+ *   input.jobValue       average revenue of one job ($)
+ *   input.closeRate      % of answered leads that become a job (0-100)
+ *   input.recoveryRate   % of missed callers a fast text-back wins back (0-100); default 30
+ *   input.weeksPerYear   default 52
+ *
+ * Model (deliberately simple + defensible):
+ *   A missed call is a lost LEAD. Lost revenue = missedCalls × closeRate × jobValue
+ *   (you only lose the ones you would have closed, not every ring).
+ *   Text-back recovers `recoveryRate` of those otherwise-lost jobs.
+ */
+function missedCallCost(input = {}) {
+  const num = (v, d = 0) => {
+    const n = Number(v);
+    return Number.isFinite(n) && n >= 0 ? n : d;
+  };
+  const missedPerWeek = num(input.missedPerWeek);
+  const jobValue = num(input.jobValue);
+  const closeRate = clampPct(input.closeRate);
+  const recoveryRate = input.recoveryRate === undefined ? 30 : clampPct(input.recoveryRate);
+  const weeksPerYear = num(input.weeksPerYear, 52) || 52;
+
+  const lostJobsPerWeek = missedPerWeek * (closeRate / 100);
+  const lostPerWeek = lostJobsPerWeek * jobValue;
+  const lostPerMonth = lostPerWeek * (weeksPerYear / 12);
+  const lostPerYear = lostPerWeek * weeksPerYear;
+
+  const recoveredPerMonth = lostPerMonth * (recoveryRate / 100);
+  const recoveredPerYear = lostPerYear * (recoveryRate / 100);
+
+  return {
+    lostJobsPerWeek: round2(lostJobsPerWeek),
+    lostPerWeek: round2(lostPerWeek),
+    lostPerMonth: round2(lostPerMonth),
+    lostPerYear: round2(lostPerYear),
+    recoveredPerMonth: round2(recoveredPerMonth),
+    recoveredPerYear: round2(recoveredPerYear),
+    inputs: { missedPerWeek, jobValue, closeRate, recoveryRate, weeksPerYear },
+  };
+}
+
+function clampPct(v) {
+  const n = Number(v);
+  if (!Number.isFinite(n)) return 0;
+  return Math.max(0, Math.min(100, n));
+}
+
+function round2(n) {
+  return Math.round(n * 100) / 100;
+}
+
+/** money(n) -> "$1,234" (whole dollars) or "$12.50" under $100. Pure formatting. */
+function money(n) {
+  const v = Number(n) || 0;
+  const abs = Math.abs(v);
+  const opts = abs < 100 && abs % 1 !== 0
+    ? { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+    : { maximumFractionDigits: 0 };
+  return '$' + v.toLocaleString('en-US', opts);
+}
+
+
+/* ============================================================================
+ * APP — DOM wiring only. All math is the pure engine above. No network/storage.
+ * ==========================================================================*/
+const $ = (id) => document.getElementById(id);
+const els = ['missed', 'value', 'close', 'recover'].map($);
+
+function render() {
+  const r = missedCallCost({
+    missedPerWeek: $('missed').value,
+    jobValue: $('value').value,
+    closeRate: $('close').value,
+    recoveryRate: $('recover').value,
+  });
+  $('perYear').textContent = money(r.lostPerYear);
+  $('perMonth').textContent = money(r.lostPerMonth);
+  $('jobsWk').textContent = r.lostJobsPerWeek.toLocaleString('en-US', { maximumFractionDigits: 1 });
+  $('recYear').textContent = money(r.recoveredPerYear);
+
+  const s = $('summary');
+  if (r.lostPerYear <= 0) {
+    s.textContent = 'Put in your numbers above to see the annual cost.';
+  } else {
+    s.innerHTML =
+      `At ${r.inputs.missedPerWeek} missed calls a week and a ${money(r.inputs.jobValue)} job, ` +
+      `you're leaving about <strong>${money(r.lostPerYear)}/year</strong> on the table. ` +
+      `An automatic text-back that recovers just ${r.inputs.recoveryRate}% of those would put ` +
+      `<strong>${money(r.recoveredPerYear)}/year</strong> back in your pocket.`;
+  }
+}
+
+els.forEach((el) => el.addEventListener('input', render));
+render();
+</script>
+</body>
+</html>
