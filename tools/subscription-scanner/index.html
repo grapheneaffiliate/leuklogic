@@ -1,0 +1,1077 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SubScan — find the subscriptions quietly draining your account</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'><rect width='22' height='22' rx='5' fill='%23D9502B'/><path d='M9.5 4.5a5 5 0 1 0 3.2 8.8l3 3M9.5 4.5a5 5 0 0 1 0 10' fill='none' stroke='%23FAF7F2' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+<meta name="description" content="Free in-browser subscription scanner. Drop a bank or card statement CSV and instantly see every recurring charge, ranked by yearly cost, with price hikes flagged. Nothing is uploaded — it all runs on your machine.">
+<meta name="color-scheme" content="light dark">
+<style>
+:root{
+  --paper:#FAF7F2;
+  --surface:#FFFFFF;
+  --sunk:#F3EEE6;
+  --ink:#12161B;
+  --body:#3D454E;
+  --muted:#616A75;
+  --line:#E4DED4;
+  --accent:#D9502B;
+  --accent-text:#B03D1D;
+  --accent-soft:#FBEAE3;
+  --teal:#10574F;
+  --teal-soft:#E3F0ED;
+  --btn-bg:#B03D1D;
+  --btn-fg:#FFFFFF;
+  --focus:#B03D1D;
+  --shadow:0 1px 2px rgba(18,22,27,.06), 0 8px 24px rgba(18,22,27,.05);
+  --radius:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#12161B;
+    --surface:#181D24;
+    --sunk:#1E242C;
+    --ink:#FAF7F2;
+    --body:#C6CCD4;
+    --muted:#98A1AC;
+    --line:#2C333C;
+    --accent:#F0764E;
+    --accent-text:#F5906C;
+    --accent-soft:#3A2018;
+    --teal:#5FD3C2;
+    --teal-soft:#12302C;
+    --btn-bg:#F0764E;
+    --btn-fg:#12161B;
+    --focus:#F5906C;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--body);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Noto Sans",sans-serif;
+  font-size:16px;
+  line-height:1.6;
+}
+.wrap{max-width:74rem;margin:0 auto;padding:1.5rem 1rem 4rem}
+h1,h2,h3{color:var(--ink);line-height:1.25;margin:0 0 .5rem}
+h1{font-size:1.9rem;letter-spacing:-.02em}
+h2{font-size:1.25rem;margin-top:0}
+h3{font-size:1rem}
+p{margin:0 0 1rem}
+a{color:var(--accent-text);text-decoration:underline;text-underline-offset:2px}
+a:hover{text-decoration-thickness:2px}
+code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;font-size:.92em}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:4px}
+.skip{position:absolute;left:-9999px;top:0;background:var(--surface);color:var(--ink);padding:.6rem 1rem;z-index:20}
+.skip:focus{left:.5rem;top:.5rem}
+header.masthead{border-bottom:1px solid var(--line);padding-bottom:1.25rem;margin-bottom:1.5rem}
+.eyebrow{
+  display:inline-block;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--accent-text);font-weight:700;margin-bottom:.4rem;
+}
+.lede{font-size:1.06rem;max-width:62ch}
+.note{
+  background:var(--teal-soft);border-left:3px solid var(--teal);
+  padding:.75rem .9rem;border-radius:0 var(--radius) var(--radius) 0;margin:0 0 1rem;
+  font-size:.94rem;
+}
+.note strong{color:var(--ink)}
+section.card{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+  padding:1.1rem;margin:0 0 1.25rem;box-shadow:var(--shadow);
+}
+.drop{
+  border:2px dashed var(--line);border-radius:var(--radius);background:var(--sunk);
+  padding:1.1rem;text-align:center;cursor:pointer;transition:border-color .12s, background .12s;
+}
+.drop:hover{border-color:var(--accent)}
+.drop.over{border-color:var(--accent);background:var(--accent-soft)}
+.drop .big{display:block;color:var(--ink);font-weight:700;margin-bottom:.15rem}
+.drop .small{display:block;font-size:.85rem;color:var(--muted)}
+.filestat{margin-top:.7rem;font-size:.9rem}
+.filestat .ok{color:var(--teal);font-weight:700}
+.filestat .warn{color:var(--accent-text);font-weight:700}
+label{display:block;font-size:.9rem;color:var(--ink);font-weight:600;margin-bottom:.25rem}
+.inline{display:flex;align-items:center;gap:.5rem;margin-bottom:.45rem}
+.inline label{display:inline;margin:0;font-weight:500;color:var(--body)}
+select,input[type=text],input[type=number],textarea{
+  font:inherit;color:var(--ink);background:var(--surface);
+  border:1px solid var(--line);border-radius:6px;padding:.45rem .55rem;width:100%;
+}
+textarea{min-height:7rem;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.85rem}
+input[type=checkbox]{width:1.05rem;height:1.05rem;accent-color:var(--accent);flex:none;margin:0}
+button{
+  font:inherit;font-weight:700;cursor:pointer;border-radius:6px;
+  border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:.5rem .85rem;
+}
+button:hover:not(:disabled){border-color:var(--accent)}
+button.primary{background:var(--btn-bg);border-color:var(--btn-bg);color:var(--btn-fg)}
+button.primary:hover:not(:disabled){filter:brightness(1.06)}
+button:disabled{opacity:.5;cursor:not-allowed}
+.row-actions{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;margin-top:.9rem}
+.hint{font-size:.88rem;color:var(--muted)}
+.tablescroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:var(--radius)}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{text-align:left;padding:.45rem .6rem;border-bottom:1px solid var(--line);vertical-align:top;white-space:nowrap}
+th{background:var(--sunk);color:var(--ink);font-weight:700;position:sticky;top:0}
+tbody tr:last-child td{border-bottom:none}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+th.num{text-align:right}
+.keycol{font-weight:700;color:var(--ink)}
+.badge{
+  display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+  padding:.1rem .4rem;border-radius:4px;border:1px solid var(--line);color:var(--body);background:var(--sunk);
+}
+.badge.good{border-color:var(--teal);color:var(--teal);background:var(--teal-soft)}
+.badge.flag{border-color:var(--accent);color:var(--accent-text);background:var(--accent-soft)}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:.6rem;margin:0 0 1rem;padding:0;list-style:none}
+@media (min-width:560px){.stats{grid-template-columns:repeat(4,1fr)}}
+.stats li{background:var(--sunk);border:1px solid var(--line);border-radius:var(--radius);padding:.55rem .65rem}
+.stats .n{display:block;font-size:1.35rem;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1.2}
+.stats .k{display:block;font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.stats li.hot{border-color:var(--accent);background:var(--accent-soft)}
+.stats li.hot .n{color:var(--accent-text)}
+.empty{color:var(--muted);padding:.9rem;background:var(--sunk);border-radius:var(--radius);border:1px solid var(--line)}
+.err{
+  background:var(--accent-soft);border:1px solid var(--accent);color:var(--accent-text);
+  padding:.7rem .85rem;border-radius:var(--radius);font-weight:600;margin-bottom:1rem;
+}
+.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.cta{background:var(--accent-soft);border:1px solid var(--accent)}
+.cta h2{color:var(--accent-text)}
+.tiers{overflow-x:auto}
+.tiers table{min-width:34rem}
+.tiers td.yes{color:var(--teal);font-weight:700}
+footer.foot{border-top:1px solid var(--line);margin-top:2.5rem;padding-top:1.1rem;font-size:.9rem;color:var(--muted)}
+.hidden{display:none !important}
+ul.plain{margin:0 0 1rem;padding-left:1.1rem}
+ul.plain li{margin-bottom:.3rem}
+</style>
+</head>
+<body>
+<a class="skip" href="#tool">Skip to the tool</a>
+<div class="wrap">
+
+<header class="masthead">
+  <span class="eyebrow">Free tool</span>
+  <h1>SubScan — find the subscriptions draining your account</h1>
+  <p class="lede">The average person underestimates their subscription spending by two to three times. Drop in a bank or card statement and see every recurring charge, ranked by what it costs you per year — with price hikes flagged. It runs entirely in your browser.</p>
+</header>
+
+<section class="card" aria-labelledby="why">
+  <h2 id="why">How it works</h2>
+  <p>Export a CSV from your bank or credit card (almost every one offers "Download transactions" / "Export to CSV"). Drop it below. SubScan groups charges by merchant, works out which ones repeat on a regular cycle — weekly, monthly, yearly — and adds up what each is really costing you. No sign-up, no upload.</p>
+  <div class="note">
+    <strong>Your statement never leaves your browser.</strong> Every bit of parsing happens in this page's own JavaScript. It loads no scripts, no fonts, no analytics, and makes no network request after the page loads — so there is none that <em>could</em> send your data anywhere. Open your browser's Network tab and watch: load the file, scan it, nothing goes out.
+  </div>
+  <p class="hint"><strong>One honest limit:</strong> a statement shows what you <em>pay for</em>, never what you still <em>use</em>. SubScan can't know you stopped watching a service — only that the charge keeps coming, how often, and whether the price crept up. It surfaces the facts and ranks the biggest ones; the "do I still need this?" call is yours.</p>
+</section>
+
+<main id="tool">
+  <section class="card">
+    <h2>Your statement</h2>
+    <div class="drop" id="drop" role="button" tabindex="0" aria-describedby="stat">
+      <span class="big">Drop a statement CSV here</span>
+      <span class="small">or press to choose a file &middot; or paste the rows into the box below</span>
+    </div>
+    <input type="file" id="file" class="visually-hidden" accept=".csv,.tsv,.txt,text/csv,text/plain">
+    <p class="filestat" id="stat" role="status">No file loaded — you can also paste CSV, or try the sample.</p>
+    <label for="csvIn">Statement CSV (needs a date, a description, and an amount column)</label>
+    <textarea id="csvIn" spellcheck="false" placeholder="Date,Description,Amount&#10;2026-01-05,NETFLIX.COM,-15.49&#10;2026-02-05,NETFLIX.COM,-15.49"></textarea>
+    <div class="inline" style="margin-top:.6rem">
+      <input type="checkbox" id="signPos">
+      <label for="signPos">My charges are shown as positive numbers (flip if the totals look wrong)</label>
+    </div>
+    <div class="row-actions">
+      <button class="primary" id="scanBtn">Scan for subscriptions</button>
+      <button id="sampleBtn">Try sample data</button>
+      <button id="clearBtn">Clear</button>
+    </div>
+    <div id="err" class="err hidden" role="alert"></div>
+    <p class="hint" id="srcnote"></p>
+  </section>
+
+  <section class="card hidden" id="results" aria-live="polite">
+    <h2>What you're paying for</h2>
+    <ul class="stats" id="stats"></ul>
+    <div class="tablescroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Subscription</th>
+            <th>Cycle</th>
+            <th class="num">Each</th>
+            <th class="num">Per month</th>
+            <th class="num">Per year</th>
+            <th class="num">Charges</th>
+            <th>First → last</th>
+            <th>Flags</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <div class="row-actions">
+      <button id="dlBtn">Download this list (.csv)</button>
+      <span class="hint" id="foundnote"></span>
+    </div>
+  </section>
+
+  <section class="card cta hidden" id="cta">
+    <h2>Want it watched for you?</h2>
+    <p>This free scan is a one-time snapshot. LeukLogic can run it on a schedule and tell you the moment something changes — a new subscription appears, a price goes up, or a free trial is about to convert — and even handle the cancellations for you.</p>
+    <div class="tiers">
+      <table>
+        <thead><tr><th>Tier</th><th>What you get</th><th>Depth</th></tr></thead>
+        <tbody>
+          <tr><td class="keycol">Free scan</td><td>This page — a one-time list of what you pay for</td><td>List only</td></tr>
+          <tr><td class="keycol">Monthly watchdog</td><td>We re-scan each month and flag new charges, price hikes &amp; renewals</td><td class="yes">List + alerts</td></tr>
+          <tr><td class="keycol">Concierge</td><td>We chase down and cancel the ones you don't want</td><td class="yes">We cancel for you</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:1rem">Interested, or want it for your own customers as a white-label tool? Email <a href="mailto:tim@leuklogic.com?subject=Subscription%20watchdog">tim@leuklogic.com</a> — we build bots, automations and internal tools, most projects $100–$500.</p>
+  </section>
+</main>
+
+<footer class="foot">
+  <p>SubScan is a free tool built by <a href="https://leuklogic.com">LeukLogic</a>. No account, no upload, no tracking. Found a charge it missed or miscounted? That's a bug worth hearing about: <a href="mailto:tim@leuklogic.com">tim@leuklogic.com</a>.</p>
+  <p>Known limits, stated plainly: SubScan reads the date, description and amount columns of a standard statement export; it detects weekly through annual cycles and needs at least two charges from a merchant to call something recurring; a merchant with wildly varying amounts (a shop you also buy other things from) may be skipped rather than guessed at. It reports what it's sure of and stays quiet on the rest.</p>
+  <p><a href="/tools/csv-diff/">Also free: DeltaCSV — compare two CSVs by key column.</a> · <a href="/tools/missed-call-calculator/">Missed-Call Cost Calculator</a></p>
+</footer>
+
+</div>
+
+<script type="module">
+/* ENGINE — inlined verbatim from src/parse.mjs + src/subscan.mjs
+ * (pure, dependency-free; only import/export keywords are removed for inlining). */
+/*
+ * DeltaCSV — parse.mjs
+ * Pure, dependency-free CSV parsing. No DOM, no Node APIs, no network.
+ * Safe to inline verbatim into a single-file HTML page (<script type="module">).
+ *
+ * Shape it targets: RFC 4180, with the tolerances real-world exports need
+ *   - fields may be quoted; a quoted field may contain the delimiter
+ *   - a quoted field may contain newlines (CRLF inside quotes is normalised to LF)
+ *   - a literal quote inside a quoted field is written as two quotes ("")
+ *   - a UTF-8 BOM at the start of the file is stripped
+ *   - LF and CRLF line endings are both accepted (bare CR too)
+ *
+ * The one rule that matters most: a record whose field count does not match the
+ * header is NEVER silently dropped and never silently padded. It goes to
+ * `malformed` with its 1-indexed line number and is excluded from `rows`.
+ */
+
+const BOM = '﻿';
+const DEFAULT_CANDIDATES = [',', ';', '\t', '|'];
+
+function stripBom(s) {
+  return s.charCodeAt(0) === 0xfeff ? s.slice(1) : s;
+}
+
+/**
+ * Split text into logical lines (quote-aware) and count each candidate
+ * delimiter OUTSIDE quoted regions. Used only by detectDelimiter.
+ */
+function countOutsideQuotes(src, quote, candidates, maxLines) {
+  const perLine = [];
+  let counts = Object.create(null);
+  for (const c of candidates) counts[c] = 0;
+  let inQuotes = false;
+  let hasContent = false;
+
+  const flush = () => {
+    if (hasContent) perLine.push(counts);
+    counts = Object.create(null);
+    for (const c of candidates) counts[c] = 0;
+    hasContent = false;
+  };
+
+  for (let i = 0; i < src.length; i++) {
+    const ch = src[i];
+    if (ch === quote) {
+      // A doubled quote inside a quoted region flips the flag twice — a no-op,
+      // which is exactly the behaviour we want for counting purposes.
+      inQuotes = !inQuotes;
+      hasContent = true;
+      continue;
+    }
+    if (!inQuotes && (ch === '\n' || ch === '\r')) {
+      if (ch === '\r' && src[i + 1] === '\n') i++;
+      flush();
+      if (perLine.length >= maxLines) return perLine;
+      continue;
+    }
+    if (!inQuotes && Object.prototype.hasOwnProperty.call(counts, ch)) counts[ch]++;
+    hasContent = true;
+  }
+  flush();
+  return perLine;
+}
+
+/**
+ * detectDelimiter(text, options?) -> ',' | ';' | '\t' | '|'
+ *
+ * Counts each candidate outside quoted regions across the first `sampleLines`
+ * logical lines, then picks the candidate that appears the most CONSISTENTLY
+ * (same non-zero count on the most lines). Consistency beats raw frequency,
+ * which is what stops a comma inside prose from beating a real semicolon.
+ *
+ * Genuinely ambiguous files exist (e.g. European decimals: "1,5;2,5"), so the
+ * result is a best guess — the UI must always expose an override.
+ */
+function detectDelimiter(text, options = {}) {
+  const quote = options.quote || '"';
+  const candidates = options.candidates || DEFAULT_CANDIDATES;
+  const sampleLines = options.sampleLines || 20;
+  const src = stripBom(typeof text === 'string' ? text : String(text ?? ''));
+  if (src === '') return candidates[0];
+
+  const lines = countOutsideQuotes(src.slice(0, 1 << 20), quote, candidates, sampleLines);
+  if (lines.length === 0) return candidates[0];
+
+  let best = null;
+  for (let ci = 0; ci < candidates.length; ci++) {
+    const c = candidates[ci];
+    // Mode of the non-zero counts for this candidate.
+    const tally = new Map();
+    for (const l of lines) {
+      const n = l[c];
+      if (n > 0) tally.set(n, (tally.get(n) || 0) + 1);
+    }
+    if (tally.size === 0) continue;
+    let mode = 0;
+    let modeLines = 0;
+    for (const [n, hits] of tally) {
+      if (hits > modeLines || (hits === modeLines && n > mode)) {
+        mode = n;
+        modeLines = hits;
+      }
+    }
+    const consistency = modeLines / lines.length;
+    const cand = { delimiter: c, consistency, mode, order: ci };
+    if (
+      best === null ||
+      cand.consistency > best.consistency ||
+      (cand.consistency === best.consistency && cand.mode > best.mode) ||
+      (cand.consistency === best.consistency && cand.mode === best.mode && cand.order < best.order)
+    ) {
+      best = cand;
+    }
+  }
+  return best ? best.delimiter : candidates[0];
+}
+
+/**
+ * parseCsv(text, options?) -> { header, rows, rowLines, malformed, delimiter, blankLines }
+ *
+ *   options.delimiter  explicit delimiter; omit (or 'auto') to auto-detect
+ *   options.hasHeader  default true; when false, headers are "Column 1", "Column 2", …
+ *   options.quote      default '"'
+ *
+ *   header      string[]   — trimmed header names, in file order
+ *   rows        string[][] — only records whose field count === header.length
+ *   rowLines    number[]   — 1-indexed start line of each row, parallel to rows
+ *   malformed   {line, fields, expected, actual, raw}[]  — reported, never dropped
+ *   delimiter   the delimiter actually used
+ *   blankLines  count of completely empty lines skipped (they carry no data)
+ */
+function parseCsv(text, options = {}) {
+  const hasHeader = options.hasHeader !== false;
+  const quote = options.quote || '"';
+  const src = stripBom(typeof text === 'string' ? text : String(text ?? ''));
+  const delimiter =
+    options.delimiter && options.delimiter !== 'auto'
+      ? options.delimiter
+      : detectDelimiter(src, { quote });
+
+  const records = [];
+  let blankLines = 0;
+
+  let fields = [];
+  let field = '';
+  let inQuotes = false;
+  let recordHadQuote = false;
+  let line = 1;
+  let recordLine = 1;
+  let recordStart = 0;
+  let i = 0;
+
+  const endRecord = (endOffset) => {
+    fields.push(field);
+    field = '';
+    const isBlank = fields.length === 1 && fields[0] === '' && !recordHadQuote;
+    if (isBlank) {
+      blankLines++;
+    } else {
+      records.push({ fields, line: recordLine, raw: src.slice(recordStart, endOffset) });
+    }
+    fields = [];
+    recordHadQuote = false;
+  };
+
+  while (i < src.length) {
+    const ch = src[i];
+
+    if (inQuotes) {
+      if (ch === quote) {
+        if (src[i + 1] === quote) {
+          field += quote;
+          i += 2;
+          continue;
+        }
+        inQuotes = false;
+        i++;
+        continue;
+      }
+      if (ch === '\r') {
+        // Normalise CRLF (and bare CR) inside a quoted field to a single LF.
+        field += '\n';
+        line++;
+        i += src[i + 1] === '\n' ? 2 : 1;
+        continue;
+      }
+      if (ch === '\n') {
+        field += '\n';
+        line++;
+        i++;
+        continue;
+      }
+      field += ch;
+      i++;
+      continue;
+    }
+
+    if (ch === quote) {
+      recordHadQuote = true;
+      if (field === '') {
+        inQuotes = true;
+        i++;
+        continue;
+      }
+      // A quote in the middle of an unquoted field is data, not structure.
+      field += ch;
+      i++;
+      continue;
+    }
+
+    if (ch === delimiter) {
+      fields.push(field);
+      field = '';
+      i++;
+      continue;
+    }
+
+    if (ch === '\r' || ch === '\n') {
+      const width = ch === '\r' && src[i + 1] === '\n' ? 2 : 1;
+      endRecord(i);
+      i += width;
+      line++;
+      recordLine = line;
+      recordStart = i;
+      continue;
+    }
+
+    field += ch;
+    i++;
+  }
+
+  // Flush a final record that was not terminated by a newline.
+  if (field !== '' || fields.length > 0 || recordHadQuote) endRecord(src.length);
+
+  if (records.length === 0) {
+    return { header: [], rows: [], rowLines: [], malformed: [], delimiter, blankLines };
+  }
+
+  let header;
+  let dataRecords;
+  if (hasHeader) {
+    header = records[0].fields.map((h) => stripBom(String(h)).trim());
+    dataRecords = records.slice(1);
+  } else {
+    header = records[0].fields.map((_, idx) => `Column ${idx + 1}`);
+    dataRecords = records;
+  }
+
+  const rows = [];
+  const rowLines = [];
+  const malformed = [];
+  for (const rec of dataRecords) {
+    if (rec.fields.length === header.length) {
+      rows.push(rec.fields);
+      rowLines.push(rec.line);
+    } else {
+      malformed.push({
+        line: rec.line,
+        fields: rec.fields,
+        expected: header.length,
+        actual: rec.fields.length,
+        raw: rec.raw,
+      });
+    }
+  }
+
+  return { header, rows, rowLines, malformed, delimiter, blankLines };
+}
+
+
+/*
+ * SubScan — subscan.mjs
+ * Pure, dependency-free subscription detection. No DOM, no Node APIs, no network.
+ * Safe to inline verbatim into a single-file HTML page (<script type="module">).
+ *
+ * WHAT IT DOES (and does not). Given a list of transactions (from a bank/card
+ * statement), it finds the RECURRING charges — the subscriptions — by grouping
+ * charges from the same merchant and checking whether they arrive on a regular
+ * cadence at a stable price. It ranks them biggest-annual-cost first and flags
+ * price increases. It is pure arithmetic over the data you give it.
+ *
+ * The one honesty rule that matters: it cannot know whether you still USE a
+ * subscription — nothing in a statement records that. It surfaces what you are
+ * paying for, on what cadence, and how it has changed, so YOU can decide. It
+ * never claims "dormant" as fact; the only usage signal is your own judgement.
+ *
+ * It also never guesses a charge into existence: a single one-off payment, an
+ * irregular cadence, or wildly varying amounts are excluded, not force-fit into
+ * a "subscription". False positives cost trust; the bias is toward under-calling.
+ */
+
+// ---- small pure helpers -------------------------------------------------------
+
+function median(nums) {
+  if (nums.length === 0) return 0;
+  const s = [...nums].sort((a, b) => a - b);
+  const mid = Math.floor(s.length / 2);
+  return s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2;
+}
+
+function round2(n) {
+  return Math.round((n + Number.EPSILON) * 100) / 100;
+}
+
+/**
+ * parseAmount(raw) -> number  (positive = money out, negative = money in)
+ * Handles "$1,234.56", "(12.34)" => -12.34, "-12.34", "  12.34  ", "12.34 CR".
+ * Returns NaN when there is no number at all.
+ */
+function parseAmount(raw) {
+  if (typeof raw === 'number') return raw;
+  let s = String(raw == null ? '' : raw).trim();
+  if (s === '') return NaN;
+  let sign = 1;
+  // Accounting parentheses mean negative.
+  if (/^\(.*\)$/.test(s)) {
+    sign = -1;
+    s = s.slice(1, -1);
+  }
+  if (/(^|\s)cr$/i.test(s)) sign = -1; // trailing CR = credit
+  if (/(^|\s)dr$/i.test(s)) sign = 1; // trailing DR = debit
+  if (s.trim().startsWith('-')) sign = -1;
+  const cleaned = s.replace(/[^0-9.]/g, '');
+  if (cleaned === '' || cleaned === '.') return NaN;
+  const n = Number(cleaned);
+  return Number.isFinite(n) ? sign * n : NaN;
+}
+
+/**
+ * toDate(v) -> Date (UTC midnight) | null
+ * Accepts YYYY-MM-DD, YYYY/MM/DD, MM/DD/YYYY, M/D/YY, and a Date object.
+ * Uses UTC to keep day-gap math free of timezone drift. Ambiguous or
+ * unparseable inputs return null (excluded, never guessed).
+ */
+function toDate(v) {
+  if (v instanceof Date) return Number.isNaN(v.getTime()) ? null : v;
+  const s = String(v == null ? '' : v).trim();
+  if (s === '') return null;
+  let m = s.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})/);
+  if (m) return mkUTC(+m[1], +m[2], +m[3]);
+  m = s.match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{2,4})$/);
+  if (m) {
+    let y = +m[3];
+    if (y < 100) y += 2000;
+    return mkUTC(y, +m[1], +m[2]); // US-style MM/DD/YYYY
+  }
+  const d = new Date(s);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
+function mkUTC(y, mo, d) {
+  if (mo < 1 || mo > 12 || d < 1 || d > 31) return null;
+  const dt = new Date(Date.UTC(y, mo - 1, d));
+  return Number.isNaN(dt.getTime()) ? null : dt;
+}
+
+function fmtDate(d) {
+  return d.toISOString().slice(0, 10);
+}
+
+// Product qualifiers that DO distinguish a subscription from a merchant's other
+// charges (Amazon Prime vs Amazon retail, Disney Plus vs a Disney store). These
+// are kept as part of the key; city/ref tokens are not.
+const QUALIFIERS = new Set([
+  'PRIME', 'PLUS', 'PREMIUM', 'MUSIC', 'TV', 'GOLD', 'PRO', 'ONE', 'ICLOUD',
+  'CLOUD', 'UNLIMITED', 'FAMILY', 'STUDENT', 'BASIC', 'STANDARD', 'MAX', 'GO',
+]);
+// Words that are billing/legal/location noise, never merchant identity.
+const NOISE = new Set([
+  'BILL', 'BILLING', 'PAYMENT', 'PYMT', 'HELP', 'SUPPORT', 'USA', 'US', 'INC',
+  'LLC', 'LTD', 'CORP', 'MEMBERSHIP', 'SUBSCRIPTION', 'SUBSCR', 'MONTHLY',
+  'ANNUAL', 'RENEWAL', 'ONLINE', 'HTTP', 'HTTPS', 'WWW',
+]);
+const STATES = new Set([
+  'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL',
+  'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT',
+  'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI',
+  'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY',
+]);
+
+/**
+ * normalizeMerchant(desc) -> canonical grouping key (may be '')
+ * Strips the noise that makes the SAME merchant look like many: processor
+ * prefixes (SQ*, TST*, PAYPAL*), store/ref numbers, phone numbers, dates,
+ * domains, states and cities — then keys on the first real word plus a product
+ * qualifier if present. Consistency (same merchant -> same key) matters more
+ * than a pretty name; the raw description is kept separately for display.
+ *
+ * Known limit: a leading city/word is rare but possible, and a high-volume
+ * merchant with many descriptor variants can still fragment. It under-calls
+ * rather than inventing a false subscription.
+ */
+function normalizeMerchant(desc) {
+  let s = String(desc == null ? '' : desc).toUpperCase();
+  // Common card/ACH processor prefixes.
+  s = s.replace(/\b(SQ|TST|SP|PP|PAYPAL|POS|ACH|WEB|PMT|PURCHASE|RECURRING|RECUR|AUTOPAY|AUTO PAY|DEBIT|CREDIT|VISA|MASTERCARD|AMEX|CHECKCARD|CARD)\b/g, ' ');
+  s = s.replace(/[*#]/g, ' ');
+  // Domains -> keep the name, drop the TLD.
+  s = s.replace(/\b([A-Z0-9-]+)\.(COM|NET|ORG|IO|CO|APP|TV|AI|GG)\b/g, ' $1 ');
+  // Drop any whitespace token that contains a digit: store/ref/phone/date codes.
+  s = s
+    .split(/\s+/)
+    .filter((t) => t && !/\d/.test(t))
+    .join(' ');
+  // Non-letters become spaces; collapse.
+  s = s.replace(/[^A-Z ]+/g, ' ').replace(/\s+/g, ' ').trim();
+  const toks = s.split(' ').filter((t) => t.length > 1 && !NOISE.has(t) && !STATES.has(t));
+  if (toks.length === 0) return '';
+  let key = toks[0];
+  if (toks[1] && QUALIFIERS.has(toks[1])) key += ' ' + toks[1];
+  return key;
+}
+
+// Regular billing cadences, by median days between charges.
+const CADENCES = [
+  { label: 'weekly', min: 5, max: 9, perYear: 52 },
+  { label: 'biweekly', min: 12, max: 16, perYear: 26 },
+  { label: 'monthly', min: 26, max: 35, perYear: 12 },
+  { label: 'bimonthly', min: 56, max: 66, perYear: 6 },
+  { label: 'quarterly', min: 82, max: 98, perYear: 4 },
+  { label: 'semiannual', min: 172, max: 195, perYear: 2 },
+  { label: 'annual', min: 350, max: 385, perYear: 1 },
+];
+
+/**
+ * classifyCadence(medianGapDays) -> {label, perYear} | null
+ * null means the spacing does not match any regular billing cycle, i.e. it is
+ * not a subscription (e.g. groceries every few days at random).
+ */
+function classifyCadence(medianGapDays) {
+  for (const c of CADENCES) {
+    if (medianGapDays >= c.min && medianGapDays <= c.max) {
+      return { label: c.label, perYear: c.perYear };
+    }
+  }
+  return null;
+}
+
+/**
+ * detectSubscriptions(transactions, options?) ->
+ *   { subscriptions, totalMonthly, totalAnnual, count, scanned }
+ *
+ *   transactions: [{ date, desc, amount }]  — amount is the charge size; only
+ *     positive amounts (money out) are considered. date/desc as strings are fine.
+ *
+ *   options.minCharges        default 2  — need at least this many to call it recurring
+ *   options.priceHikePct      default 5  — last vs first amount rise (%) to flag a hike
+ *   options.maxAmountRatio    default 3  — reject a group whose max/min amount exceeds this
+ *
+ * Each subscription: { merchant, sampleDesc, cadence, perYear, typicalAmount,
+ *   monthly, annual, chargeCount, firstDate, lastDate, firstAmount, lastAmount,
+ *   priceIncrease }. Sorted by annual cost, biggest first.
+ */
+function detectSubscriptions(transactions, options = {}) {
+  const minCharges = options.minCharges || 2;
+  const priceHikePct = options.priceHikePct == null ? 5 : options.priceHikePct;
+  const maxAmountRatio = options.maxAmountRatio || 3;
+
+  const groups = new Map();
+  let scanned = 0;
+  for (const t of transactions || []) {
+    const amount = typeof t.amount === 'number' ? t.amount : parseAmount(t.amount);
+    if (!Number.isFinite(amount) || amount <= 0) continue; // money in / non-charges ignored
+    const date = toDate(t.date);
+    if (!date) continue;
+    const key = normalizeMerchant(t.desc);
+    if (!key) continue;
+    scanned++;
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push({ date, amount, desc: String(t.desc == null ? '' : t.desc).trim() });
+  }
+
+  const subscriptions = [];
+  for (const [key, charges] of groups) {
+    if (charges.length < minCharges) continue;
+    charges.sort((a, b) => a.date - b.date);
+
+    const gaps = [];
+    for (let i = 1; i < charges.length; i++) {
+      gaps.push((charges[i].date - charges[i - 1].date) / 86400000);
+    }
+    const medianGap = median(gaps);
+    if (medianGap <= 0) continue; // same-day duplicates, not a cadence
+    const cadence = classifyCadence(medianGap);
+    if (!cadence) continue;
+
+    // With 3+ charges, require most gaps to sit near the cadence (reject the
+    // merchant you happen to buy from on a loosely monthly-ish basis).
+    if (gaps.length >= 2) {
+      const tol = Math.max(4, medianGap * 0.25);
+      const near = gaps.filter((g) => Math.abs(g - medianGap) <= tol).length;
+      if (near / gaps.length < 0.5) continue;
+    }
+
+    const amounts = charges.map((c) => c.amount);
+    const maxAmt = Math.max(...amounts);
+    const minAmt = Math.min(...amounts);
+    if (minAmt > 0 && maxAmt / minAmt > maxAmountRatio) continue; // variable spend, not a sub
+
+    const typical = median(amounts);
+    const first = charges[0];
+    const last = charges[charges.length - 1];
+    const priceIncrease = last.amount > first.amount * (1 + priceHikePct / 100);
+
+    subscriptions.push({
+      merchant: key,
+      sampleDesc: last.desc || key,
+      cadence: cadence.label,
+      perYear: cadence.perYear,
+      typicalAmount: round2(typical),
+      monthly: round2((typical * cadence.perYear) / 12),
+      annual: round2(typical * cadence.perYear),
+      chargeCount: charges.length,
+      firstDate: fmtDate(first.date),
+      lastDate: fmtDate(last.date),
+      firstAmount: round2(first.amount),
+      lastAmount: round2(last.amount),
+      priceIncrease,
+    });
+  }
+
+  subscriptions.sort((a, b) => b.annual - a.annual || a.merchant.localeCompare(b.merchant));
+  const totalMonthly = round2(subscriptions.reduce((s, x) => s + x.monthly, 0));
+  const totalAnnual = round2(subscriptions.reduce((s, x) => s + x.annual, 0));
+  return { subscriptions, totalMonthly, totalAnnual, count: subscriptions.length, scanned };
+}
+
+/**
+ * pickColumns(header) -> { date, desc, amount, debit, credit }  (indices; -1 if absent)
+ * Best-effort mapping of statement columns by header name.
+ */
+function pickColumns(header) {
+  const idx = { date: -1, desc: -1, amount: -1, debit: -1, credit: -1 };
+  const h = (header || []).map((x) => String(x == null ? '' : x).toLowerCase().trim());
+  const find = (re, taken) => {
+    for (let i = 0; i < h.length; i++) if (re.test(h[i]) && !taken.includes(i)) return i;
+    return -1;
+  };
+  const taken = [];
+  idx.date = find(/\b(date|posted|posting|trans(action)? date)\b|^date$/, taken);
+  if (idx.date >= 0) taken.push(idx.date);
+  idx.debit = find(/debit|withdrawal|paid out|payment|charge/, taken);
+  if (idx.debit >= 0) taken.push(idx.debit);
+  idx.credit = find(/credit|deposit|paid in/, taken);
+  if (idx.credit >= 0) taken.push(idx.credit);
+  idx.amount = find(/amount|amt|value/, taken);
+  if (idx.amount >= 0) taken.push(idx.amount);
+  idx.desc = find(/description|payee|name|memo|merchant|details|narrative|transaction/, taken);
+  if (idx.desc >= 0) taken.push(idx.desc);
+  // Fallbacks: if desc still missing, take the widest text column that isn't date/amount.
+  return idx;
+}
+
+/**
+ * transactionsFromCsv(parsed, options?) -> { transactions, columns, note }
+ * Maps a parseCsv() result to [{date, desc, amount}]. amount is positive for a
+ * charge (money out). Column meaning:
+ *   - explicit Debit column  -> those values are charges
+ *   - single Amount column   -> negative values are charges by default (most US
+ *                               exports); set options.chargesArePositive to flip
+ */
+function transactionsFromCsv(parsed, options = {}) {
+  const header = (parsed && parsed.header) || [];
+  const rows = (parsed && parsed.rows) || [];
+  const columns = pickColumns(header);
+  const out = [];
+  let note = '';
+
+  if (columns.date < 0 || columns.desc < 0 || (columns.amount < 0 && columns.debit < 0)) {
+    return { transactions: [], columns, note: 'Could not find date, description, and amount columns.' };
+  }
+
+  // Decide sign convention for a single Amount column by sampling the data.
+  let chargesArePositive = options.chargesArePositive;
+  if (chargesArePositive === undefined && columns.debit < 0 && columns.amount >= 0) {
+    let neg = 0;
+    let pos = 0;
+    for (const r of rows) {
+      const a = parseAmount(r[columns.amount]);
+      if (!Number.isFinite(a) || a === 0) continue;
+      if (a < 0) neg++;
+      else pos++;
+    }
+    // A statement is mostly spending; whichever sign dominates is the charges.
+    chargesArePositive = pos > neg;
+    note = chargesArePositive
+      ? 'Single amount column: treating positive values as charges.'
+      : 'Single amount column: treating negative values as charges.';
+  }
+
+  for (const r of rows) {
+    const date = r[columns.date];
+    const desc = r[columns.desc];
+    let amount;
+    if (columns.debit >= 0) {
+      amount = parseAmount(r[columns.debit]); // debit column holds the charge amount
+      if (!Number.isFinite(amount)) continue;
+      amount = Math.abs(amount);
+    } else {
+      const a = parseAmount(r[columns.amount]);
+      if (!Number.isFinite(a) || a === 0) continue;
+      const isCharge = chargesArePositive ? a > 0 : a < 0;
+      if (!isCharge) continue;
+      amount = Math.abs(a);
+    }
+    if (amount > 0) out.push({ date, desc, amount });
+  }
+  return { transactions: out, columns, note };
+}
+
+
+
+/* ============================================================================
+ * APP — DOM wiring only. All detection is the pure engine above.
+ * No network, no storage; every action runs on this page.
+ * ==========================================================================*/
+const $ = (id) => document.getElementById(id);
+const show = (el, on) => el.classList.toggle('hidden', !on);
+
+const csvIn = $('csvIn');
+const errBox = $('err');
+const results = $('results');
+const cta = $('cta');
+const statsEl = $('stats');
+const rowsEl = $('rows');
+const srcnote = $('srcnote');
+const foundnote = $('foundnote');
+
+let lastResult = null;
+
+function money(n) {
+  return '$' + Number(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function esc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+}
+function showErr(msg) {
+  errBox.textContent = msg;
+  show(errBox, true);
+  show(results, false);
+  show(cta, false);
+}
+
+function runScan() {
+  show(errBox, false);
+  const text = csvIn.value;
+  if (text.trim() === '') {
+    show(results, false);
+    show(cta, false);
+    srcnote.textContent = '';
+    return;
+  }
+  let parsed;
+  try {
+    parsed = parseCsv(text);
+  } catch (e) {
+    showErr('Could not read that as CSV: ' + e.message);
+    return;
+  }
+  const opts = $('signPos').checked ? { chargesArePositive: true } : {};
+  const mapped = transactionsFromCsv(parsed, opts);
+  if (mapped.transactions.length === 0) {
+    showErr(
+      mapped.note ||
+        'No charges found. Make sure the file has a date column, a description column, and an amount (or debit) column.',
+    );
+    return;
+  }
+  const res = detectSubscriptions(mapped.transactions);
+  lastResult = res;
+  render(res, mapped.note, mapped.transactions.length);
+}
+
+function render(res, note, scanned) {
+  const hikes = res.subscriptions.filter((s) => s.priceIncrease).length;
+  statsEl.innerHTML = [
+    { n: money(res.totalMonthly), k: 'Per month', hot: false },
+    { n: money(res.totalAnnual), k: 'Per year', hot: true },
+    { n: String(res.count), k: res.count === 1 ? 'Subscription' : 'Subscriptions', hot: false },
+    { n: String(hikes), k: hikes === 1 ? 'Price hike' : 'Price hikes', hot: hikes > 0 },
+  ]
+    .map((s) => `<li class="${s.hot ? 'hot' : ''}"><span class="n">${esc(s.n)}</span><span class="k">${esc(s.k)}</span></li>`)
+    .join('');
+
+  if (res.subscriptions.length === 0) {
+    rowsEl.innerHTML = `<tr><td colspan="8"><div class="empty">No clearly recurring charges found among ${scanned} charge${scanned === 1 ? '' : 's'}. That can be right — or your export may cover too short a window to see a second charge from the same merchant. Try a longer date range.</div></td></tr>`;
+  } else {
+    rowsEl.innerHTML = res.subscriptions
+      .map((s) => {
+        const flags = [];
+        if (s.priceIncrease) flags.push(`<span class="badge flag">price up</span>`);
+        flags.push(`<span class="badge">review</span>`);
+        return (
+          `<tr>` +
+          `<td class="keycol">${esc(s.merchant)}<br><span class="hint">${esc(s.sampleDesc)}</span></td>` +
+          `<td>${esc(s.cadence)}</td>` +
+          `<td class="num">${money(s.typicalAmount)}</td>` +
+          `<td class="num">${money(s.monthly)}</td>` +
+          `<td class="num">${money(s.annual)}</td>` +
+          `<td class="num">${s.chargeCount}</td>` +
+          `<td>${esc(s.firstDate)} → ${esc(s.lastDate)}${s.priceIncrease ? `<br><span class="hint">${money(s.firstAmount)} → ${money(s.lastAmount)}</span>` : ''}</td>` +
+          `<td>${flags.join(' ')}</td>` +
+          `</tr>`
+        );
+      })
+      .join('');
+  }
+
+  foundnote.textContent = `Scanned ${scanned} charge${scanned === 1 ? '' : 's'}.`;
+  srcnote.textContent = note || '';
+  show(results, true);
+  show(cta, true);
+}
+
+function downloadReport() {
+  if (!lastResult || lastResult.subscriptions.length === 0) return;
+  const head = ['Subscription', 'Cycle', 'Each', 'PerMonth', 'PerYear', 'Charges', 'FirstDate', 'LastDate', 'PriceIncrease'];
+  const q = (v) => {
+    const s = String(v);
+    return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  };
+  const lines = [head.join(',')];
+  for (const s of lastResult.subscriptions) {
+    lines.push(
+      [s.merchant, s.cadence, s.typicalAmount, s.monthly, s.annual, s.chargeCount, s.firstDate, s.lastDate, s.priceIncrease ? 'yes' : 'no']
+        .map(q)
+        .join(','),
+    );
+  }
+  const blob = new Blob([lines.join('\r\n') + '\r\n'], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'my-subscriptions.csv';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+/* ---- drop zone + file input ---- */
+(function wireDrop() {
+  const dropEl = $('drop');
+  const fileEl = $('file');
+  const statEl = $('stat');
+  const setStat = (msg, cls) => {
+    statEl.innerHTML = cls ? `<span class="${cls}">${msg}</span>` : msg;
+  };
+  const readFile = (file) => {
+    if (!file) return;
+    const r = new FileReader();
+    r.onload = () => {
+      csvIn.value = String(r.result || '');
+      setStat(`Loaded ${esc(file.name)} (${file.size.toLocaleString()} bytes).`, 'ok');
+      runScan();
+    };
+    r.onerror = () => setStat('Could not read that file.', 'warn');
+    r.readAsText(file);
+  };
+  dropEl.addEventListener('click', () => fileEl.click());
+  dropEl.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      fileEl.click();
+    }
+  });
+  fileEl.addEventListener('change', () => readFile(fileEl.files[0]));
+  dropEl.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropEl.classList.add('over');
+  });
+  dropEl.addEventListener('dragleave', () => dropEl.classList.remove('over'));
+  dropEl.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropEl.classList.remove('over');
+    readFile(e.dataTransfer.files[0]);
+  });
+})();
+
+const SAMPLE = [
+  'Date,Description,Amount',
+  '2026-01-03,WHOLE FOODS MKT #123 AUSTIN TX,-84.12',
+  '2026-01-04,NETFLIX.COM 866-579-7172 CA,-15.49',
+  '2026-01-06,SHELL OIL 574212,-52.10',
+  '2026-01-08,SPOTIFY USA NEW YORK,-9.99',
+  '2026-01-10,PLANET FIT CLUB 8009212,-24.99',
+  '2026-01-15,PAYROLL DIRECT DEP,2450.00',
+  '2026-01-16,ADOBE  *CREATIVE CLD,-54.99',
+  '2026-01-20,ICLOUD APPLE.COM/BILL,-2.99',
+  '2026-02-04,NETFLIX.COM 866-579-7172 CA,-15.49',
+  '2026-02-08,SPOTIFY USA NEW YORK,-9.99',
+  '2026-02-10,PLANET FIT CLUB 8009212,-24.99',
+  '2026-02-11,WHOLE FOODS MKT #310 AUSTIN TX,-31.55',
+  '2026-02-16,ADOBE  *CREATIVE CLD,-54.99',
+  '2026-02-20,ICLOUD APPLE.COM/BILL,-2.99',
+  '2026-03-01,AMAZON PRIME*2H4XY9 AMZN.COM WA,-139.00',
+  '2026-03-04,NETFLIX.COM 866-579-7172 CA,-17.99',
+  '2026-03-08,SPOTIFY USA NEW YORK,-11.99',
+  '2026-03-10,PLANET FIT CLUB 8009212,-24.99',
+  '2026-03-16,ADOBE  *CREATIVE CLD,-54.99',
+  '2026-03-20,ICLOUD APPLE.COM/BILL,-2.99',
+].join('\n');
+
+$('scanBtn').addEventListener('click', runScan);
+$('sampleBtn').addEventListener('click', () => {
+  csvIn.value = SAMPLE;
+  $('stat').textContent = 'Loaded sample statement — 3 months of a typical account.';
+  runScan();
+});
+$('clearBtn').addEventListener('click', () => {
+  csvIn.value = '';
+  show(results, false);
+  show(cta, false);
+  show(errBox, false);
+  srcnote.textContent = '';
+  $('stat').textContent = 'No file loaded — you can also paste CSV, or try the sample.';
+});
+$('signPos').addEventListener('change', () => {
+  if (csvIn.value.trim() !== '') runScan();
+});
+$('dlBtn').addEventListener('click', downloadReport);
+
+</script>
+</body>
+</html>

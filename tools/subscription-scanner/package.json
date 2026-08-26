@@ -1,0 +1,7 @@
+{
+  "name": "subscription-scanner",
+  "private": true,
+  "description": "SubScan — pure ESM subscription-detection engine + self-contained page. Run: npm test.",
+  "type": "module",
+  "scripts": { "test": "node --test test/engine.test.mjs" }
+}

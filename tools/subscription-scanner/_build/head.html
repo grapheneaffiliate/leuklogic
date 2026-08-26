@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SubScan — find the subscriptions quietly draining your account</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'><rect width='22' height='22' rx='5' fill='%23D9502B'/><path d='M9.5 4.5a5 5 0 1 0 3.2 8.8l3 3M9.5 4.5a5 5 0 0 1 0 10' fill='none' stroke='%23FAF7F2' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+<meta name="description" content="Free in-browser subscription scanner. Drop a bank or card statement CSV and instantly see every recurring charge, ranked by yearly cost, with price hikes flagged. Nothing is uploaded — it all runs on your machine.">
+<meta name="color-scheme" content="light dark">
+<style>
+:root{
+  --paper:#FAF7F2;
+  --surface:#FFFFFF;
+  --sunk:#F3EEE6;
+  --ink:#12161B;
+  --body:#3D454E;
+  --muted:#616A75;
+  --line:#E4DED4;
+  --accent:#D9502B;
+  --accent-text:#B03D1D;
+  --accent-soft:#FBEAE3;
+  --teal:#10574F;
+  --teal-soft:#E3F0ED;
+  --btn-bg:#B03D1D;
+  --btn-fg:#FFFFFF;
+  --focus:#B03D1D;
+  --shadow:0 1px 2px rgba(18,22,27,.06), 0 8px 24px rgba(18,22,27,.05);
+  --radius:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#12161B;
+    --surface:#181D24;
+    --sunk:#1E242C;
+    --ink:#FAF7F2;
+    --body:#C6CCD4;
+    --muted:#98A1AC;
+    --line:#2C333C;
+    --accent:#F0764E;
+    --accent-text:#F5906C;
+    --accent-soft:#3A2018;
+    --teal:#5FD3C2;
+    --teal-soft:#12302C;
+    --btn-bg:#F0764E;
+    --btn-fg:#12161B;
+    --focus:#F5906C;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--body);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Noto Sans",sans-serif;
+  font-size:16px;
+  line-height:1.6;
+}
+.wrap{max-width:74rem;margin:0 auto;padding:1.5rem 1rem 4rem}
+h1,h2,h3{color:var(--ink);line-height:1.25;margin:0 0 .5rem}
+h1{font-size:1.9rem;letter-spacing:-.02em}
+h2{font-size:1.25rem;margin-top:0}
+h3{font-size:1rem}
+p{margin:0 0 1rem}
+a{color:var(--accent-text);text-decoration:underline;text-underline-offset:2px}
+a:hover{text-decoration-thickness:2px}
+code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;font-size:.92em}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:4px}
+.skip{position:absolute;left:-9999px;top:0;background:var(--surface);color:var(--ink);padding:.6rem 1rem;z-index:20}
+.skip:focus{left:.5rem;top:.5rem}
+header.masthead{border-bottom:1px solid var(--line);padding-bottom:1.25rem;margin-bottom:1.5rem}
+.eyebrow{
+  display:inline-block;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--accent-text);font-weight:700;margin-bottom:.4rem;
+}
+.lede{font-size:1.06rem;max-width:62ch}
+.note{
+  background:var(--teal-soft);border-left:3px solid var(--teal);
+  padding:.75rem .9rem;border-radius:0 var(--radius) var(--radius) 0;margin:0 0 1rem;
+  font-size:.94rem;
+}
+.note strong{color:var(--ink)}
+section.card{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+  padding:1.1rem;margin:0 0 1.25rem;box-shadow:var(--shadow);
+}
+.drop{
+  border:2px dashed var(--line);border-radius:var(--radius);background:var(--sunk);
+  padding:1.1rem;text-align:center;cursor:pointer;transition:border-color .12s, background .12s;
+}
+.drop:hover{border-color:var(--accent)}
+.drop.over{border-color:var(--accent);background:var(--accent-soft)}
+.drop .big{display:block;color:var(--ink);font-weight:700;margin-bottom:.15rem}
+.drop .small{display:block;font-size:.85rem;color:var(--muted)}
+.filestat{margin-top:.7rem;font-size:.9rem}
+.filestat .ok{color:var(--teal);font-weight:700}
+.filestat .warn{color:var(--accent-text);font-weight:700}
+label{display:block;font-size:.9rem;color:var(--ink);font-weight:600;margin-bottom:.25rem}
+.inline{display:flex;align-items:center;gap:.5rem;margin-bottom:.45rem}
+.inline label{display:inline;margin:0;font-weight:500;color:var(--body)}
+select,input[type=text],input[type=number],textarea{
+  font:inherit;color:var(--ink);background:var(--surface);
+  border:1px solid var(--line);border-radius:6px;padding:.45rem .55rem;width:100%;
+}
+textarea{min-height:7rem;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.85rem}
+input[type=checkbox]{width:1.05rem;height:1.05rem;accent-color:var(--accent);flex:none;margin:0}
+button{
+  font:inherit;font-weight:700;cursor:pointer;border-radius:6px;
+  border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:.5rem .85rem;
+}
+button:hover:not(:disabled){border-color:var(--accent)}
+button.primary{background:var(--btn-bg);border-color:var(--btn-bg);color:var(--btn-fg)}
+button.primary:hover:not(:disabled){filter:brightness(1.06)}
+button:disabled{opacity:.5;cursor:not-allowed}
+.row-actions{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;margin-top:.9rem}
+.hint{font-size:.88rem;color:var(--muted)}
+.tablescroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:var(--radius)}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{text-align:left;padding:.45rem .6rem;border-bottom:1px solid var(--line);vertical-align:top;white-space:nowrap}
+th{background:var(--sunk);color:var(--ink);font-weight:700;position:sticky;top:0}
+tbody tr:last-child td{border-bottom:none}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+th.num{text-align:right}
+.keycol{font-weight:700;color:var(--ink)}
+.badge{
+  display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+  padding:.1rem .4rem;border-radius:4px;border:1px solid var(--line);color:var(--body);background:var(--sunk);
+}
+.badge.good{border-color:var(--teal);color:var(--teal);background:var(--teal-soft)}
+.badge.flag{border-color:var(--accent);color:var(--accent-text);background:var(--accent-soft)}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:.6rem;margin:0 0 1rem;padding:0;list-style:none}
+@media (min-width:560px){.stats{grid-template-columns:repeat(4,1fr)}}
+.stats li{background:var(--sunk);border:1px solid var(--line);border-radius:var(--radius);padding:.55rem .65rem}
+.stats .n{display:block;font-size:1.35rem;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1.2}
+.stats .k{display:block;font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.stats li.hot{border-color:var(--accent);background:var(--accent-soft)}
+.stats li.hot .n{color:var(--accent-text)}
+.empty{color:var(--muted);padding:.9rem;background:var(--sunk);border-radius:var(--radius);border:1px solid var(--line)}
+.err{
+  background:var(--accent-soft);border:1px solid var(--accent);color:var(--accent-text);
+  padding:.7rem .85rem;border-radius:var(--radius);font-weight:600;margin-bottom:1rem;
+}
+.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.cta{background:var(--accent-soft);border:1px solid var(--accent)}
+.cta h2{color:var(--accent-text)}
+.tiers{overflow-x:auto}
+.tiers table{min-width:34rem}
+.tiers td.yes{color:var(--teal);font-weight:700}
+footer.foot{border-top:1px solid var(--line);margin-top:2.5rem;padding-top:1.1rem;font-size:.9rem;color:var(--muted)}
+.hidden{display:none !important}
+ul.plain{margin:0 0 1rem;padding-left:1.1rem}
+ul.plain li{margin-bottom:.3rem}
+</style>
+</head>
+<body>
+<a class="skip" href="#tool">Skip to the tool</a>
+<div class="wrap">
+
+<header class="masthead">
+  <span class="eyebrow">Free tool</span>
+  <h1>SubScan — find the subscriptions draining your account</h1>
+  <p class="lede">The average person underestimates their subscription spending by two to three times. Drop in a bank or card statement and see every recurring charge, ranked by what it costs you per year — with price hikes flagged. It runs entirely in your browser.</p>
+</header>
+
+<section class="card" aria-labelledby="why">
+  <h2 id="why">How it works</h2>
+  <p>Export a CSV from your bank or credit card (almost every one offers "Download transactions" / "Export to CSV"). Drop it below. SubScan groups charges by merchant, works out which ones repeat on a regular cycle — weekly, monthly, yearly — and adds up what each is really costing you. No sign-up, no upload.</p>
+  <div class="note">
+    <strong>Your statement never leaves your browser.</strong> Every bit of parsing happens in this page's own JavaScript. It loads no scripts, no fonts, no analytics, and makes no network request after the page loads — so there is none that <em>could</em> send your data anywhere. Open your browser's Network tab and watch: load the file, scan it, nothing goes out.
+  </div>
+  <p class="hint"><strong>One honest limit:</strong> a statement shows what you <em>pay for</em>, never what you still <em>use</em>. SubScan can't know you stopped watching a service — only that the charge keeps coming, how often, and whether the price crept up. It surfaces the facts and ranks the biggest ones; the "do I still need this?" call is yours.</p>
+</section>
+
+<main id="tool">
+  <section class="card">
+    <h2>Your statement</h2>
+    <div class="drop" id="drop" role="button" tabindex="0" aria-describedby="stat">
+      <span class="big">Drop a statement CSV here</span>
+      <span class="small">or press to choose a file &middot; or paste the rows into the box below</span>
+    </div>
+    <input type="file" id="file" class="visually-hidden" accept=".csv,.tsv,.txt,text/csv,text/plain">
+    <p class="filestat" id="stat" role="status">No file loaded — you can also paste CSV, or try the sample.</p>
+    <label for="csvIn">Statement CSV (needs a date, a description, and an amount column)</label>
+    <textarea id="csvIn" spellcheck="false" placeholder="Date,Description,Amount&#10;2026-01-05,NETFLIX.COM,-15.49&#10;2026-02-05,NETFLIX.COM,-15.49"></textarea>
+    <div class="inline" style="margin-top:.6rem">
+      <input type="checkbox" id="signPos">
+      <label for="signPos">My charges are shown as positive numbers (flip if the totals look wrong)</label>
+    </div>
+    <div class="row-actions">
+      <button class="primary" id="scanBtn">Scan for subscriptions</button>
+      <button id="sampleBtn">Try sample data</button>
+      <button id="clearBtn">Clear</button>
+    </div>
+    <div id="err" class="err hidden" role="alert"></div>
+    <p class="hint" id="srcnote"></p>
+  </section>
+
+  <section class="card hidden" id="results" aria-live="polite">
+    <h2>What you're paying for</h2>
+    <ul class="stats" id="stats"></ul>
+    <div class="tablescroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Subscription</th>
+            <th>Cycle</th>
+            <th class="num">Each</th>
+            <th class="num">Per month</th>
+            <th class="num">Per year</th>
+            <th class="num">Charges</th>
+            <th>First → last</th>
+            <th>Flags</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <div class="row-actions">
+      <button id="dlBtn">Download this list (.csv)</button>
+      <span class="hint" id="foundnote"></span>
+    </div>
+  </section>
+
+  <section class="card cta hidden" id="cta">
+    <h2>Want it watched for you?</h2>
+    <p>This free scan is a one-time snapshot. LeukLogic can run it on a schedule and tell you the moment something changes — a new subscription appears, a price goes up, or a free trial is about to convert — and even handle the cancellations for you.</p>
+    <div class="tiers">
+      <table>
+        <thead><tr><th>Tier</th><th>What you get</th><th>Depth</th></tr></thead>
+        <tbody>
+          <tr><td class="keycol">Free scan</td><td>This page — a one-time list of what you pay for</td><td>List only</td></tr>
+          <tr><td class="keycol">Monthly watchdog</td><td>We re-scan each month and flag new charges, price hikes &amp; renewals</td><td class="yes">List + alerts</td></tr>
+          <tr><td class="keycol">Concierge</td><td>We chase down and cancel the ones you don't want</td><td class="yes">We cancel for you</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:1rem">Interested, or want it for your own customers as a white-label tool? Email <a href="mailto:tim@leuklogic.com?subject=Subscription%20watchdog">tim@leuklogic.com</a> — we build bots, automations and internal tools, most projects $100–$500.</p>
+  </section>
+</main>
+
+<footer class="foot">
+  <p>SubScan is a free tool built by <a href="https://leuklogic.com">LeukLogic</a>. No account, no upload, no tracking. Found a charge it missed or miscounted? That's a bug worth hearing about: <a href="mailto:tim@leuklogic.com">tim@leuklogic.com</a>.</p>
+  <p>Known limits, stated plainly: SubScan reads the date, description and amount columns of a standard statement export; it detects weekly through annual cycles and needs at least two charges from a merchant to call something recurring; a merchant with wildly varying amounts (a shop you also buy other things from) may be skipped rather than guessed at. It reports what it's sure of and stays quiet on the rest.</p>
+  <p><a href="/tools/csv-diff/">Also free: DeltaCSV — compare two CSVs by key column.</a> · <a href="/tools/missed-call-calculator/">Missed-Call Cost Calculator</a></p>
+</footer>
+
+</div>
