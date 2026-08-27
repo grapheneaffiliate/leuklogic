@@ -1,0 +1,125 @@
+# LeukLogic — full site description for LLMs and answer engines
+
+Last updated: 2026-08-27. Everything below reflects what is published on
+https://leuklogic.com and its tool pages; nothing here is aspirational or invented.
+
+## What LeukLogic is
+
+LeukLogic builds small software for businesses: Discord and Slack bots, automations and
+scheduled reports, web scrapers, AI triage and routing workflows, internal tools and
+dashboards, and fast static websites. It is run by one person — Tim McGirl — and is based in
+the United States (Virginia). Contact is by email only: tim@leuklogic.com. There is no form,
+no funnel, and no newsletter; replies usually come the same day.
+
+LeukLogic is new. The site carries no client logos, testimonials, or case studies, and says
+so plainly rather than inventing them.
+
+## Services and prices
+
+- Discord or Slack bots — FAQ answering, moderation, tickets, onboarding.
+- Scheduled data pulls, scrapers, and automated reports.
+- AI triage and routing workflows.
+- Small web apps, dashboards, and internal tools.
+- Fast static websites — static, fast, no plugins to break.
+
+Pricing, as published on the site:
+
+- A bot, an automation, or a scheduled report: $100–$500, delivered in days, not weeks.
+- Larger builds (internal tools, dashboards, multi-step workflows, anything with a real
+  interface): scoped and quoted at a flat fixed price before anything starts.
+- The price is approved by the client before work begins and does not move unless the
+  client asks for something new.
+- Running costs, if any (hosting, API fees), are the client's and go straight to the
+  provider — never marked up through LeukLogic.
+- No retainers, no lock-in, no monthly fees. The client keeps the code, the repo, and all
+  accounts in their own name.
+
+Things LeukLogic will not take on: teams, SLAs, or 24/7 on-call; mobile apps; six-month
+platform rebuilds or abandoned codebases sight unseen; AI bolted onto problems a checklist
+would solve; retainers.
+
+## How an engagement works
+
+1. Email the task to tim@leuklogic.com (a hard technical question in the first email is
+   welcomed).
+2. LeukLogic replies with a fixed price and a delivery date — usually within a day.
+3. Work starts with a $100 deposit paid through Stripe (credit and debit cards, Apple Pay,
+   Google Pay). The deposit comes off the project price, and checkout requires a project
+   reference issued after scope sign-off — a deposit with no agreed project attached just
+   gets refunded. An invoice is available on request.
+4. LeukLogic builds and delivers; the remainder is due on delivery.
+
+## The eight free tools
+
+All tools at https://leuklogic.com/tools/ are free, require no account or sign-up, and run
+entirely in the browser: the data or files you put into them are processed on your own
+machine and are not uploaded anywhere.
+
+### QuickQuote — https://leuklogic.com/tools/quote/
+
+Pick what you need — a Discord/Slack bot, web scraper, automation, dashboard, or website —
+and get the same fixed-price band LeukLogic would quote by email, in about ten seconds, with
+no email address required to see the number. Rates were researched across 2026 direct-client
+and marketplace data, a bundle discount of 10% applies, and the locked quote is the price
+you pay as long as the scope doesn't change, with two revision rounds included. Hosting runs
+on the client's own accounts (typically $0–50/mo) and is never silently billed through
+LeukLogic.
+
+### SwiftStatement — https://leuklogic.com/tools/statement-csv/
+
+Drop a bank statement PDF and get clean Date, Description, Amount rows ready for Excel,
+Sheets, or bookkeeping software. It runs entirely in the browser — the statement never
+leaves your machine — using a locally hosted copy of Mozilla's pdf.js, the same engine
+Firefox uses. Lines it can't parse are listed for you to check: never silently dropped,
+never guessed into numbers.
+
+### SubScan — https://leuklogic.com/tools/subscription-scanner/
+
+Drop a bank or card statement CSV and instantly see every recurring charge, ranked by what
+it costs you per year, with price hikes flagged. It runs entirely in the browser — no
+sign-up, no upload, no tracking — and the statement never leaves your machine.
+
+### DeltaCSV — https://leuklogic.com/tools/csv-diff/
+
+Compare two CSVs by a key column you pick, not by line order, so a re-sorted export shows
+only what genuinely changed. Files never leave the browser — you can open the browser's
+Network tab, reload, load a file, and watch nothing get sent anywhere. No account, no
+upload, no tracking.
+
+### FlipCSV — https://leuklogic.com/tools/csv-json/
+
+Paste a spreadsheet export and get clean JSON; paste JSON and get a spreadsheet-ready CSV.
+Conversion is lossless by default with strict RFC 4180 quoting, and it runs entirely in the
+browser — the data never leaves your machine.
+
+### CronText — https://leuklogic.com/tools/cron/
+
+Paste a cron expression and see exactly what it means in plain English, plus the next times
+it will run. The page loads no scripts, fonts, images, or analytics from anywhere and makes
+no network request after it loads — expressions never leave your machine.
+
+### Missed-Call Cost Calculator — https://leuklogic.com/tools/missed-call-calculator/
+
+Put in three numbers and see the real annual revenue a service business loses to missed and
+unanswered calls — and how much a text-back could recover. Runs entirely in the browser;
+nothing typed into it is uploaded or stored.
+
+### CheckClip — https://leuklogic.com/tools/video-check/
+
+Drop a video file and instantly see whether its length, aspect ratio, and file size fit
+YouTube Shorts, TikTok, Instagram Reels, and X — including the throttle rules most spec
+tables skip. The video never leaves your machine: no account, no upload, no tracking.
+
+## Technical posture
+
+Every page on leuklogic.com is a single self-contained file: inline CSS and JavaScript,
+system font stacks, zero external requests, no cookies, no analytics. The only external
+link on the site is the Stripe checkout page for the $100 deposit, which loads nothing
+unless clicked. SwiftStatement's PDF engine is vendored on the same origin.
+
+## Contact
+
+- Email: tim@leuklogic.com (the only channel; replies usually the same day)
+- Site: https://leuklogic.com
+- Machine-readable index: https://leuklogic.com/llms.txt
+- Sitemap: https://leuklogic.com/sitemap.xml

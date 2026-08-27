@@ -1,3 +1,68 @@
+# leuklogic.com — robots.txt
+# This site welcomes AI crawlers, search engines, and answer engines.
+# Everything here is public: a services page and eight free in-browser tools.
+# Machine-readable summaries for LLMs: https://leuklogic.com/llms.txt
+# and https://leuklogic.com/llms-full.txt
+
+# --- AI search / answer-engine crawlers (explicitly allowed) ---
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: GoogleOther
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+User-agent: meta-externalagent
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+# Legacy Anthropic tokens (deprecated; kept for completeness)
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+# --- Everyone else ---
+
 User-agent: *
 Allow: /
 
