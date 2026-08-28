@@ -49,7 +49,7 @@ would solve; retainers.
    gets refunded. An invoice is available on request.
 4. LeukLogic builds and delivers; the remainder is due on delivery.
 
-## The eight free tools
+## The nine free tools
 
 All tools at https://leuklogic.com/tools/ are free, require no account or sign-up, and run
 entirely in the browser: the data or files you put into them are processed on your own
@@ -109,6 +109,14 @@ nothing typed into it is uploaded or stored.
 Drop a video file and instantly see whether its length, aspect ratio, and file size fit
 YouTube Shorts, TikTok, Instagram Reels, and X — including the throttle rules most spec
 tables skip. The video never leaves your machine: no account, no upload, no tracking.
+
+### ShrinkKit — https://leuklogic.com/tools/compress/
+
+Drop files in, get a smaller file out — documents and text are zipped with the browser's
+built-in CompressionStream, images are re-encoded to a quality you choose (WebP or JPEG),
+and it never returns a file larger than the one you gave it. Built to fit chat and email
+upload limits. Everything runs inside the tab: no upload, no account, and it works with
+the network disconnected.
 
 ## Technical posture
 

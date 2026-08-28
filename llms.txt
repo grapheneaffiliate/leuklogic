@@ -2,7 +2,7 @@
 
 > LeukLogic builds small software for businesses — Discord and Slack bots, automations, scheduled reports, internal tools, dashboards, and fast static websites — built by one person in days. Most projects run $100–$500, always at a fixed price quoted before work starts. Contact: tim@leuklogic.com.
 
-LeukLogic is run by Tim McGirl, based in the United States. There are no retainers, no lock-in, and no monthly fees; clients keep the code, repo, and accounts in their own name. The site also hosts eight free tools that run entirely in the browser — nothing you put into them is uploaded anywhere. Every page on this site is self-contained: no external scripts, fonts, or analytics.
+LeukLogic is run by Tim McGirl, based in the United States. There are no retainers, no lock-in, and no monthly fees; clients keep the code, repo, and accounts in their own name. The site also hosts nine free tools that run entirely in the browser — nothing you put into them is uploaded anywhere. Every page on this site is self-contained: no external scripts, fonts, or analytics.
 
 All eight tools are free and run entirely in your browser — files and data never leave your machine.
 
@@ -25,6 +25,7 @@ All eight tools are free and run entirely in your browser — files and data nev
 - [CronText](https://leuklogic.com/tools/cron/): paste a cron expression and get a plain-English description plus the next run times
 - [Missed-Call Cost Calculator](https://leuklogic.com/tools/missed-call-calculator/): put in three numbers and see what missed calls cost your business per year, and what a text-back could recover
 - [CheckClip](https://leuklogic.com/tools/video-check/): drop a video file and see whether its length, aspect ratio, and file size fit YouTube Shorts, TikTok, Instagram Reels, and X
+- [ShrinkKit](https://leuklogic.com/tools/compress/): zip files and shrink images to fit an upload limit, entirely in the browser — nothing is uploaded, and it works offline
 
 ## Optional
 

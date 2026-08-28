@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ShrinkKit — compress files without uploading them</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'><rect width='22' height='22' rx='5' fill='%23D9502B'/><path d='M11 3.5v7m0 8v-7m0 0H5m6 0h6' fill='none' stroke='%23FAF7F2' stroke-width='2' stroke-linecap='round'/></svg>">
+
+<meta name="description" content="Free in-browser file compressor. Zips any files and re-encodes images to fit an upload limit. Runs entirely on your machine — nothing is uploaded, so it works offline and your files never leave the browser.">
+<link rel="canonical" href="https://leuklogic.com/tools/compress/">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "ShrinkKit",
+  "url": "https://leuklogic.com/tools/compress/",
+  "applicationCategory": "WebApplication",
+  "operatingSystem": "Any (browser)",
+  "description": "Compresses files to fit an upload limit — ZIP/DEFLATE for documents and text, canvas re-encoding for images. Runs entirely in the browser; files are never uploaded and it works with the network disconnected.",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "publisher": { "@type": "Organization", "name": "LeukLogic", "url": "https://leuklogic.com" }
+}
+</script>
+<meta property="og:title" content="ShrinkKit — compress files without uploading them">
+<meta property="og:description" content="Zip and shrink files to fit an upload limit, entirely in your browser. Nothing is uploaded — it works offline.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://leuklogic.com/tools/compress/">
+<style>
+:root{
+  --paper:#FAF7F2; --surface:#FFFFFF; --sunk:#F3EEE6; --ink:#12161B; --body:#3D454E;
+  --muted:#616A75; --line:#E4DED4; --accent:#D9502B; --accent-text:#B03D1D;
+  --accent-soft:#FBEAE3; --teal:#10574F; --teal-soft:#E3F0ED; --btn-bg:#B03D1D;
+  --btn-fg:#FFFFFF; --focus:#B03D1D;
+  --shadow:0 1px 2px rgba(18,22,27,.06), 0 8px 24px rgba(18,22,27,.05); --radius:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#12161B; --surface:#181D24; --sunk:#1E242C; --ink:#FAF7F2; --body:#C6CCD4;
+    --muted:#98A1AC; --line:#2C333C; --accent:#F0764E; --accent-text:#F5906C;
+    --accent-soft:#3A2018; --teal:#5FD3C2; --teal-soft:#12302C; --btn-bg:#F0764E;
+    --btn-fg:#12161B; --focus:#F5906C;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--body);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Noto Sans",sans-serif;
+  font-size:16px;line-height:1.6}
+.wrap{max-width:74rem;margin:0 auto;padding:1.5rem 1rem 4rem}
+h1,h2,h3{color:var(--ink);line-height:1.25;margin:0 0 .5rem}
+h1{font-size:1.9rem;letter-spacing:-.02em}
+h2{font-size:1.25rem;margin-top:0}
+h3{font-size:1rem}
+p{margin:0 0 1rem}
+a{color:var(--accent-text);text-decoration:underline;text-underline-offset:2px}
+a:hover{text-decoration-thickness:2px}
+code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;font-size:.92em}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:4px}
+.skip{position:absolute;left:-9999px;top:0;background:var(--surface);color:var(--ink);padding:.6rem 1rem;z-index:20}
+.skip:focus{left:.5rem;top:.5rem}
+header.masthead{border-bottom:1px solid var(--line);padding-bottom:1.25rem;margin-bottom:1.5rem}
+.eyebrow{display:inline-block;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--accent-text);font-weight:700;margin-bottom:.35rem}
+.lede{font-size:1.05rem;max-width:52rem}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:1.25rem;margin-bottom:1.25rem}
+.drop{border:2px dashed var(--line);border-radius:var(--radius);background:var(--sunk);
+  padding:2.25rem 1rem;text-align:center;cursor:pointer;transition:border-color .15s,background .15s}
+.drop:hover,.drop.over{border-color:var(--accent);background:var(--accent-soft)}
+.drop strong{color:var(--ink);display:block;font-size:1.05rem;margin-bottom:.25rem}
+.controls{display:flex;flex-wrap:wrap;gap:1.25rem;align-items:flex-end;margin-top:1rem}
+.field{display:flex;flex-direction:column;gap:.3rem}
+label{font-size:.85rem;color:var(--muted);font-weight:600}
+select,input[type=range]{font:inherit;color:var(--ink);background:var(--surface);
+  border:1px solid var(--line);border-radius:6px;padding:.4rem .5rem}
+input[type=range]{padding:0;width:11rem;background:transparent}
+button{font:inherit;font-weight:600;background:var(--btn-bg);color:var(--btn-fg);border:0;
+  border-radius:8px;padding:.6rem 1.1rem;cursor:pointer}
+button:disabled{opacity:.5;cursor:not-allowed}
+button.secondary{background:transparent;color:var(--accent-text);border:1px solid var(--line)}
+table{width:100%;border-collapse:collapse;margin-top:.5rem;font-size:.93rem}
+th,td{text-align:left;padding:.5rem .6rem;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.06em}
+td.num{text-align:right;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.win{color:var(--teal);font-weight:700}
+.flat{color:var(--muted)}
+.badge{display:inline-block;background:var(--teal-soft);color:var(--teal);border-radius:999px;
+  padding:.15rem .6rem;font-size:.78rem;font-weight:700}
+.note{background:var(--teal-soft);border-left:3px solid var(--teal);padding:.75rem 1rem;
+  border-radius:6px;color:var(--ink);margin-bottom:1.25rem}
+.hire{background:var(--accent-soft);border:1px solid var(--line);border-radius:var(--radius);
+  padding:1.1rem 1.25rem;margin-top:2rem}
+.hire h2{margin-bottom:.35rem}
+.muted{color:var(--muted);font-size:.9rem}
+footer{border-top:1px solid var(--line);margin-top:2.5rem;padding-top:1.25rem;font-size:.9rem;color:var(--muted)}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<a class="skip" href="#tool">Skip to the tool</a>
+<div class="wrap">
+
+<header class="masthead">
+  <span class="eyebrow">LeukLogic · free tool</span>
+  <h1>ShrinkKit — compress files without uploading them</h1>
+  <p class="lede">Drop files in, get a smaller file out. Documents, spreadsheets and text are zipped;
+  images are re-encoded to a quality you choose. <strong>Everything happens inside this browser tab</strong> —
+  nothing is sent anywhere, so it works with your Wi-Fi switched off.</p>
+</header>
+
+<div class="note">
+  <strong>Why that matters:</strong> most free compressors upload your file to a server to do the work.
+  If the file is a bank statement, a client export, or an unreleased report, that is a copy you no longer
+  control. This page makes zero network requests — open your browser's Network tab and watch it stay empty.
+</div>
+
+<main id="tool">
+  <div class="card">
+    <div class="drop" id="drop" tabindex="0" role="button"
+         aria-label="Choose files to compress, or drag them here">
+      <strong>Drop files here</strong>
+      <span class="muted">or click to choose · nothing leaves your machine</span>
+    </div>
+    <input type="file" id="picker" multiple class="hidden">
+
+    <div class="controls">
+      <div class="field">
+        <label for="mode">Output</label>
+        <select id="mode">
+          <option value="auto">Auto — zip everything, shrink images</option>
+          <option value="zip">ZIP only</option>
+          <option value="img">Images only (no zip)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="q">Image quality — <span id="qv">70</span>%</label>
+        <input type="range" id="q" min="30" max="95" value="70" step="5">
+      </div>
+      <div class="field">
+        <label for="fmt">Image format</label>
+        <select id="fmt">
+          <option value="image/webp">WebP (smallest)</option>
+          <option value="image/jpeg">JPEG (most compatible)</option>
+        </select>
+      </div>
+      <button id="go" disabled>Compress</button>
+      <button id="reset" class="secondary">Clear</button>
+    </div>
+  </div>
+
+  <div class="card hidden" id="results">
+    <h2>Result <span class="badge" id="overall"></span></h2>
+    <table>
+      <thead><tr><th>File</th><th class="num">Before</th><th class="num">After</th><th class="num">Saved</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <p style="margin-top:1rem"><button id="save">Download</button>
+      <span class="muted" id="savenote"></span></p>
+  </div>
+</main>
+
+<div class="hire">
+  <h2>Need this wired into something?</h2>
+  <p style="margin-bottom:.35rem">I'm Tim — I build small software for businesses: automations, scrapers,
+  internal tools, Discord and Slack bots. Fixed price, quoted before work starts, usually $100–$500.</p>
+  <p style="margin:0"><a href="https://leuklogic.com/">See what I build</a> ·
+  <a href="mailto:tim@leuklogic.com">tim@leuklogic.com</a></p>
+</div>
+
+<footer>
+  <p>ShrinkKit runs entirely in your browser using the built-in <code>CompressionStream</code> and
+  <code>canvas</code> APIs — no libraries are downloaded and no file is transmitted.
+  Compression is lossless for zipped files; image re-encoding is lossy by design.</p>
+  <p><a href="https://leuklogic.com/">LeukLogic</a> · more free tools on the homepage</p>
+</footer>
+</div>
+
+<script>
+(() => {
+  "use strict";
+  const $ = id => document.getElementById(id);
+  const drop = $("drop"), picker = $("picker"), go = $("go"), reset = $("reset");
+  const modeEl = $("mode"), qEl = $("q"), qv = $("qv"), fmtEl = $("fmt");
+  const results = $("results"), rows = $("rows"), overall = $("overall");
+  const save = $("save"), savenote = $("savenote");
+
+  let files = [];
+  let out = null;            // {blob, name}
+
+  const fmtBytes = n => {
+    if (n < 1024) return n + " B";
+    if (n < 1048576) return (n / 1024).toFixed(1) + " KB";
+    return (n / 1048576).toFixed(2) + " MB";
+  };
+
+  qEl.addEventListener("input", () => { qv.textContent = qEl.value; });
+
+  // ---- file intake -------------------------------------------------------
+  const accept = list => {
+    files = Array.from(list || []);
+    go.disabled = files.length === 0;
+    drop.querySelector("strong").textContent = files.length
+      ? `${files.length} file${files.length > 1 ? "s" : ""} ready`
+      : "Drop files here";
+  };
+  drop.addEventListener("click", () => picker.click());
+  drop.addEventListener("keydown", e => {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); picker.click(); }
+  });
+  picker.addEventListener("change", e => accept(e.target.files));
+  ["dragenter", "dragover"].forEach(t => drop.addEventListener(t, e => {
+    e.preventDefault(); drop.classList.add("over");
+  }));
+  ["dragleave", "drop"].forEach(t => drop.addEventListener(t, e => {
+    e.preventDefault(); drop.classList.remove("over");
+  }));
+  drop.addEventListener("drop", e => accept(e.dataTransfer.files));
+  reset.addEventListener("click", () => {
+    accept([]); picker.value = ""; results.classList.add("hidden"); rows.innerHTML = ""; out = null;
+  });
+
+  // ---- image re-encode ---------------------------------------------------
+  async function shrinkImage(file) {
+    const bmp = await createImageBitmap(file);
+    const c = document.createElement("canvas");
+    c.width = bmp.width; c.height = bmp.height;
+    c.getContext("2d").drawImage(bmp, 0, 0);
+    bmp.close?.();
+    const blob = await new Promise(res =>
+      c.toBlob(res, fmtEl.value, qEl.value / 100));
+    // Never hand back something LARGER than we were given.
+    if (!blob || blob.size >= file.size) return { blob: file, changed: false };
+    const ext = fmtEl.value === "image/webp" ? ".webp" : ".jpg";
+    return { blob, changed: true, name: file.name.replace(/\.[^.]+$/, "") + ext };
+  }
+
+  // ---- minimal ZIP writer (store or deflate-raw via CompressionStream) ----
+  const enc = new TextEncoder();
+  const CRC = (() => {
+    const t = new Uint32Array(256);
+    for (let i = 0; i < 256; i++) {
+      let c = i;
+      for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1;
+      t[i] = c >>> 0;
+    }
+    return buf => {
+      let c = 0xFFFFFFFF;
+      for (let i = 0; i < buf.length; i++) c = t[(c ^ buf[i]) & 0xFF] ^ (c >>> 8);
+      return (c ^ 0xFFFFFFFF) >>> 0;
+    };
+  })();
+
+  async function deflateRaw(bytes) {
+    if (typeof CompressionStream === "undefined") return null;
+    try {
+      const cs = new CompressionStream("deflate-raw");
+      const stream = new Blob([bytes]).stream().pipeThrough(cs);
+      return new Uint8Array(await new Response(stream).arrayBuffer());
+    } catch { return null; }
+  }
+
+  function dosTime(d) {
+    const time = ((d.getHours() & 31) << 11) | ((d.getMinutes() & 63) << 5) | ((d.getSeconds() / 2) & 31);
+    const date = (((d.getFullYear() - 1980) & 127) << 9) | (((d.getMonth() + 1) & 15) << 5) | (d.getDate() & 31);
+    return { time, date };
+  }
+
+  async function makeZip(entries) {
+    const chunks = [], central = [];
+    let offset = 0;
+    const now = dosTime(new Date());
+
+    for (const e of entries) {
+      const raw = new Uint8Array(await e.blob.arrayBuffer());
+      const crc = CRC(raw);
+      let data = await deflateRaw(raw);
+      let method = 8;
+      if (!data || data.length >= raw.length) { data = raw; method = 0; }  // store if deflate loses
+      const name = enc.encode(e.name);
+
+      const local = new DataView(new ArrayBuffer(30));
+      local.setUint32(0, 0x04034b50, true);
+      local.setUint16(4, 20, true); local.setUint16(6, 0, true);
+      local.setUint16(8, method, true);
+      local.setUint16(10, now.time, true); local.setUint16(12, now.date, true);
+      local.setUint32(14, crc, true);
+      local.setUint32(18, data.length, true);
+      local.setUint32(22, raw.length, true);
+      local.setUint16(26, name.length, true); local.setUint16(28, 0, true);
+      chunks.push(new Uint8Array(local.buffer), name, data);
+
+      const cen = new DataView(new ArrayBuffer(46));
+      cen.setUint32(0, 0x02014b50, true);
+      cen.setUint16(4, 20, true); cen.setUint16(6, 20, true); cen.setUint16(8, 0, true);
+      cen.setUint16(10, method, true);
+      cen.setUint16(12, now.time, true); cen.setUint16(14, now.date, true);
+      cen.setUint32(16, crc, true);
+      cen.setUint32(20, data.length, true);
+      cen.setUint32(24, raw.length, true);
+      cen.setUint16(28, name.length, true);
+      cen.setUint32(42, offset, true);
+      central.push(new Uint8Array(cen.buffer), name);
+
+      offset += 30 + name.length + data.length;
+    }
+
+    const centralBytes = central.reduce((n, c) => n + c.length, 0);
+    const end = new DataView(new ArrayBuffer(22));
+    end.setUint32(0, 0x06054b50, true);
+    end.setUint16(8, entries.length, true); end.setUint16(10, entries.length, true);
+    end.setUint32(12, centralBytes, true); end.setUint32(16, offset, true);
+
+    return new Blob([...chunks, ...central, new Uint8Array(end.buffer)],
+                    { type: "application/zip" });
+  }
+
+  // ---- run ---------------------------------------------------------------
+  go.addEventListener("click", async () => {
+    if (!files.length) return;
+    go.disabled = true; go.textContent = "Working…";
+    rows.innerHTML = ""; out = null;
+
+    try {
+      const mode = modeEl.value;
+      const before = files.reduce((n, f) => n + f.size, 0);
+      const staged = [];
+
+      for (const f of files) {
+        const isImg = /^image\/(png|jpeg|webp|bmp)$/.test(f.type);
+        let entry = { name: f.name, blob: f }, note = "";
+        if (isImg && mode !== "zip") {
+          const r = await shrinkImage(f);
+          if (r.changed) { entry = { name: r.name, blob: r.blob }; note = "re-encoded"; }
+          else note = "already small";
+        }
+        staged.push({ entry, original: f, note });
+      }
+
+      const zipIt = mode === "auto" || mode === "zip";
+      if (zipIt) {
+        out = { blob: await makeZip(staged.map(s => s.entry)), name: "compressed.zip" };
+      } else if (staged.length === 1) {
+        out = { blob: staged[0].entry.blob, name: staged[0].entry.name };
+      } else {
+        out = { blob: await makeZip(staged.map(s => s.entry)), name: "compressed.zip" };
+      }
+
+      for (const s of staged) {
+        const tr = document.createElement("tr");
+        const saved = s.original.size - s.entry.blob.size;
+        const pct = s.original.size ? Math.round(saved / s.original.size * 100) : 0;
+        tr.innerHTML =
+          `<td>${s.entry.name.replace(/[<>&]/g, c => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" }[c]))}` +
+          `${s.note ? ` <span class="muted">· ${s.note}</span>` : ""}</td>` +
+          `<td class="num">${fmtBytes(s.original.size)}</td>` +
+          `<td class="num">${fmtBytes(s.entry.blob.size)}</td>` +
+          `<td class="num ${pct > 0 ? "win" : "flat"}">${pct > 0 ? pct + "%" : "—"}</td>`;
+        rows.appendChild(tr);
+      }
+
+      const after = out.blob.size;
+      const pct = before ? Math.round((before - after) / before * 100) : 0;
+      overall.textContent = pct > 0
+        ? `${fmtBytes(before)} → ${fmtBytes(after)} · ${pct}% smaller`
+        : `${fmtBytes(before)} → ${fmtBytes(after)} · already compact`;
+      savenote.textContent = out.name === "compressed.zip"
+        ? "one zip containing every file" : "";
+      results.classList.remove("hidden");
+    } catch (err) {
+      overall.textContent = "Couldn't compress those — " + (err && err.message ? err.message : "unknown error");
+      results.classList.remove("hidden");
+    } finally {
+      go.disabled = false; go.textContent = "Compress";
+    }
+  });
+
+  save.addEventListener("click", () => {
+    if (!out) return;
+    const url = URL.createObjectURL(out.blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = out.name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  });
+})();
+</script>
+</body>
+</html>
