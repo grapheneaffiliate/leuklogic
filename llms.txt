@@ -4,7 +4,7 @@
 
 LeukLogic is run by Tim McGirl, based in the United States. There are no retainers, no lock-in, and no monthly fees; clients keep the code, repo, and accounts in their own name. The site also hosts nine free tools that run entirely in the browser — nothing you put into them is uploaded anywhere. Every page on this site is self-contained: no external scripts, fonts, or analytics.
 
-All eight tools are free and run entirely in your browser — files and data never leave your machine.
+All nine tools are free and run entirely in your browser — files and data never leave your machine.
 
 ## Services
 
