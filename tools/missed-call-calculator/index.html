@@ -269,6 +269,7 @@ ul.plain li{margin-bottom:.3rem}
 </main>
 
 
+
 <section class="card" id="leuk-subscribe" style="margin-top:1.25rem">
   <h2 style="margin-top:0">Get the next free tool</h2>
   <p style="margin:.35rem 0 .9rem">
@@ -297,149 +298,22 @@ ul.plain li{margin-bottom:.3rem}
     type here, and only when you press the button.
   </p>
 </section>
-<footer class="foot">
-  <p>Built by <a href="https://leuklogic.com">LeukLogic</a> — we build the bots, automations and internal tools that stop small businesses from leaking money. Runs entirely in your browser: nothing you type here is uploaded or stored.</p>
-  <p>Honest about the math: this is an estimate from YOUR inputs — lost revenue = missed calls × your close rate × your job value, and recovery applies your chosen win-back %. No hidden multipliers; change any number and watch it update.</p>
-  <p><a href="/tools/csv-diff/">DeltaCSV</a> · <a href="/tools/csv-json/">FlipCSV</a> · <a href="/tools/cron/">CronText</a></p>
-</footer>
-
-</div>
-<script type="module">
-/* ============================================================================
- * ENGINE — inlined verbatim from src/calc.mjs (export keywords removed)
- * ==========================================================================*/
-/*
- * Missed-Call Cost Calculator — calc.mjs
- * Pure, dependency-free. No DOM, no Node APIs, no network. Inline-safe.
- *
- * The persuasion is arithmetic, kept honest: it shows what missed calls cost a
- * service business, and what a text-back that recovers SOME of them saves — with
- * every assumption an explicit, editable input, never a hidden multiplier.
- */
-
-/**
- * missedCallCost(input) -> breakdown
- *   input.missedPerWeek  missed/unanswered calls in a typical week
- *   input.jobValue       average revenue of one job ($)
- *   input.closeRate      % of answered leads that become a job (0-100)
- *   input.recoveryRate   % of missed callers a fast text-back wins back (0-100); default 30
- *   input.weeksPerYear   default 52
- *
- * Model (deliberately simple + defensible):
- *   A missed call is a lost LEAD. Lost revenue = missedCalls × closeRate × jobValue
- *   (you only lose the ones you would have closed, not every ring).
- *   Text-back recovers `recoveryRate` of those otherwise-lost jobs.
- */
-function missedCallCost(input = {}) {
-  const num = (v, d = 0) => {
-    const n = Number(v);
-    return Number.isFinite(n) && n >= 0 ? n : d;
-  };
-  const missedPerWeek = num(input.missedPerWeek);
-  const jobValue = num(input.jobValue);
-  const closeRate = clampPct(input.closeRate);
-  const recoveryRate = input.recoveryRate === undefined ? 30 : clampPct(input.recoveryRate);
-  const weeksPerYear = num(input.weeksPerYear, 52) || 52;
-
-  const lostJobsPerWeek = missedPerWeek * (closeRate / 100);
-  const lostPerWeek = lostJobsPerWeek * jobValue;
-  const lostPerMonth = lostPerWeek * (weeksPerYear / 12);
-  const lostPerYear = lostPerWeek * weeksPerYear;
-
-  const recoveredPerMonth = lostPerMonth * (recoveryRate / 100);
-  const recoveredPerYear = lostPerYear * (recoveryRate / 100);
-
-  return {
-    lostJobsPerWeek: round2(lostJobsPerWeek),
-    lostPerWeek: round2(lostPerWeek),
-    lostPerMonth: round2(lostPerMonth),
-    lostPerYear: round2(lostPerYear),
-    recoveredPerMonth: round2(recoveredPerMonth),
-    recoveredPerYear: round2(recoveredPerYear),
-    inputs: { missedPerWeek, jobValue, closeRate, recoveryRate, weeksPerYear },
-  };
-}
-
-function clampPct(v) {
-  const n = Number(v);
-  if (!Number.isFinite(n)) return 0;
-  return Math.max(0, Math.min(100, n));
-}
-
-function round2(n) {
-  return Math.round(n * 100) / 100;
-}
-
-/** money(n) -> "$1,234" (whole dollars) or "$12.50" under $100. Pure formatting. */
-function money(n) {
-  const v = Number(n) || 0;
-  const abs = Math.abs(v);
-  const opts = abs < 100 && abs % 1 !== 0
-    ? { minimumFractionDigits: 2, maximumFractionDigits: 2 }
-    : { maximumFractionDigits: 0 };
-  return '$' + v.toLocaleString('en-US', opts);
-}
-
-
-/* ============================================================================
- * APP — DOM wiring only. All math is the pure engine above. No network/storage.
- * ==========================================================================*/
-const $ = (id) => document.getElementById(id);
-const els = ['missed', 'value', 'close', 'recover'].map($);
-
-function render() {
-  const r = missedCallCost({
-    missedPerWeek: $('missed').value,
-    jobValue: $('value').value,
-    closeRate: $('close').value,
-    recoveryRate: $('recover').value,
-  });
-  $('perYear').textContent = money(r.lostPerYear);
-  $('perMonth').textContent = money(r.lostPerMonth);
-  $('jobsWk').textContent = r.lostJobsPerWeek.toLocaleString('en-US', { maximumFractionDigits: 1 });
-  $('recYear').textContent = money(r.recoveredPerYear);
-
-  const s = $('summary');
-  if (r.lostPerYear <= 0) {
-    s.textContent = 'Put in your numbers above to see the annual cost.';
-  } else {
-    s.innerHTML =
-      `At ${r.inputs.missedPerWeek} missed calls a week and a ${money(r.inputs.jobValue)} job, ` +
-      `you're leaving about <strong>${money(r.lostPerYear)}/year</strong> on the table. ` +
-      `An automatic text-back that recovers just ${r.inputs.recoveryRate}% of those would put ` +
-      `<strong>${money(r.recoveredPerYear)}/year</strong> back in your pocket.`;
-  }
-
-  const btn = $('copyLine'), okMsg = $('copyOk');
-  if (btn) {
-    const shareable = r.lostPerYear > 0
-      ? `${r.inputs.missedPerWeek} missed calls a week at a ${money(r.inputs.jobValue)} job = `
-        + `${money(r.lostPerYear)}/year walking out the door. An auto text-back recovering `
-        + `${r.inputs.recoveryRate}% brings back ${money(r.recoveredPerYear)}/year.\n`
-        + `Worked out free, in the browser: https://leuklogic.com/tools/missed-call-calculator/`
-      : '';
-    btn.hidden = !shareable;
-    okMsg.hidden = true;
-    btn.onclick = async () => {
-      try {
-        await navigator.clipboard.writeText(shareable);
-      } catch (e) {
-        // Clipboard API needs a secure context and can be blocked outright. Falling back to a
-        // selected textarea means the button still does something useful instead of failing mute.
-        const ta = document.createElement('textarea');
-        ta.value = shareable; ta.style.position = 'fixed'; ta.style.opacity = '0';
-        document.body.appendChild(ta); ta.select();
-        try { document.execCommand('copy'); } catch (e2) {}
-        document.body.removeChild(ta);
-      }
-      okMsg.hidden = false;
-      setTimeout(() => { okMsg.hidden = true; }, 2200);
-    };
-  }
-}
-
-els.forEach((el) => el.addEventListener('input', render));
-render();
+<script>
+// The endpoint redirects back here with ?subscribed=1 and, without this, the visitor lands on an
+// unchanged page and reasonably concludes it failed. A submit with no acknowledgement is a bug even
+// when the submit worked. Inline, so no external request; it REPLACES the form rather than sitting
+// beside it, so nobody submits twice wondering whether the first one took.
+(function () {
+  try {
+    if (new URLSearchParams(location.search).get('subscribed') !== '1') return;
+    var box = document.getElementById('leuk-subscribe');
+    if (!box) return;
+    box.innerHTML = "<h2 style='margin-top:0'>You're on the list</h2>"
+      + "<p style='margin:.35rem 0 0'>We'll email you when the next free tool goes live. "
+      + "Nothing else, and you can unsubscribe from any message.</p>";
+    history.replaceState({}, '', location.pathname);
+  } catch (e) {}
+})();
 </script>
 </body>
 </html>
