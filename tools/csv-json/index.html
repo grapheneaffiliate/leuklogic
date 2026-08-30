@@ -321,7 +321,6 @@ ul.plain li{margin-bottom:.3rem}
 </main>
 
 
-
 <section class="card" id="leuk-subscribe" style="margin-top:1.25rem">
   <h2 style="margin-top:0">Get the next free tool</h2>
   <p style="margin:.35rem 0 .9rem">
@@ -350,22 +349,629 @@ ul.plain li{margin-bottom:.3rem}
     type here, and only when you press the button.
   </p>
 </section>
-<script>
-// The endpoint redirects back here with ?subscribed=1 and, without this, the visitor lands on an
-// unchanged page and reasonably concludes it failed. A submit with no acknowledgement is a bug even
-// when the submit worked. Inline, so no external request; it REPLACES the form rather than sitting
-// beside it, so nobody submits twice wondering whether the first one took.
-(function () {
+<footer class="foot">
+  <p>FlipCSV is a free tool built by <a href="https://leuklogic.com">LeukLogic</a> — we build bots, automations and internal tools, most projects $100–$500. No account, no upload, no tracking. If it gets something wrong, that is a bug worth hearing about: <a href="mailto:tim@leuklogic.com">tim@leuklogic.com</a>.</p>
+  <p>Known limits, stated plainly: delimiter auto-detection covers comma, semicolon, tab and pipe; nested JSON values are written into a cell as JSON text (a CSV cell cannot hold a structure); very large files are bounded by your browser's memory, because all of the work happens on your machine.</p>
+  <p><a href="/tools/csv-diff/">Also free: DeltaCSV — compare two CSVs by key column.</a></p>
+</footer>
+
+</div>
+<script type="module">
+/* ============================================================================
+ * ENGINE — inlined verbatim from src/parse.mjs + src/convert.mjs
+ * (pure, dependency-free; only import/export keywords are removed for inlining)
+ * ==========================================================================*/
+/*
+ * DeltaCSV — parse.mjs
+ * Pure, dependency-free CSV parsing. No DOM, no Node APIs, no network.
+ * Safe to inline verbatim into a single-file HTML page (<script type="module">).
+ *
+ * Shape it targets: RFC 4180, with the tolerances real-world exports need
+ *   - fields may be quoted; a quoted field may contain the delimiter
+ *   - a quoted field may contain newlines (CRLF inside quotes is normalised to LF)
+ *   - a literal quote inside a quoted field is written as two quotes ("")
+ *   - a UTF-8 BOM at the start of the file is stripped
+ *   - LF and CRLF line endings are both accepted (bare CR too)
+ *
+ * The one rule that matters most: a record whose field count does not match the
+ * header is NEVER silently dropped and never silently padded. It goes to
+ * `malformed` with its 1-indexed line number and is excluded from `rows`.
+ */
+
+const BOM = '﻿';
+const DEFAULT_CANDIDATES = [',', ';', '\t', '|'];
+
+function stripBom(s) {
+  return s.charCodeAt(0) === 0xfeff ? s.slice(1) : s;
+}
+
+/**
+ * Split text into logical lines (quote-aware) and count each candidate
+ * delimiter OUTSIDE quoted regions. Used only by detectDelimiter.
+ */
+function countOutsideQuotes(src, quote, candidates, maxLines) {
+  const perLine = [];
+  let counts = Object.create(null);
+  for (const c of candidates) counts[c] = 0;
+  let inQuotes = false;
+  let hasContent = false;
+
+  const flush = () => {
+    if (hasContent) perLine.push(counts);
+    counts = Object.create(null);
+    for (const c of candidates) counts[c] = 0;
+    hasContent = false;
+  };
+
+  for (let i = 0; i < src.length; i++) {
+    const ch = src[i];
+    if (ch === quote) {
+      // A doubled quote inside a quoted region flips the flag twice — a no-op,
+      // which is exactly the behaviour we want for counting purposes.
+      inQuotes = !inQuotes;
+      hasContent = true;
+      continue;
+    }
+    if (!inQuotes && (ch === '\n' || ch === '\r')) {
+      if (ch === '\r' && src[i + 1] === '\n') i++;
+      flush();
+      if (perLine.length >= maxLines) return perLine;
+      continue;
+    }
+    if (!inQuotes && Object.prototype.hasOwnProperty.call(counts, ch)) counts[ch]++;
+    hasContent = true;
+  }
+  flush();
+  return perLine;
+}
+
+/**
+ * detectDelimiter(text, options?) -> ',' | ';' | '\t' | '|'
+ *
+ * Counts each candidate outside quoted regions across the first `sampleLines`
+ * logical lines, then picks the candidate that appears the most CONSISTENTLY
+ * (same non-zero count on the most lines). Consistency beats raw frequency,
+ * which is what stops a comma inside prose from beating a real semicolon.
+ *
+ * Genuinely ambiguous files exist (e.g. European decimals: "1,5;2,5"), so the
+ * result is a best guess — the UI must always expose an override.
+ */
+function detectDelimiter(text, options = {}) {
+  const quote = options.quote || '"';
+  const candidates = options.candidates || DEFAULT_CANDIDATES;
+  const sampleLines = options.sampleLines || 20;
+  const src = stripBom(typeof text === 'string' ? text : String(text ?? ''));
+  if (src === '') return candidates[0];
+
+  const lines = countOutsideQuotes(src.slice(0, 1 << 20), quote, candidates, sampleLines);
+  if (lines.length === 0) return candidates[0];
+
+  let best = null;
+  for (let ci = 0; ci < candidates.length; ci++) {
+    const c = candidates[ci];
+    // Mode of the non-zero counts for this candidate.
+    const tally = new Map();
+    for (const l of lines) {
+      const n = l[c];
+      if (n > 0) tally.set(n, (tally.get(n) || 0) + 1);
+    }
+    if (tally.size === 0) continue;
+    let mode = 0;
+    let modeLines = 0;
+    for (const [n, hits] of tally) {
+      if (hits > modeLines || (hits === modeLines && n > mode)) {
+        mode = n;
+        modeLines = hits;
+      }
+    }
+    const consistency = modeLines / lines.length;
+    const cand = { delimiter: c, consistency, mode, order: ci };
+    if (
+      best === null ||
+      cand.consistency > best.consistency ||
+      (cand.consistency === best.consistency && cand.mode > best.mode) ||
+      (cand.consistency === best.consistency && cand.mode === best.mode && cand.order < best.order)
+    ) {
+      best = cand;
+    }
+  }
+  return best ? best.delimiter : candidates[0];
+}
+
+/**
+ * parseCsv(text, options?) -> { header, rows, rowLines, malformed, delimiter, blankLines }
+ *
+ *   options.delimiter  explicit delimiter; omit (or 'auto') to auto-detect
+ *   options.hasHeader  default true; when false, headers are "Column 1", "Column 2", …
+ *   options.quote      default '"'
+ *
+ *   header      string[]   — trimmed header names, in file order
+ *   rows        string[][] — only records whose field count === header.length
+ *   rowLines    number[]   — 1-indexed start line of each row, parallel to rows
+ *   malformed   {line, fields, expected, actual, raw}[]  — reported, never dropped
+ *   delimiter   the delimiter actually used
+ *   blankLines  count of completely empty lines skipped (they carry no data)
+ */
+function parseCsv(text, options = {}) {
+  const hasHeader = options.hasHeader !== false;
+  const quote = options.quote || '"';
+  const src = stripBom(typeof text === 'string' ? text : String(text ?? ''));
+  const delimiter =
+    options.delimiter && options.delimiter !== 'auto'
+      ? options.delimiter
+      : detectDelimiter(src, { quote });
+
+  const records = [];
+  let blankLines = 0;
+
+  let fields = [];
+  let field = '';
+  let inQuotes = false;
+  let recordHadQuote = false;
+  let line = 1;
+  let recordLine = 1;
+  let recordStart = 0;
+  let i = 0;
+
+  const endRecord = (endOffset) => {
+    fields.push(field);
+    field = '';
+    const isBlank = fields.length === 1 && fields[0] === '' && !recordHadQuote;
+    if (isBlank) {
+      blankLines++;
+    } else {
+      records.push({ fields, line: recordLine, raw: src.slice(recordStart, endOffset) });
+    }
+    fields = [];
+    recordHadQuote = false;
+  };
+
+  while (i < src.length) {
+    const ch = src[i];
+
+    if (inQuotes) {
+      if (ch === quote) {
+        if (src[i + 1] === quote) {
+          field += quote;
+          i += 2;
+          continue;
+        }
+        inQuotes = false;
+        i++;
+        continue;
+      }
+      if (ch === '\r') {
+        // Normalise CRLF (and bare CR) inside a quoted field to a single LF.
+        field += '\n';
+        line++;
+        i += src[i + 1] === '\n' ? 2 : 1;
+        continue;
+      }
+      if (ch === '\n') {
+        field += '\n';
+        line++;
+        i++;
+        continue;
+      }
+      field += ch;
+      i++;
+      continue;
+    }
+
+    if (ch === quote) {
+      recordHadQuote = true;
+      if (field === '') {
+        inQuotes = true;
+        i++;
+        continue;
+      }
+      // A quote in the middle of an unquoted field is data, not structure.
+      field += ch;
+      i++;
+      continue;
+    }
+
+    if (ch === delimiter) {
+      fields.push(field);
+      field = '';
+      i++;
+      continue;
+    }
+
+    if (ch === '\r' || ch === '\n') {
+      const width = ch === '\r' && src[i + 1] === '\n' ? 2 : 1;
+      endRecord(i);
+      i += width;
+      line++;
+      recordLine = line;
+      recordStart = i;
+      continue;
+    }
+
+    field += ch;
+    i++;
+  }
+
+  // Flush a final record that was not terminated by a newline.
+  if (field !== '' || fields.length > 0 || recordHadQuote) endRecord(src.length);
+
+  if (records.length === 0) {
+    return { header: [], rows: [], rowLines: [], malformed: [], delimiter, blankLines };
+  }
+
+  let header;
+  let dataRecords;
+  if (hasHeader) {
+    header = records[0].fields.map((h) => stripBom(String(h)).trim());
+    dataRecords = records.slice(1);
+  } else {
+    header = records[0].fields.map((_, idx) => `Column ${idx + 1}`);
+    dataRecords = records;
+  }
+
+  const rows = [];
+  const rowLines = [];
+  const malformed = [];
+  for (const rec of dataRecords) {
+    if (rec.fields.length === header.length) {
+      rows.push(rec.fields);
+      rowLines.push(rec.line);
+    } else {
+      malformed.push({
+        line: rec.line,
+        fields: rec.fields,
+        expected: header.length,
+        actual: rec.fields.length,
+        raw: rec.raw,
+      });
+    }
+  }
+
+  return { header, rows, rowLines, malformed, delimiter, blankLines };
+}
+
+/*
+ * FlipCSV — convert.mjs
+ * Pure, dependency-free CSV <-> JSON conversion. No DOM, no Node APIs, no network.
+ * Safe to inline verbatim into a single-file HTML page (<script type="module">).
+ *
+ * Two directions, both lossless by default:
+ *   csvToJson(text, opts) -> { rows, header, malformed, delimiter, blankLines }
+ *       rows: array of plain objects keyed by header. Values are STRINGS unless
+ *       opts.inferTypes is set, in which case a value is converted ONLY when the
+ *       conversion round-trips exactly (so nothing is silently corrupted).
+ *   jsonToCsv(jsonOrText, opts) -> { csv, columns, count }
+ *       Accepts a JSON string or an already-parsed value. An array of objects
+ *       becomes one row each; a single object becomes one row. Columns are the
+ *       UNION of every object's keys in first-seen order — no row silently loses
+ *       a field that a later row introduced. Emits strict RFC 4180 quoting.
+ *
+ * The design rule shared with DeltaCSV: never silently drop or corrupt data.
+ * A CSV record whose width does not match the header is reported in `malformed`,
+ * never guessed at; a JSON value that cannot be a table is a thrown error with a
+ * plain-English reason, never a half-written file.
+ */
+
+
+/* --------------------------------------------------------------------------
+ * CSV -> JSON
+ * ------------------------------------------------------------------------ */
+
+/**
+ * inferValue(s) -> string | number | boolean | null
+ * Conservative, round-trip-safe type inference. A string is converted ONLY if
+ * re-serialising the result yields the original string, so "007", "1e999",
+ * " 12 " and "1,5" all stay strings (converting them would lose information).
+ */
+function inferValue(s) {
+  if (s === '') return null;
+  if (s === 'true') return true;
+  if (s === 'false') return false;
+  // Numbers: must round-trip EXACTLY. This rejects leading zeros ("007"),
+  // leading/trailing space, "+1", "1." , "Infinity"/"NaN", and overflow.
+  const n = Number(s);
+  if (!Number.isNaN(n) && Number.isFinite(n) && String(n) === s) return n;
+  return s;
+}
+
+/**
+ * csvToJson(text, options?)
+ *   options.delimiter   explicit delimiter, or omit/'auto' to detect
+ *   options.hasHeader   default true
+ *   options.inferTypes  default false (values stay strings — lossless)
+ * Returns { rows, header, malformed, delimiter, blankLines }.
+ */
+function csvToJson(text, options = {}) {
+  const { header, rows, malformed, delimiter, blankLines } = parseCsv(text, {
+    delimiter: options.delimiter,
+    hasHeader: options.hasHeader,
+  });
+  const infer = options.inferTypes === true;
+
+  // Duplicate header names would collide as object keys; disambiguate the
+  // SECOND and later occurrences ("id", "id" -> "id", "id_2") so no column
+  // silently overwrites another. First occurrence keeps its bare name.
+  const seen = Object.create(null);
+  const keys = header.map((h) => {
+    const base = h === '' ? 'column' : h;
+    if (seen[base] === undefined) {
+      seen[base] = 1;
+      return base;
+    }
+    seen[base] += 1;
+    return `${base}_${seen[base]}`;
+  });
+
+  const out = rows.map((cells) => {
+    const obj = {};
+    for (let i = 0; i < keys.length; i++) {
+      obj[keys[i]] = infer ? inferValue(cells[i]) : cells[i];
+    }
+    return obj;
+  });
+
+  return { rows: out, header: keys, malformed, delimiter, blankLines };
+}
+
+/* --------------------------------------------------------------------------
+ * JSON -> CSV
+ * ------------------------------------------------------------------------ */
+
+const NEEDS_QUOTING = /["\n\r]/;
+
+/**
+ * csvCell(value, delimiter) -> string
+ * RFC 4180 field serialisation. null/undefined become an empty field; objects
+ * and arrays are JSON-stringified into the cell (a table cell cannot hold a
+ * nested structure, so we keep it as readable JSON rather than "[object Object]").
+ */
+function csvCell(value, delimiter) {
+  if (value === null || value === undefined) return '';
+  let s;
+  if (typeof value === 'object') s = JSON.stringify(value);
+  else s = String(value);
+  if (s.includes(delimiter) || NEEDS_QUOTING.test(s)) {
+    return '"' + s.replace(/"/g, '""') + '"';
+  }
+  return s;
+}
+
+/**
+ * jsonToCsv(jsonOrText, options?)
+ *   options.delimiter   default ','
+ *   options.newline     default '\r\n' (RFC 4180); pass '\n' for unix
+ *   options.columns     explicit column order; omit to use first-seen union
+ * Returns { csv, columns, count }. Throws a plain-English Error when the input
+ * is not a JSON array/object of records.
+ */
+function jsonToCsv(jsonOrText, options = {}) {
+  const delimiter = options.delimiter || ',';
+  const newline = options.newline || '\r\n';
+
+  let data = jsonOrText;
+  if (typeof jsonOrText === 'string') {
+    const trimmed = jsonOrText.trim();
+    if (trimmed === '') throw new Error('Nothing to convert — the JSON input is empty.');
+    try {
+      data = JSON.parse(trimmed);
+    } catch (e) {
+      throw new Error('That is not valid JSON: ' + e.message);
+    }
+  }
+
+  // Normalise to an array of records.
+  let records;
+  if (Array.isArray(data)) {
+    records = data;
+  } else if (data && typeof data === 'object') {
+    records = [data];
+  } else {
+    throw new Error(
+      'JSON must be an array of objects (or a single object) to become a table — got a ' +
+        (data === null ? 'null' : typeof data) + '.'
+    );
+  }
+
+  if (records.length === 0) return { csv: '', columns: [], count: 0 };
+
+  // Every record must be an object; a bare value has no columns.
+  records.forEach((rec, idx) => {
+    if (Array.isArray(rec) || rec === null || typeof rec !== 'object') {
+      throw new Error(
+        `Row ${idx + 1} is not an object, so it has no columns — every item in the array must be a { key: value } object.`
+      );
+    }
+  });
+
+  // Column order: explicit, else the union of keys in first-seen order.
+  let columns = options.columns;
+  if (!columns) {
+    const set = new Map();
+    for (const rec of records) for (const k of Object.keys(rec)) if (!set.has(k)) set.set(k, true);
+    columns = [...set.keys()];
+  }
+
+  const headerLine = columns.map((c) => csvCell(c, delimiter)).join(delimiter);
+  const lines = [headerLine];
+  for (const rec of records) {
+    lines.push(columns.map((c) => csvCell(rec[c], delimiter)).join(delimiter));
+  }
+  return { csv: lines.join(newline), columns, count: records.length };
+}
+
+
+/* ============================================================================
+ * APP — DOM wiring only. All conversion is the pure engine above.
+ * No network, no storage; every action runs on this page.
+ * ==========================================================================*/
+const $ = (id) => document.getElementById(id);
+const show = (el, on) => el.classList.toggle('hidden', !on);
+
+/* ---- tabs ---- */
+const tabC = $('tab-c2j'), tabJ = $('tab-j2c');
+const panelC = $('panel-c2j'), panelJ = $('panel-j2c');
+function selectTab(which) {
+  const c = which === 'c2j';
+  tabC.setAttribute('aria-selected', String(c));
+  tabJ.setAttribute('aria-selected', String(!c));
+  show(panelC, c);
+  show(panelJ, !c);
+}
+tabC.addEventListener('click', () => selectTab('c2j'));
+tabJ.addEventListener('click', () => selectTab('j2c'));
+[tabC, tabJ].forEach((t) =>
+  t.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+      e.preventDefault();
+      selectTab(t === tabC ? 'j2c' : 'c2j');
+      (t === tabC ? tabJ : tabC).focus();
+    }
+  })
+);
+
+/* ---- shared: wire a drop zone + hidden file input to a textarea ---- */
+function wireDrop(dropEl, fileEl, statEl, textarea, onLoaded) {
+  const setStat = (msg, cls) => {
+    statEl.innerHTML = cls ? `<span class="${cls}">${msg}</span>` : msg;
+  };
+  const readFile = (file) => {
+    if (!file) return;
+    const r = new FileReader();
+    r.onload = () => {
+      textarea.value = String(r.result || '');
+      setStat(`Loaded ${file.name} (${file.size.toLocaleString()} bytes).`, 'ok');
+      onLoaded();
+    };
+    r.onerror = () => setStat('Could not read that file.', 'warn');
+    r.readAsText(file);
+  };
+  dropEl.addEventListener('click', () => fileEl.click());
+  dropEl.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      fileEl.click();
+    }
+  });
+  fileEl.addEventListener('change', () => readFile(fileEl.files[0]));
+  dropEl.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropEl.classList.add('over');
+  });
+  dropEl.addEventListener('dragleave', () => dropEl.classList.remove('over'));
+  dropEl.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropEl.classList.remove('over');
+    readFile(e.dataTransfer.files[0]);
+  });
+}
+
+/* ---- download helper: local Blob, nothing uploaded ---- */
+function download(text, filename, mime) {
+  const blob = new Blob([text], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+async function copyText(text, btn) {
   try {
-    if (new URLSearchParams(location.search).get('subscribed') !== '1') return;
-    var box = document.getElementById('leuk-subscribe');
-    if (!box) return;
-    box.innerHTML = "<h2 style='margin-top:0'>You're on the list</h2>"
-      + "<p style='margin:.35rem 0 0'>We'll email you when the next free tool goes live. "
-      + "Nothing else, and you can unsubscribe from any message.</p>";
-    history.replaceState({}, '', location.pathname);
-  } catch (e) {}
-})();
+    await navigator.clipboard.writeText(text);
+    const old = btn.textContent;
+    btn.textContent = 'Copied ✓';
+    setTimeout(() => (btn.textContent = old), 1200);
+  } catch {
+    btn.textContent = 'Press Ctrl/Cmd+C';
+  }
+}
+
+/* ============ CSV -> JSON ============ */
+const csvIn = $('csvIn'), jsonOut = $('jsonOut');
+const errC = $('errC'), malC = $('malC'), cntC = $('cntC');
+const copyJson = $('copyJson'), dlJson = $('dlJson');
+
+function runC2J() {
+  show(errC, false);
+  show(malC, false);
+  const text = csvIn.value;
+  if (text.trim() === '') {
+    jsonOut.value = '';
+    cntC.textContent = '';
+    copyJson.disabled = dlJson.disabled = true;
+    return;
+  }
+  try {
+    const delim = $('delimC').value;
+    const res = csvToJson(text, {
+      delimiter: delim === 'auto' ? 'auto' : delim,
+      hasHeader: $('hasHeaderC').checked,
+      inferTypes: $('inferC').checked,
+    });
+    jsonOut.value = JSON.stringify(res.rows, null, $('prettyC').checked ? 2 : 0);
+    copyJson.disabled = dlJson.disabled = res.rows.length === 0;
+    cntC.textContent = `${res.rows.length} row${res.rows.length === 1 ? '' : 's'}, ${res.header.length} column${res.header.length === 1 ? '' : 's'} · delimiter ${JSON.stringify(res.delimiter)}`;
+    if (res.malformed.length) {
+      show(malC, true);
+      const lines = res.malformed.slice(0, 5).map((m) => `line ${m.line} (${m.actual} field${m.actual === 1 ? '' : 's'}, expected ${m.expected})`);
+      malC.innerHTML = `<strong>${res.malformed.length} row${res.malformed.length === 1 ? '' : 's'} skipped</strong> for a wrong field count — reported, never guessed: ${lines.join('; ')}${res.malformed.length > 5 ? ' …' : ''}.`;
+    }
+  } catch (e) {
+    jsonOut.value = '';
+    copyJson.disabled = dlJson.disabled = true;
+    cntC.textContent = '';
+    show(errC, true);
+    errC.textContent = e.message;
+  }
+}
+['input', 'change'].forEach((ev) => {
+  csvIn.addEventListener(ev, runC2J);
+  ['delimC', 'hasHeaderC', 'inferC', 'prettyC'].forEach((id) => $(id).addEventListener(ev, runC2J));
+});
+wireDrop($('dropC'), $('fileC'), $('statC'), csvIn, runC2J);
+copyJson.addEventListener('click', () => copyText(jsonOut.value, copyJson));
+dlJson.addEventListener('click', () => download(jsonOut.value, 'data.json', 'application/json'));
+
+/* ============ JSON -> CSV ============ */
+const jsonIn = $('jsonIn'), csvOut = $('csvOut');
+const errJ = $('errJ'), cntJ = $('cntJ');
+const copyCsv = $('copyCsv'), dlCsv = $('dlCsv');
+
+function runJ2C() {
+  show(errJ, false);
+  const text = jsonIn.value;
+  if (text.trim() === '') {
+    csvOut.value = '';
+    cntJ.textContent = '';
+    copyCsv.disabled = dlCsv.disabled = true;
+    return;
+  }
+  try {
+    const res = jsonToCsv(text, {
+      delimiter: $('delimJ').value,
+      newline: $('nlJ').value === 'lf' ? '\n' : '\r\n',
+    });
+    csvOut.value = res.csv;
+    copyCsv.disabled = dlCsv.disabled = res.count === 0;
+    cntJ.textContent = `${res.count} row${res.count === 1 ? '' : 's'}, ${res.columns.length} column${res.columns.length === 1 ? '' : 's'}`;
+  } catch (e) {
+    csvOut.value = '';
+    copyCsv.disabled = dlCsv.disabled = true;
+    cntJ.textContent = '';
+    show(errJ, true);
+    errJ.textContent = e.message;
+  }
+}
+['input', 'change'].forEach((ev) => {
+  jsonIn.addEventListener(ev, runJ2C);
+  ['delimJ', 'nlJ'].forEach((id) => $(id).addEventListener(ev, runJ2C));
+});
+wireDrop($('dropJ'), $('fileJ'), $('statJ'), jsonIn, runJ2C);
+copyCsv.addEventListener('click', () => copyText(csvOut.value, copyCsv));
+dlCsv.addEventListener('click', () => download(csvOut.value, 'data.csv', 'text/csv'));
 </script>
 </body>
 </html>

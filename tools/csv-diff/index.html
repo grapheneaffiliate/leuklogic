@@ -370,7 +370,6 @@ ul.plain li{margin-bottom:.3rem}
 </div>
 
 
-
 <section class="card" id="leuk-subscribe" style="margin-top:1.25rem">
   <h2 style="margin-top:0">Get the next free tool</h2>
   <p style="margin:.35rem 0 .9rem">
@@ -399,22 +398,1217 @@ ul.plain li{margin-bottom:.3rem}
     type here, and only when you press the button.
   </p>
 </section>
-<script>
-// The endpoint redirects back here with ?subscribed=1 and, without this, the visitor lands on an
-// unchanged page and reasonably concludes it failed. A submit with no acknowledgement is a bug even
-// when the submit worked. Inline, so no external request; it REPLACES the form rather than sitting
-// beside it, so nobody submits twice wondering whether the first one took.
-(function () {
+<footer class="foot">
+  <p>DeltaCSV is a free tool built by <a href="https://leuklogic.com">LeukLogic</a>. No account, no upload, no tracking. If it gets something wrong, that is a bug worth hearing about.</p>
+  <p>Known limits, stated plainly: delimiter detection covers comma, semicolon, tab and pipe only; numeric tolerance compares plain numeric literals only; very large files are bounded by your browser's memory, because all of the work happens on your machine.</p>
+</footer>
+
+</div>
+
+<script type="module">
+/* ============================================================================
+ * ENGINE — inlined from src/parse.mjs and src/diff.mjs
+ * (pure, dependency-free; the `export` keywords are the only thing removed)
+ * ==========================================================================*/
+
+const DEFAULT_CANDIDATES = [',', ';', '\t', '|'];
+
+function stripBom(s) {
+  return s.charCodeAt(0) === 0xfeff ? s.slice(1) : s;
+}
+
+function countOutsideQuotes(src, quote, candidates, maxLines) {
+  const perLine = [];
+  let counts = Object.create(null);
+  for (const c of candidates) counts[c] = 0;
+  let inQuotes = false;
+  let hasContent = false;
+
+  const flush = () => {
+    if (hasContent) perLine.push(counts);
+    counts = Object.create(null);
+    for (const c of candidates) counts[c] = 0;
+    hasContent = false;
+  };
+
+  for (let i = 0; i < src.length; i++) {
+    const ch = src[i];
+    if (ch === quote) {
+      // A doubled quote inside a quoted region flips the flag twice — a no-op,
+      // which is exactly the behaviour we want for counting purposes.
+      inQuotes = !inQuotes;
+      hasContent = true;
+      continue;
+    }
+    if (!inQuotes && (ch === '\n' || ch === '\r')) {
+      if (ch === '\r' && src[i + 1] === '\n') i++;
+      flush();
+      if (perLine.length >= maxLines) return perLine;
+      continue;
+    }
+    if (!inQuotes && Object.prototype.hasOwnProperty.call(counts, ch)) counts[ch]++;
+    hasContent = true;
+  }
+  flush();
+  return perLine;
+}
+
+function detectDelimiter(text, options = {}) {
+  const quote = options.quote || '"';
+  const candidates = options.candidates || DEFAULT_CANDIDATES;
+  const sampleLines = options.sampleLines || 20;
+  const src = stripBom(typeof text === 'string' ? text : String(text ?? ''));
+  if (src === '') return candidates[0];
+
+  const lines = countOutsideQuotes(src.slice(0, 1 << 20), quote, candidates, sampleLines);
+  if (lines.length === 0) return candidates[0];
+
+  let best = null;
+  for (let ci = 0; ci < candidates.length; ci++) {
+    const c = candidates[ci];
+    // Mode of the non-zero counts for this candidate.
+    const tally = new Map();
+    for (const l of lines) {
+      const n = l[c];
+      if (n > 0) tally.set(n, (tally.get(n) || 0) + 1);
+    }
+    if (tally.size === 0) continue;
+    let mode = 0;
+    let modeLines = 0;
+    for (const [n, hits] of tally) {
+      if (hits > modeLines || (hits === modeLines && n > mode)) {
+        mode = n;
+        modeLines = hits;
+      }
+    }
+    const consistency = modeLines / lines.length;
+    const cand = { delimiter: c, consistency, mode, order: ci };
+    if (
+      best === null ||
+      cand.consistency > best.consistency ||
+      (cand.consistency === best.consistency && cand.mode > best.mode) ||
+      (cand.consistency === best.consistency && cand.mode === best.mode && cand.order < best.order)
+    ) {
+      best = cand;
+    }
+  }
+  return best ? best.delimiter : candidates[0];
+}
+
+function parseCsv(text, options = {}) {
+  const hasHeader = options.hasHeader !== false;
+  const quote = options.quote || '"';
+  const src = stripBom(typeof text === 'string' ? text : String(text ?? ''));
+  const delimiter =
+    options.delimiter && options.delimiter !== 'auto'
+      ? options.delimiter
+      : detectDelimiter(src, { quote });
+
+  const records = [];
+  let blankLines = 0;
+
+  let fields = [];
+  let field = '';
+  let inQuotes = false;
+  let recordHadQuote = false;
+  let line = 1;
+  let recordLine = 1;
+  let recordStart = 0;
+  let i = 0;
+
+  const endRecord = (endOffset) => {
+    fields.push(field);
+    field = '';
+    const isBlank = fields.length === 1 && fields[0] === '' && !recordHadQuote;
+    if (isBlank) {
+      blankLines++;
+    } else {
+      records.push({ fields, line: recordLine, raw: src.slice(recordStart, endOffset) });
+    }
+    fields = [];
+    recordHadQuote = false;
+  };
+
+  while (i < src.length) {
+    const ch = src[i];
+
+    if (inQuotes) {
+      if (ch === quote) {
+        if (src[i + 1] === quote) {
+          field += quote;
+          i += 2;
+          continue;
+        }
+        inQuotes = false;
+        i++;
+        continue;
+      }
+      if (ch === '\r') {
+        // Normalise CRLF (and bare CR) inside a quoted field to a single LF.
+        field += '\n';
+        line++;
+        i += src[i + 1] === '\n' ? 2 : 1;
+        continue;
+      }
+      if (ch === '\n') {
+        field += '\n';
+        line++;
+        i++;
+        continue;
+      }
+      field += ch;
+      i++;
+      continue;
+    }
+
+    if (ch === quote) {
+      recordHadQuote = true;
+      if (field === '') {
+        inQuotes = true;
+        i++;
+        continue;
+      }
+      // A quote in the middle of an unquoted field is data, not structure.
+      field += ch;
+      i++;
+      continue;
+    }
+
+    if (ch === delimiter) {
+      fields.push(field);
+      field = '';
+      i++;
+      continue;
+    }
+
+    if (ch === '\r' || ch === '\n') {
+      const width = ch === '\r' && src[i + 1] === '\n' ? 2 : 1;
+      endRecord(i);
+      i += width;
+      line++;
+      recordLine = line;
+      recordStart = i;
+      continue;
+    }
+
+    field += ch;
+    i++;
+  }
+
+  // Flush a final record that was not terminated by a newline.
+  if (field !== '' || fields.length > 0 || recordHadQuote) endRecord(src.length);
+
+  if (records.length === 0) {
+    return { header: [], rows: [], rowLines: [], malformed: [], delimiter, blankLines };
+  }
+
+  let header;
+  let dataRecords;
+  if (hasHeader) {
+    header = records[0].fields.map((h) => stripBom(String(h)).trim());
+    dataRecords = records.slice(1);
+  } else {
+    header = records[0].fields.map((_, idx) => `Column ${idx + 1}`);
+    dataRecords = records;
+  }
+
+  const rows = [];
+  const rowLines = [];
+  const malformed = [];
+  for (const rec of dataRecords) {
+    if (rec.fields.length === header.length) {
+      rows.push(rec.fields);
+      rowLines.push(rec.line);
+    } else {
+      malformed.push({
+        line: rec.line,
+        fields: rec.fields,
+        expected: header.length,
+        actual: rec.fields.length,
+        raw: rec.raw,
+      });
+    }
+  }
+
+  return { header, rows, rowLines, malformed, delimiter, blankLines };
+}
+
+// Key parts are joined with U+001F (UNIT SEPARATOR). CSV data can in principle
+// contain that byte, so parts are escaped prefix-free first (U+001E is the escape).
+const KEY_SEP = '\u001F';
+const KEY_ESC = '\u001E';
+
+function escapeKeyPart(s) {
+  return s.indexOf(KEY_ESC) === -1 && s.indexOf(KEY_SEP) === -1
+    ? s
+    : s.split(KEY_ESC).join(KEY_ESC + KEY_ESC).split(KEY_SEP).join(KEY_ESC + KEY_SEP);
+}
+
+function normName(n) {
+  return String(n ?? '').replace(/^\uFEFF/, '').trim();
+}
+
+const NUMERIC_RE = /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$/;
+
+// Deliberately does NOT trim: whitespace handling is the `trim` option's job, so
+// numericTolerance never quietly overrides a user who turned trimming off.
+function toNumber(s) {
+  if (s === '' || !NUMERIC_RE.test(s)) return null;
+  const n = Number(s);
+  return Number.isFinite(n) ? n : null;
+}
+
+function normalizeTable(t, label) {
+  if (!t || !Array.isArray(t.header) || !Array.isArray(t.rows)) {
+    throw new Error(
+      `diffRows: argument "${label}" must be a parseCsv result — an object with { header, rows }.`
+    );
+  }
+  const header = t.header.map(normName);
+  const index = new Map();
+  // First occurrence wins for lookups; duplicates are reported separately.
+  header.forEach((h, i) => {
+    if (!index.has(h)) index.set(h, i);
+  });
+  return { header, index, rows: t.rows, rowLines: Array.isArray(t.rowLines) ? t.rowLines : [] };
+}
+
+function cellOf(T, row, col) {
+  if (Array.isArray(row)) {
+    const i = T.index.get(col);
+    return i === undefined ? '' : row[i] ?? '';
+  }
+  return row[col] ?? '';
+}
+
+function rowObject(T, row) {
+  const o = {};
+  T.header.forEach((h, i) => {
+    if (!(h in o)) o[h] = Array.isArray(row) ? row[i] ?? '' : row[h] ?? '';
+  });
+  return o;
+}
+
+function tallyNames(header) {
+  const seen = new Map();
+  for (const h of header) seen.set(h, (seen.get(h) || 0) + 1);
+  return seen;
+}
+
+function normValue(v, o) {
+  let s = v == null ? '' : String(v);
+  if (o.trim) s = s.trim();
+  if (o.caseInsensitiveValues) s = s.toLowerCase();
+  return s;
+}
+
+function normKeyPart(v, o) {
+  let s = v == null ? '' : String(v);
+  if (o.trim) s = s.trim();
+  if (o.caseInsensitiveKeys) s = s.toLowerCase();
+  return s;
+}
+
+function valuesEqual(x, y, o) {
+  const a = normValue(x, o);
+  const b = normValue(y, o);
+  if (a === b) return true;
+  if (o.numericTolerance > 0) {
+    const na = toNumber(a);
+    const nb = toNumber(b);
+    // Only a numeric comparison when BOTH sides are numbers — "1.0" vs "one"
+    // stays a difference.
+    if (na !== null && nb !== null) return Math.abs(na - nb) <= o.numericTolerance + 1e-12;
+  }
+  return false;
+}
+
+function indexByKey(T, keys, o) {
+  const idx = new Map();
+  T.rows.forEach((row, i) => {
+    const keyValues = keys.map((k) => cellOf(T, row, k));
+    const key = keyValues.map((p) => escapeKeyPart(normKeyPart(p, o))).join(KEY_SEP);
+    let bucket = idx.get(key);
+    if (!bucket) {
+      bucket = [];
+      idx.set(key, bucket);
+    }
+    bucket.push({ row, rowIndex: i, line: T.rowLines[i] ?? null, keyValues });
+  });
+  return idx;
+}
+
+function diffRows(a, b, options = {}) {
+  const o = {
+    trim: options.trim !== false,
+    caseInsensitiveKeys: options.caseInsensitiveKeys === true,
+    caseInsensitiveValues: options.caseInsensitiveValues === true,
+    numericTolerance: Number(options.numericTolerance) || 0,
+  };
+  if (o.numericTolerance < 0) throw new Error('diffRows: numericTolerance must be >= 0.');
+
+  const A = normalizeTable(a, 'a');
+  const B = normalizeTable(b, 'b');
+
+  const keys = (options.keyColumns || []).map(normName).filter((k) => k !== '');
+  if (keys.length === 0) {
+    throw new Error(
+      'diffRows: keyColumns is required — rows are matched by key, not by line order.'
+    );
+  }
+  for (const k of keys) {
+    if (!A.index.has(k)) {
+      throw new Error(`diffRows: key column "${k}" is not in the first file's header.`);
+    }
+    if (!B.index.has(k)) {
+      throw new Error(`diffRows: key column "${k}" is not in the second file's header.`);
+    }
+  }
+
+  const ignore = new Set((options.ignoreColumns || []).map(normName));
+
+  // Columns, matched by NAME. Order is irrelevant.
+  const inA = new Set(A.header);
+  const inB = new Set(B.header);
+  const addedColumns = [];
+  const removedColumns = [];
+  for (const h of B.header) if (!inA.has(h) && !addedColumns.includes(h)) addedColumns.push(h);
+  for (const h of A.header) if (!inB.has(h) && !removedColumns.includes(h)) removedColumns.push(h);
+
+  const comparedColumns = [];
+  for (const h of A.header) {
+    if (inB.has(h) && !ignore.has(h) && !comparedColumns.includes(h)) comparedColumns.push(h);
+  }
+
+  // Duplicate COLUMN names make name-based lookup ambiguous — say so out loud.
+  const tallyA = tallyNames(A.header);
+  const tallyB = tallyNames(B.header);
+  const duplicateColumns = [];
+  for (const name of new Set([...A.header, ...B.header])) {
+    const countA = tallyA.get(name) || 0;
+    const countB = tallyB.get(name) || 0;
+    if (countA > 1 || countB > 1) duplicateColumns.push({ column: name, countA, countB });
+  }
+
+  const idxA = indexByKey(A, keys, o);
+  const idxB = indexByKey(B, keys, o);
+
+  // RULE 1: any key appearing more than once in EITHER file is excluded from
+  // added/removed/changed and reported on its own.
+  const dupKeys = new Set();
+  for (const [k, ea] of idxA) {
+    const eb = idxB.get(k);
+    if (ea.length > 1 || (eb && eb.length > 1)) dupKeys.add(k);
+  }
+  for (const [k, eb] of idxB) {
+    if (eb.length > 1) dupKeys.add(k);
+  }
+
+  const duplicateKeys = [];
+  const emitDup = (k) => {
+    const ea = idxA.get(k) || [];
+    const eb = idxB.get(k) || [];
+    duplicateKeys.push({
+      key: k,
+      keyValues: (ea[0] || eb[0]).keyValues,
+      countA: ea.length,
+      countB: eb.length,
+      linesA: ea.map((e) => e.line),
+      linesB: eb.map((e) => e.line),
+    });
+  };
+  for (const k of idxA.keys()) if (dupKeys.has(k)) emitDup(k);
+  for (const k of idxB.keys()) if (dupKeys.has(k) && !idxA.has(k)) emitDup(k);
+
+  const added = [];
+  const removed = [];
+  const changed = [];
+  let unchangedCount = 0;
+
+  for (const [k, ea] of idxA) {
+    if (dupKeys.has(k)) continue;
+    const eb = idxB.get(k);
+    const oldEntry = ea[0];
+    if (!eb) {
+      removed.push({
+        key: k,
+        keyValues: oldEntry.keyValues,
+        row: rowObject(A, oldEntry.row),
+        rowIndex: oldEntry.rowIndex,
+        line: oldEntry.line,
+      });
+      continue;
+    }
+    const newEntry = eb[0];
+    const cells = [];
+    for (const col of comparedColumns) {
+      const oldValue = cellOf(A, oldEntry.row, col);
+      const newValue = cellOf(B, newEntry.row, col);
+      if (!valuesEqual(oldValue, newValue, o)) cells.push({ column: col, oldValue, newValue });
+    }
+    if (cells.length > 0) {
+      changed.push({
+        key: k,
+        keyValues: oldEntry.keyValues,
+        cells,
+        oldRowIndex: oldEntry.rowIndex,
+        newRowIndex: newEntry.rowIndex,
+        oldLine: oldEntry.line,
+        newLine: newEntry.line,
+      });
+    } else {
+      unchangedCount++;
+    }
+  }
+
+  for (const [k, eb] of idxB) {
+    if (dupKeys.has(k) || idxA.has(k)) continue;
+    const e = eb[0];
+    added.push({
+      key: k,
+      keyValues: e.keyValues,
+      row: rowObject(B, e.row),
+      rowIndex: e.rowIndex,
+      line: e.line,
+    });
+  }
+
+  return {
+    added,
+    removed,
+    changed,
+    unchangedCount,
+    duplicateKeys,
+    addedColumns,
+    removedColumns,
+    duplicateColumns,
+    comparedColumns,
+    keyColumns: keys,
+    options: o,
+  };
+}
+
+/* ============================================================================
+ * UI — all local. No fetch, no XHR, no WebSocket, no remote asset anywhere.
+ * ==========================================================================*/
+
+const PAGE_SIZE = 200;
+const $ = (id) => document.getElementById(id);
+
+const state = {
+  a: { text: null, name: null, parsed: null },
+  b: { text: null, name: null, parsed: null },
+  keys: [],
+  result: null,
+  filter: '',
+  page: { added: 1, removed: 1, changed: 1, problems: 1 },
+};
+
+function el(tag, attrs, children) {
+  const node = document.createElement(tag);
+  if (attrs) {
+    for (const [k, v] of Object.entries(attrs)) {
+      if (v === null || v === undefined || v === false) continue;
+      if (k === 'class') node.className = v;
+      else if (k === 'text') node.textContent = v;
+      else node.setAttribute(k, v === true ? '' : String(v));
+    }
+  }
+  if (children) {
+    for (const c of [].concat(children)) {
+      if (c === null || c === undefined) continue;
+      node.appendChild(typeof c === 'string' ? document.createTextNode(c) : c);
+    }
+  }
+  return node;
+}
+
+function delimiterName(d) {
+  return d === ',' ? 'comma' : d === ';' ? 'semicolon' : d === '\t' ? 'tab' : d === '|' ? 'pipe' : JSON.stringify(d);
+}
+
+const fmt = (n) => n.toLocaleString();
+const keyDisplay = (keyValues) => keyValues.join('  |  ');
+
+function showError(msg) {
+  const box = $('errBox');
+  box.textContent = msg;
+  box.classList.remove('hidden');
+}
+function clearError() {
+  const box = $('errBox');
+  box.textContent = '';
+  box.classList.add('hidden');
+}
+
+/* ---- loading ---- */
+
+function parseSide(side) {
+  const s = state[side];
+  if (s.text === null) {
+    s.parsed = null;
+    renderStat(side);
+    return;
+  }
+  const hasHeader = $(side === 'a' ? 'headerA' : 'headerB').checked;
+  const delim = $(side === 'a' ? 'delimA' : 'delimB').value;
   try {
-    if (new URLSearchParams(location.search).get('subscribed') !== '1') return;
-    var box = document.getElementById('leuk-subscribe');
-    if (!box) return;
-    box.innerHTML = "<h2 style='margin-top:0'>You're on the list</h2>"
-      + "<p style='margin:.35rem 0 0'>We'll email you when the next free tool goes live. "
-      + "Nothing else, and you can unsubscribe from any message.</p>";
-    history.replaceState({}, '', location.pathname);
-  } catch (e) {}
-})();
+    s.parsed = parseCsv(s.text, { hasHeader, delimiter: delim });
+  } catch (e) {
+    s.parsed = null;
+    showError('Could not parse ' + (side === 'a' ? 'the before file' : 'the after file') + ': ' + e.message);
+  }
+  renderStat(side);
+}
+
+function renderStat(side) {
+  const s = state[side];
+  const node = $(side === 'a' ? 'statA' : 'statB');
+  node.textContent = '';
+  if (!s.parsed) {
+    node.textContent = 'No file loaded.';
+    return;
+  }
+  const p = s.parsed;
+  node.appendChild(el('span', { class: 'ok', text: s.name || 'pasted text' }));
+  node.appendChild(document.createTextNode(
+    ' — ' + fmt(p.rows.length) + ' rows, ' + fmt(p.header.length) + ' columns, ' +
+    delimiterName(p.delimiter) + '-delimited'
+  ));
+  if (p.malformed.length) {
+    node.appendChild(document.createElement('br'));
+    node.appendChild(el('span', {
+      class: 'warn',
+      text: 'Warning: ' + fmt(p.malformed.length) + ' malformed row' + (p.malformed.length === 1 ? '' : 's') +
+            ' (field count does not match the header) — listed under Problems, excluded from the diff',
+    }));
+  }
+}
+
+function loadText(side, text, name) {
+  state[side].text = text;
+  state[side].name = name;
+  clearError();
+  parseSide(side);
+  refreshKeySection();
+}
+
+function readFile(side, file) {
+  // FileReader reads from the local disk into this page. Nothing is transmitted.
+  const r = new FileReader();
+  r.onload = () => loadText(side, String(r.result), file.name);
+  r.onerror = () => showError('Could not read ' + file.name + '.');
+  r.readAsText(file);
+}
+
+function wireDrop(side) {
+  const zone = $(side === 'a' ? 'dropA' : 'dropB');
+  const input = $(side === 'a' ? 'fileA' : 'fileB');
+  const openPicker = () => input.click();
+
+  zone.addEventListener('click', openPicker);
+  zone.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openPicker(); }
+  });
+  zone.addEventListener('paste', (e) => {
+    const t = (e.clipboardData || window.clipboardData).getData('text');
+    if (t) { e.preventDefault(); loadText(side, t, 'pasted text'); }
+  });
+  ['dragenter', 'dragover'].forEach((ev) =>
+    zone.addEventListener(ev, (e) => { e.preventDefault(); zone.classList.add('over'); })
+  );
+  ['dragleave', 'drop'].forEach((ev) =>
+    zone.addEventListener(ev, () => zone.classList.remove('over'))
+  );
+  zone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+    if (f) readFile(side, f);
+  });
+  input.addEventListener('change', () => {
+    const f = input.files && input.files[0];
+    if (f) readFile(side, f);
+  });
+}
+
+/* ---- key picker ---- */
+
+function uniqueness(parsed, col, opts) {
+  const idx = parsed.header.indexOf(col);
+  if (idx === -1 || parsed.rows.length === 0) return null;
+  const seen = new Set();
+  for (const row of parsed.rows) {
+    let v = row[idx] == null ? '' : String(row[idx]);
+    if (opts.trim) v = v.trim();
+    if (opts.caseInsensitiveKeys) v = v.toLowerCase();
+    seen.add(v);
+  }
+  return seen.size / parsed.rows.length;
+}
+
+function currentOpts() {
+  return {
+    trim: $('optTrim').checked,
+    caseInsensitiveKeys: $('optCIK').checked,
+    caseInsensitiveValues: $('optCIV').checked,
+    numericTolerance: Number($('optTol').value) || 0,
+  };
+}
+
+function refreshKeySection() {
+  const A = state.a.parsed;
+  const B = state.b.parsed;
+  const sec = $('keySection');
+  if (!A || !B) { sec.classList.add('hidden'); return; }
+  sec.classList.remove('hidden');
+
+  const opts = currentOpts();
+  const inA = new Set(A.header);
+  const inB = new Set(B.header);
+  const all = [];
+  for (const h of A.header) if (!all.includes(h)) all.push(h);
+  for (const h of B.header) if (!all.includes(h)) all.push(h);
+
+  const shared = all.filter((h) => inA.has(h) && inB.has(h));
+  const validKeys = new Set(shared);
+  state.keys = state.keys.filter((k) => validKeys.has(k));
+
+  // Preselect the leftmost column that is 100% unique in BOTH files.
+  if (state.keys.length === 0) {
+    const auto = shared.find((h) => uniqueness(A, h, opts) === 1 && uniqueness(B, h, opts) === 1);
+    if (auto) state.keys = [auto];
+  }
+
+  const body = $('keyBody');
+  body.textContent = '';
+
+  all.forEach((col, i) => {
+    const both = inA.has(col) && inB.has(col);
+    const uA = inA.has(col) ? uniqueness(A, col, opts) : null;
+    const uB = inB.has(col) ? uniqueness(B, col, opts) : null;
+
+    const cb = el('input', { type: 'checkbox', id: 'key-' + i });
+    cb.checked = state.keys.includes(col);
+    cb.disabled = !both;
+    cb.addEventListener('change', () => {
+      if (cb.checked) { if (!state.keys.includes(col)) state.keys.push(col); }
+      else state.keys = state.keys.filter((k) => k !== col);
+      updateCompareEnabled();
+    });
+
+    const pct = (u) => (u === null ? '—' : (u * 100).toFixed(u === 1 ? 0 : 1) + '%');
+
+    let status;
+    let cls = '';
+    if (!both) {
+      status = inA.has(col) ? 'Only in file A — cannot be a key' : 'Only in file B — cannot be a key';
+      cls = 'flag';
+    } else if (uA === 1 && uB === 1) {
+      status = 'Unique in both — safe key';
+      cls = 'good';
+    } else {
+      status = 'Has repeats — duplicates would be quarantined';
+    }
+
+    body.appendChild(el('tr', null, [
+      el('td', null, [cb, el('label', { for: 'key-' + i, class: 'visually-hidden', text: 'Use ' + col + ' as a key column' })]),
+      el('td', { class: 'keycol', text: col }),
+      el('td', { class: 'uniq', text: pct(uA) }),
+      el('td', { class: 'uniq', text: pct(uB) }),
+      el('td', null, [el('span', { class: 'badge ' + cls, text: status })]),
+    ]));
+  });
+
+  updateCompareEnabled();
+  if (state.result) runCompare(true);
+}
+
+function updateCompareEnabled() {
+  const ok = state.keys.length > 0;
+  $('compareBtn').disabled = !ok;
+  $('compareHint').textContent = ok ? 'Key: ' + state.keys.join(' + ') : 'Pick at least one key column.';
+}
+
+/* ---- compare ---- */
+
+function runCompare(silent) {
+  clearError();
+  try {
+    state.result = diffRows(state.a.parsed, state.b.parsed, {
+      keyColumns: state.keys,
+      ...currentOpts(),
+    });
+  } catch (e) {
+    state.result = null;
+    $('resultSection').classList.add('hidden');
+    showError(e.message);
+    return;
+  }
+  state.page = { added: 1, removed: 1, changed: 1, problems: 1 };
+  renderResults();
+  if (!silent) {
+    // An explicit Compare starts at the first tab, so nobody lands on a panel
+    // left over from the previous run. A silent re-compare (an option toggle)
+    // leaves the reader where they were.
+    selectTab('added');
+    $('resultSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+function renderResults() {
+  const r = state.result;
+  const A = state.a.parsed;
+  const B = state.b.parsed;
+  $('resultSection').classList.remove('hidden');
+
+  $('resultCaption').textContent =
+    'Matched on ' + r.keyColumns.join(' + ') + '. ' +
+    fmt(r.comparedColumns.length) + ' column' + (r.comparedColumns.length === 1 ? '' : 's') +
+    ' compared by name. Row order in either file has no effect on this result.';
+
+  const mal = A.malformed.length + B.malformed.length;
+  const stats = [
+    ['Rows in A', A.rows.length, false],
+    ['Rows in B', B.rows.length, false],
+    ['Added', r.added.length, r.added.length > 0],
+    ['Removed', r.removed.length, r.removed.length > 0],
+    ['Changed', r.changed.length, r.changed.length > 0],
+    ['Unchanged', r.unchangedCount, false],
+    ['Duplicate keys', r.duplicateKeys.length, r.duplicateKeys.length > 0],
+    ['Malformed rows', mal, mal > 0],
+    ['Columns added', r.addedColumns.length, r.addedColumns.length > 0],
+    ['Columns removed', r.removedColumns.length, r.removedColumns.length > 0],
+  ];
+  const ul = $('stats');
+  ul.textContent = '';
+  for (const [k, n, hot] of stats) {
+    ul.appendChild(el('li', { class: hot ? 'hot' : null }, [
+      el('span', { class: 'n', text: fmt(n) }),
+      el('span', { class: 'k', text: k }),
+    ]));
+  }
+
+  const excl = [];
+  const dupRows = r.duplicateKeys.reduce((s, d) => s + d.countA + d.countB, 0);
+  if (r.duplicateKeys.length) {
+    excl.push(fmt(r.duplicateKeys.length) + ' duplicate key' + (r.duplicateKeys.length === 1 ? '' : 's') +
+      ' covering ' + fmt(dupRows) + ' rows, excluded from added/removed/changed rather than first-matched');
+  }
+  if (mal) excl.push(fmt(mal) + ' malformed row' + (mal === 1 ? '' : 's') + ' excluded from the diff');
+  if (r.addedColumns.length || r.removedColumns.length) {
+    excl.push('cells in columns present in only one file, reported as column changes rather than row changes');
+  }
+  $('exclusionLine').textContent = excl.length
+    ? 'Excluded and accounted for: ' + excl.join('; ') + '. All of it is itemised under Problems.'
+    : 'Nothing was excluded — every row in both files landed in exactly one bucket above.';
+
+  $('tab-added').textContent = 'Added (' + fmt(r.added.length) + ')';
+  $('tab-removed').textContent = 'Removed (' + fmt(r.removed.length) + ')';
+  $('tab-changed').textContent = 'Changed (' + fmt(r.changed.length) + ')';
+  const probCount = r.duplicateKeys.length + mal + r.duplicateColumns.length + r.addedColumns.length + r.removedColumns.length;
+  $('tab-problems').textContent = 'Problems (' + fmt(probCount) + ')';
+
+  renderPanels();
+}
+
+function matchFilter(cells) {
+  if (!state.filter) return true;
+  const q = state.filter.toLowerCase();
+  return cells.some((c) => String(c === null || c === undefined ? '' : c).toLowerCase().includes(q));
+}
+
+function pagedTable(panel, headers, rowsData, key, rowBuilder) {
+  const total = rowsData.length;
+  if (total === 0) {
+    panel.appendChild(el('p', { class: 'empty', text: state.filter ? 'No rows match the filter.' : 'None.' }));
+    return;
+  }
+  const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const page = Math.min(state.page[key] || 1, pages);
+  state.page[key] = page;
+  const start = (page - 1) * PAGE_SIZE;
+  const slice = rowsData.slice(start, start + PAGE_SIZE);
+
+  panel.appendChild(el('div', { class: 'tablescroll' }, [
+    el('table', null, [
+      el('thead', null, [el('tr', null, headers.map((h) => el('th', { scope: 'col', text: h })))]),
+      el('tbody', null, slice.map(rowBuilder)),
+    ]),
+  ]));
+
+  const pager = el('div', { class: 'pager' });
+  pager.appendChild(el('span', {
+    class: 'hint',
+    text: 'Showing ' + fmt(start + 1) + '–' + fmt(Math.min(start + PAGE_SIZE, total)) + ' of ' + fmt(total),
+  }));
+  if (pages > 1) {
+    const prev = el('button', { type: 'button', text: 'Previous page' });
+    prev.disabled = page === 1;
+    prev.addEventListener('click', () => { state.page[key] = page - 1; renderPanels(); });
+    const next = el('button', { type: 'button', text: 'Next page' });
+    next.disabled = page === pages;
+    next.addEventListener('click', () => { state.page[key] = page + 1; renderPanels(); });
+    pager.appendChild(prev);
+    pager.appendChild(el('span', { class: 'hint', text: 'Page ' + page + ' of ' + pages }));
+    pager.appendChild(next);
+  }
+  panel.appendChild(pager);
+}
+
+function rowSideTable(panel, entries, parsed, key, label, symbol) {
+  const cols = parsed.header.filter((h, i) => parsed.header.indexOf(h) === i);
+  const filtered = entries.filter((e) =>
+    matchFilter([keyDisplay(e.keyValues)].concat(cols.map((c) => e.row[c] ?? '')))
+  );
+  pagedTable(
+    panel,
+    [label, 'Line'].concat(cols),
+    filtered,
+    key,
+    (e) => el('tr', null, [
+      el('td', { class: 'keycol' }, [
+        el('span', { class: 'badge flag', text: symbol + ' ' + label }),
+        el('span', { class: 'keyparts', text: keyDisplay(e.keyValues) }),
+      ]),
+      el('td', { class: 'uniq', text: e.line === null || e.line === undefined ? '—' : String(e.line) }),
+      ...cols.map((c) => el('td', { class: 'wrapcell', text: e.row[c] ?? '' })),
+    ])
+  );
+}
+
+function renderPanels() {
+  const r = state.result;
+  if (!r) return;
+  const A = state.a.parsed;
+  const B = state.b.parsed;
+
+  const pAdded = $('panel-added');
+  pAdded.textContent = '';
+  pAdded.appendChild(el('p', { class: 'hint', text: 'Rows whose key is in the after file but not the before file.' }));
+  rowSideTable(pAdded, r.added, B, 'added', 'Added', '+');
+
+  const pRemoved = $('panel-removed');
+  pRemoved.textContent = '';
+  pRemoved.appendChild(el('p', { class: 'hint', text: 'Rows whose key is in the before file but not the after file.' }));
+  rowSideTable(pRemoved, r.removed, A, 'removed', 'Removed', '−');
+
+  const pChanged = $('panel-changed');
+  pChanged.textContent = '';
+  pChanged.appendChild(el('p', { class: 'hint', text: 'One line per differing cell. The old value is struck through; the arrow points to the new value.' }));
+  const flat = [];
+  for (const c of r.changed) {
+    for (const cell of c.cells) {
+      flat.push({
+        key: keyDisplay(c.keyValues),
+        column: cell.column,
+        oldValue: cell.oldValue,
+        newValue: cell.newValue,
+        oldLine: c.oldLine,
+        newLine: c.newLine,
+      });
+    }
+  }
+  const flatFiltered = flat.filter((f) => matchFilter([f.key, f.column, f.oldValue, f.newValue]));
+  pagedTable(
+    pChanged,
+    ['Key', 'Column', 'Change: old to new', 'Line A', 'Line B'],
+    flatFiltered,
+    'changed',
+    (f) => el('tr', null, [
+      el('td', { class: 'keycol' }, [
+        el('span', { class: 'badge flag', text: 'Changed' }),
+        el('span', { class: 'keyparts', text: f.key }),
+      ]),
+      el('td', { text: f.column }),
+      el('td', { class: 'wrapcell' }, [
+        el('span', { class: 'old', text: f.oldValue === '' ? '(empty)' : f.oldValue }),
+        el('span', { class: 'arrow', text: '→' }),
+        el('span', { class: 'new', text: f.newValue === '' ? '(empty)' : f.newValue }),
+      ]),
+      el('td', { class: 'uniq', text: f.oldLine === null || f.oldLine === undefined ? '—' : String(f.oldLine) }),
+      el('td', { class: 'uniq', text: f.newLine === null || f.newLine === undefined ? '—' : String(f.newLine) }),
+    ])
+  );
+
+  const pProb = $('panel-problems');
+  pProb.textContent = '';
+  let any = false;
+
+  if (r.duplicateKeys.length) {
+    any = true;
+    const rows = r.duplicateKeys.filter((d) => matchFilter([keyDisplay(d.keyValues)]));
+    const block = el('div', { class: 'problem-block' }, [
+      el('h3', { text: 'Duplicate keys (' + fmt(r.duplicateKeys.length) + ')' }),
+      el('p', { class: 'hint', text: 'These keys appear more than once in at least one file, so there is no single right pairing. They are excluded from added, removed and changed — resolving them by taking the first match is exactly how a diff tool reports a confident wrong answer.' }),
+      el('div', { class: 'tablescroll' }, [
+        el('table', null, [
+          el('thead', null, [el('tr', null, ['Key', 'Count in A', 'Count in B', 'Lines in A', 'Lines in B'].map((h) => el('th', { scope: 'col', text: h })))]),
+          el('tbody', null, rows.slice(0, PAGE_SIZE).map((d) => el('tr', null, [
+            el('td', { class: 'keycol' }, [el('span', { class: 'keyparts', text: keyDisplay(d.keyValues) })]),
+            el('td', { class: 'uniq', text: String(d.countA) }),
+            el('td', { class: 'uniq', text: String(d.countB) }),
+            el('td', { class: 'uniq', text: d.linesA.join(', ') || '—' }),
+            el('td', { class: 'uniq', text: d.linesB.join(', ') || '—' }),
+          ]))),
+        ]),
+      ]),
+    ]);
+    if (rows.length > PAGE_SIZE) {
+      block.appendChild(el('p', { class: 'hint', text: 'Showing the first ' + PAGE_SIZE + ' of ' + fmt(rows.length) + '. Export the CSV for the full list.' }));
+    }
+    pProb.appendChild(block);
+  }
+
+  for (const [side, parsed, fname] of [['A', A, state.a.name], ['B', B, state.b.name]]) {
+    if (!parsed.malformed.length) continue;
+    any = true;
+    const rows = parsed.malformed.filter((m) => matchFilter([String(m.line), m.raw]));
+    const block = el('div', { class: 'problem-block' }, [
+      el('h3', { text: 'Malformed rows in file ' + side + ' (' + fmt(parsed.malformed.length) + ')' }),
+      el('p', { class: 'hint', text: 'Field count does not match the ' + parsed.header.length + '-column header, so these rows are excluded from the diff rather than padded, truncated or dropped.' + (fname ? ' Source: ' + fname + '.' : '') }),
+      el('div', { class: 'tablescroll' }, [
+        el('table', null, [
+          el('thead', null, [el('tr', null, ['Line', 'Fields found', 'Expected', 'Raw text'].map((h) => el('th', { scope: 'col', text: h })))]),
+          el('tbody', null, rows.slice(0, PAGE_SIZE).map((m) => el('tr', null, [
+            el('td', { class: 'uniq', text: String(m.line) }),
+            el('td', { class: 'uniq', text: String(m.actual) }),
+            el('td', { class: 'uniq', text: String(m.expected) }),
+            el('td', { class: 'wrapcell mono', text: m.raw }),
+          ]))),
+        ]),
+      ]),
+    ]);
+    if (rows.length > PAGE_SIZE) {
+      block.appendChild(el('p', { class: 'hint', text: 'Showing the first ' + PAGE_SIZE + ' of ' + fmt(rows.length) + '.' }));
+    }
+    pProb.appendChild(block);
+  }
+
+  if (r.addedColumns.length || r.removedColumns.length) {
+    any = true;
+    const list = el('ul', { class: 'plain' });
+    for (const c of r.addedColumns) {
+      list.appendChild(el('li', null, [el('span', { class: 'badge flag', text: '+ Column added' }), document.createTextNode(' ' + c)]));
+    }
+    for (const c of r.removedColumns) {
+      list.appendChild(el('li', null, [el('span', { class: 'badge flag', text: '− Column removed' }), document.createTextNode(' ' + c)]));
+    }
+    pProb.appendChild(el('div', { class: 'problem-block' }, [
+      el('h3', { text: 'Column differences' }),
+      el('p', { class: 'hint', text: 'Columns are matched by name, so reordering them is not a change. A column present in only one file is reported here; its cells are never counted as per-row changes.' }),
+      list,
+    ]));
+  }
+
+  if (r.duplicateColumns.length) {
+    any = true;
+    const list = el('ul', { class: 'plain' });
+    for (const d of r.duplicateColumns) {
+      list.appendChild(el('li', { text: d.column + ' — ' + d.countA + ' times in A, ' + d.countB + ' times in B' }));
+    }
+    pProb.appendChild(el('div', { class: 'problem-block' }, [
+      el('h3', { text: 'Duplicate column names' }),
+      el('p', { class: 'hint', text: 'A repeated header name makes lookup by name ambiguous. The first occurrence is used, and the ambiguity is reported rather than hidden.' }),
+      list,
+    ]));
+  }
+
+  if (!any) {
+    pProb.appendChild(el('p', { class: 'empty', text: 'No problems: no duplicate keys, no malformed rows, no column differences. Every row in both files was accounted for.' }));
+  }
+}
+
+/* ---- tabs ---- */
+
+const TABS = ['added', 'removed', 'changed', 'problems'];
+function selectTab(name) {
+  TABS.forEach((t) => {
+    const tab = $('tab-' + t);
+    const panel = $('panel-' + t);
+    const on = t === name;
+    tab.setAttribute('aria-selected', on ? 'true' : 'false');
+    tab.tabIndex = on ? 0 : -1;
+    panel.hidden = !on;
+  });
+}
+TABS.forEach((t, i) => {
+  const tab = $('tab-' + t);
+  tab.addEventListener('click', () => selectTab(t));
+  tab.addEventListener('keydown', (e) => {
+    let j = null;
+    if (e.key === 'ArrowRight') j = (i + 1) % TABS.length;
+    else if (e.key === 'ArrowLeft') j = (i - 1 + TABS.length) % TABS.length;
+    else if (e.key === 'Home') j = 0;
+    else if (e.key === 'End') j = TABS.length - 1;
+    if (j !== null) { e.preventDefault(); selectTab(TABS[j]); $('tab-' + TABS[j]).focus(); }
+  });
+});
+
+/* ---- export ---- */
+
+function csvEscape(v) {
+  const s = v === null || v === undefined ? '' : String(v);
+  return /[",\r\n]/.test(s) ? '"' + s.split('"').join('""') + '"' : s;
+}
+
+function exportCsv() {
+  const r = state.result;
+  if (!r) return;
+  const A = state.a.parsed;
+  const B = state.b.parsed;
+  const out = [['change_type', 'key', 'column', 'before_value', 'after_value', 'line_a', 'line_b', 'note']];
+
+  for (const e of r.added) {
+    for (const c of B.header) out.push(['added', keyDisplay(e.keyValues), c, '', e.row[c] ?? '', '', e.line ?? '', '']);
+  }
+  for (const e of r.removed) {
+    for (const c of A.header) out.push(['removed', keyDisplay(e.keyValues), c, e.row[c] ?? '', '', e.line ?? '', '', '']);
+  }
+  for (const c of r.changed) {
+    for (const cell of c.cells) {
+      out.push(['changed', keyDisplay(c.keyValues), cell.column, cell.oldValue, cell.newValue, c.oldLine ?? '', c.newLine ?? '', '']);
+    }
+  }
+  for (const d of r.duplicateKeys) {
+    out.push(['duplicate_key', keyDisplay(d.keyValues), r.keyColumns.join(' + '), '', '',
+      d.linesA.join(' '), d.linesB.join(' '),
+      'excluded from the diff; ' + d.countA + ' occurrence(s) in A, ' + d.countB + ' in B']);
+  }
+  for (const [side, parsed] of [['a', A], ['b', B]]) {
+    for (const m of parsed.malformed) {
+      out.push(['malformed_row', '', '',
+        side === 'a' ? m.raw : '', side === 'b' ? m.raw : '',
+        side === 'a' ? m.line : '', side === 'b' ? m.line : '',
+        'excluded from the diff; found ' + m.actual + ' fields, expected ' + m.expected]);
+    }
+  }
+  for (const c of r.addedColumns) out.push(['column_added', '', c, '', '', '', '', 'present only in the after file']);
+  for (const c of r.removedColumns) out.push(['column_removed', '', c, '', '', '', '', 'present only in the before file']);
+
+  const text = out.map((row) => row.map(csvEscape).join(',')).join('\r\n') + '\r\n';
+  // Blob + object URL: the file is built and saved locally. Nothing is uploaded.
+  const blob = new Blob(['\uFEFF' + text], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = el('a', { href: url, download: 'deltacsv-results.csv' });
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 0);
+}
+
+/* ---- wiring ---- */
+
+wireDrop('a');
+wireDrop('b');
+
+$('usePasteA').addEventListener('click', () => {
+  const t = $('pasteA').value;
+  if (t.trim()) loadText('a', t, 'pasted text');
+});
+$('usePasteB').addEventListener('click', () => {
+  const t = $('pasteB').value;
+  if (t.trim()) loadText('b', t, 'pasted text');
+});
+
+['headerA', 'delimA'].forEach((id) => $(id).addEventListener('change', () => { parseSide('a'); refreshKeySection(); }));
+['headerB', 'delimB'].forEach((id) => $(id).addEventListener('change', () => { parseSide('b'); refreshKeySection(); }));
+['optTrim', 'optCIK', 'optCIV', 'optTol'].forEach((id) => $(id).addEventListener('change', refreshKeySection));
+
+$('compareBtn').addEventListener('click', () => runCompare(false));
+$('exportBtn').addEventListener('click', exportCsv);
+
+let filterTimer = null;
+$('filterBox').addEventListener('input', (e) => {
+  const v = e.target.value;
+  clearTimeout(filterTimer);
+  filterTimer = setTimeout(() => {
+    state.filter = v.trim();
+    state.page = { added: 1, removed: 1, changed: 1, problems: 1 };
+    renderPanels();
+  }, 150);
+});
+
+$('resetBtn').addEventListener('click', () => {
+  state.a = { text: null, name: null, parsed: null };
+  state.b = { text: null, name: null, parsed: null };
+  state.keys = [];
+  state.result = null;
+  state.filter = '';
+  $('pasteA').value = '';
+  $('pasteB').value = '';
+  $('fileA').value = '';
+  $('fileB').value = '';
+  $('filterBox').value = '';
+  renderStat('a');
+  renderStat('b');
+  $('keySection').classList.add('hidden');
+  $('resultSection').classList.add('hidden');
+  clearError();
+});
+
+function loadDemo(before, after, nameA, nameB) {
+  $('pasteA').value = before;
+  $('pasteB').value = after;
+  loadText('a', before, nameA);
+  loadText('b', after, nameB);
+}
+
+// Demo 1 — the headline. The after file is the same report re-sorted (rows fully
+// reversed) with its columns reordered, plus one column added and one removed.
+// A line diff would call every row different; only the real edits show here.
+$('demoBtn').addEventListener('click', () => {
+  loadDemo(
+    [
+      'order_id,customer,status,total,region',
+      '1001,Acme Ltd,shipped,240.00,East',
+      '1002,Borden Co,pending,118.50,West',
+      '1003,Cygnus,shipped,77.25,East',
+      '1004,Delta Works,pending,410.00,North',
+      '1005,"Eastman, Inc",shipped,52.10,South',
+      '1006,Fenwick,pending,99.99,West',
+    ].join('\n'),
+    [
+      'customer,order_id,total,status,channel',
+      'Fenwick,1006,99.99,shipped,web',
+      '"Eastman, Inc",1005,52.10,shipped,web',
+      'Delta Works,1004,438.75,shipped,phone',
+      'Cygnus,1003,77.25,shipped,web',
+      'Borden Co,1002,118.50,pending,web',
+      'Gale Partners,1007,15.00,pending,web',
+    ].join('\n'),
+    'orders-january.csv',
+    'orders-february.csv'
+  );
+});
+
+// Demo 2 — the correctness rules. sku repeats in both files, so no single column
+// is unique in both and nothing is preselected. Compare on sku alone and the
+// repeated key is quarantined instead of first-matched; add warehouse to the key
+// and the composite resolves it. File B also carries one malformed row.
+$('messyBtn').addEventListener('click', () => {
+  loadDemo(
+    [
+      'sku,warehouse,qty,price',
+      'A-100,EAST,5,10.00',
+      'A-100,WEST,3,10.00',
+      'B-200,EAST,7,20.00',
+      'C-300,EAST,5,30.00',
+    ].join('\n'),
+    [
+      'sku,warehouse,qty,price,updated',
+      'A-100,EAST,5,10.00,2026-01-05',
+      'A-100,WEST,4,10.00,2026-01-05',
+      'B-200,EAST,7,22.50,2026-01-05',
+      'D-400,EAST,5,40.00,2026-01-05',
+      'E-500,EAST,9',
+    ].join('\n'),
+    'stock-before.csv',
+    'stock-after.csv'
+  );
+});
+
+renderStat('a');
+renderStat('b');
 </script>
 </body>
 </html>
