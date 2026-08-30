@@ -234,6 +234,10 @@ ul.plain li{margin-bottom:.3rem}
   </section>
 
   <section class="card hidden" id="results" aria-live="polite">
+    <p style="margin:0 0 .6rem">
+      <button type="button" id="copyLine" class="ghost" hidden>Copy this result</button>
+      <span id="copyOk" hidden style="margin-left:.6rem;color:var(--accent-text);font-weight:600">Copied</span>
+    </p>
     <h2>What you're paying for</h2>
     <ul class="stats" id="stats"></ul>
     <div class="tablescroll">
@@ -1007,6 +1011,41 @@ function render(res, note, scanned) {
   srcnote.textContent = note || '';
   show(results, true);
   show(cta, true);
+  buildShareLine();
+}
+
+// The yearly total is the number people actually react to, and until now the only way to take it
+// away was a CSV download. A figure worth screenshotting with no way to copy it is a sharing
+// mechanism built and left unfinished (Sous, design audit 2026-08-30).
+function buildShareLine() {
+  const btn = document.getElementById('copyLine');
+  const okMsg = document.getElementById('copyOk');
+  if (!btn || !lastResult) return;
+  const subs = lastResult.subscriptions || [];
+  if (!subs.length) { btn.hidden = true; return; }
+  const totalYear = subs.reduce((a, s) => a + (Number(s.annual) || 0), 0);
+  const top = subs.slice().sort((a, b) => (b.annual || 0) - (a.annual || 0))[0];
+  const line =
+    `Found ${subs.length} recurring charge${subs.length === 1 ? '' : 's'} on my statement — `
+    + `${money(totalYear)}/year total. Biggest: ${top.merchant} at ${money(top.annual)}/year.\n`
+    + `Scanned it free, in my own browser, nothing uploaded: `
+    + `https://leuklogic.com/tools/subscription-scanner/`;
+  btn.hidden = false;
+  okMsg.hidden = true;
+  btn.onclick = async () => {
+    try {
+      await navigator.clipboard.writeText(line);
+    } catch (e) {
+      // Clipboard API needs a secure context and can be blocked; fall back rather than fail mute.
+      const ta = document.createElement('textarea');
+      ta.value = line; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); } catch (e2) {}
+      document.body.removeChild(ta);
+    }
+    okMsg.hidden = false;
+    setTimeout(() => { okMsg.hidden = true; }, 2200);
+  };
 }
 
 function downloadReport() {

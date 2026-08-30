@@ -254,6 +254,9 @@ ul.plain li{margin-bottom:.3rem}
       <li class="hot"><span class="n" id="recYear">—</span><span class="k">Text-back could recover / yr</span></li>
     </ul>
     <p id="summary" style="font-size:1.05rem;color:var(--ink)"></p>
+    <button type="button" id="copyLine" class="ghost" hidden
+            style="margin-top:.5rem">Copy this result</button>
+    <span id="copyOk" hidden style="margin-left:.6rem;color:var(--accent-text);font-weight:600">Copied</span>
   </section>
 
   <section class="card">
@@ -376,6 +379,33 @@ function render() {
       `you're leaving about <strong>${money(r.lostPerYear)}/year</strong> on the table. ` +
       `An automatic text-back that recovers just ${r.inputs.recoveryRate}% of those would put ` +
       `<strong>${money(r.recoveredPerYear)}/year</strong> back in your pocket.`;
+  }
+
+  const btn = $('copyLine'), okMsg = $('copyOk');
+  if (btn) {
+    const shareable = r.lostPerYear > 0
+      ? `${r.inputs.missedPerWeek} missed calls a week at a ${money(r.inputs.jobValue)} job = `
+        + `${money(r.lostPerYear)}/year walking out the door. An auto text-back recovering `
+        + `${r.inputs.recoveryRate}% brings back ${money(r.recoveredPerYear)}/year.\n`
+        + `Worked out free, in the browser: https://leuklogic.com/tools/missed-call-calculator/`
+      : '';
+    btn.hidden = !shareable;
+    okMsg.hidden = true;
+    btn.onclick = async () => {
+      try {
+        await navigator.clipboard.writeText(shareable);
+      } catch (e) {
+        // Clipboard API needs a secure context and can be blocked outright. Falling back to a
+        // selected textarea means the button still does something useful instead of failing mute.
+        const ta = document.createElement('textarea');
+        ta.value = shareable; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); } catch (e2) {}
+        document.body.removeChild(ta);
+      }
+      okMsg.hidden = false;
+      setTimeout(() => { okMsg.hidden = true; }, 2200);
+    };
   }
 }
 
