@@ -149,6 +149,9 @@ footer.foot{border-top:1px solid var(--line);margin-top:2.5rem;padding-top:1.1re
 </div>
 
 
+
+
+<!-- leuk-subscribe:start -->
 <section class="card" id="leuk-subscribe" style="margin-top:1.25rem">
   <h2 style="margin-top:0">Get the next free tool</h2>
   <p style="margin:.35rem 0 .9rem">
@@ -177,6 +180,24 @@ footer.foot{border-top:1px solid var(--line);margin-top:2.5rem;padding-top:1.1re
     type here, and only when you press the button.
   </p>
 </section>
+<script>
+// The endpoint redirects back here with ?subscribed=1 and, without this, the visitor lands on an
+// unchanged page and reasonably concludes it failed. A submit with no acknowledgement is a bug even
+// when the submit worked. Inline, so no external request; it REPLACES the form rather than sitting
+// beside it, so nobody submits twice wondering whether the first one took.
+(function () {
+  try {
+    if (new URLSearchParams(location.search).get('subscribed') !== '1') return;
+    var box = document.getElementById('leuk-subscribe');
+    if (!box) return;
+    box.innerHTML = "<h2 style='margin-top:0'>You're on the list</h2>"
+      + "<p style='margin:.35rem 0 0'>We'll email you when the next free tool goes live. "
+      + "Nothing else, and you can unsubscribe from any message.</p>";
+    history.replaceState({}, '', location.pathname);
+  } catch (e) {}
+})();
+</script>
+<!-- leuk-subscribe:end -->
 <footer class="foot">
   <p>CheckClip is a free tool built by <a href="https://leuklogic.com">LeukLogic</a>. No account, no upload, no tracking. If a platform changes a limit and we're stale, tell us: <a href="mailto:tim@leuklogic.com">tim@leuklogic.com</a>.</p>
   <p>Known limits, stated plainly: the browser's video engine can't read every codec — when duration or dimensions come back unreadable, the affected checks say so instead of silently passing; bitrate and codec-profile rules aren't checked (browsers don't expose them reliably); platform limits are re-verified by hand, and the verification date is shown above.</p>

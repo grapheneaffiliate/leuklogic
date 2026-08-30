@@ -181,6 +181,9 @@ footer.foot{border-top:1px solid var(--line);margin-top:2.5rem;padding-top:1.1re
 </main>
 
 
+
+
+<!-- leuk-subscribe:start -->
 <section class="card" id="leuk-subscribe" style="margin-top:1.25rem">
   <h2 style="margin-top:0">Get the next free tool</h2>
   <p style="margin:.35rem 0 .9rem">
@@ -209,6 +212,24 @@ footer.foot{border-top:1px solid var(--line);margin-top:2.5rem;padding-top:1.1re
     type here, and only when you press the button.
   </p>
 </section>
+<script>
+// The endpoint redirects back here with ?subscribed=1 and, without this, the visitor lands on an
+// unchanged page and reasonably concludes it failed. A submit with no acknowledgement is a bug even
+// when the submit worked. Inline, so no external request; it REPLACES the form rather than sitting
+// beside it, so nobody submits twice wondering whether the first one took.
+(function () {
+  try {
+    if (new URLSearchParams(location.search).get('subscribed') !== '1') return;
+    var box = document.getElementById('leuk-subscribe');
+    if (!box) return;
+    box.innerHTML = "<h2 style='margin-top:0'>You're on the list</h2>"
+      + "<p style='margin:.35rem 0 0'>We'll email you when the next free tool goes live. "
+      + "Nothing else, and you can unsubscribe from any message.</p>";
+    history.replaceState({}, '', location.pathname);
+  } catch (e) {}
+})();
+</script>
+<!-- leuk-subscribe:end -->
 <footer class="foot">
   <p>SwiftStatement is a free tool built by <a href="https://leuklogic.com">LeukLogic</a> — bots, automations and internal tools. Need this at volume, on a schedule, or wired into your bookkeeping? That's exactly what we build: <a href="mailto:tim@leuklogic.com?subject=Statement%20automation">tim@leuklogic.com</a>.</p>
   <p>Known limits, stated plainly: scanned/photographed statements have no text layer, and this tool won't pretend to OCR them — it tells you. Layouts vary by bank; the parser handles the common shapes (date · description · amount · optional balance) and reports the rest rather than guessing. Amounts keep the sign convention your statement uses.</p>

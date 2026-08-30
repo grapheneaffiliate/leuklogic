@@ -269,6 +269,9 @@ ul.plain li{margin-bottom:.3rem}
 </main>
 
 
+
+
+<!-- leuk-subscribe:start -->
 <section class="card" id="leuk-subscribe" style="margin-top:1.25rem">
   <h2 style="margin-top:0">Get the next free tool</h2>
   <p style="margin:.35rem 0 .9rem">
@@ -297,6 +300,24 @@ ul.plain li{margin-bottom:.3rem}
     type here, and only when you press the button.
   </p>
 </section>
+<script>
+// The endpoint redirects back here with ?subscribed=1 and, without this, the visitor lands on an
+// unchanged page and reasonably concludes it failed. A submit with no acknowledgement is a bug even
+// when the submit worked. Inline, so no external request; it REPLACES the form rather than sitting
+// beside it, so nobody submits twice wondering whether the first one took.
+(function () {
+  try {
+    if (new URLSearchParams(location.search).get('subscribed') !== '1') return;
+    var box = document.getElementById('leuk-subscribe');
+    if (!box) return;
+    box.innerHTML = "<h2 style='margin-top:0'>You're on the list</h2>"
+      + "<p style='margin:.35rem 0 0'>We'll email you when the next free tool goes live. "
+      + "Nothing else, and you can unsubscribe from any message.</p>";
+    history.replaceState({}, '', location.pathname);
+  } catch (e) {}
+})();
+</script>
+<!-- leuk-subscribe:end -->
 <footer class="foot">
   <p>Built by <a href="https://leuklogic.com">LeukLogic</a> — we build the bots, automations and internal tools that stop small businesses from leaking money. Runs entirely in your browser: nothing you type here is uploaded or stored.</p>
   <p>Honest about the math: this is an estimate from YOUR inputs — lost revenue = missed calls × your close rate × your job value, and recovery applies your chosen win-back %. No hidden multipliers; change any number and watch it update.</p>
