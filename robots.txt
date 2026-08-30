@@ -1,6 +1,6 @@
 # leuklogic.com — robots.txt
 # This site welcomes AI crawlers, search engines, and answer engines.
-# Everything here is public: a services page and eight free in-browser tools.
+# Everything here is public: a services page and nine free in-browser tools.
 # Machine-readable summaries for LLMs: https://leuklogic.com/llms.txt
 # and https://leuklogic.com/llms-full.txt
 
