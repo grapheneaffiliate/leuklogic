@@ -1,3 +1,9 @@
 *.png
 *.jpg
 !og.png
+
+# OG social cards are DELIVERABLES, not build noise. The blanket *.png above silently
+# swallowed all nine on 2026-08-30: `git add -A` succeeded, the commit succeeded, the meta
+# tags went live pointing at images that 404'd. Un-ignore them explicitly.
+!og.png
+!og/*.png
