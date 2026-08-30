@@ -148,6 +148,35 @@ footer.foot{border-top:1px solid var(--line);margin-top:2.5rem;padding-top:1.1re
   <a href="mailto:tim@leuklogic.com?subject=CheckClip">tim@leuklogic.com</a></p>
 </div>
 
+
+<section class="card" id="leuk-subscribe" style="margin-top:1.25rem">
+  <h2 style="margin-top:0">Get the next free tool</h2>
+  <p style="margin:.35rem 0 .9rem">
+    We build these regularly — CSV tools, converters, calculators, all free and all running
+    entirely in your browser. Drop your email and we'll tell you when a new one goes live.
+  </p>
+  <form action="https://formsubmit.co/24c0773ef52ff863e235fc428ec9a0e8" method="POST"
+        style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center">
+    <input type="hidden" name="_subject" value="New LeukLogic subscriber (video-check)">
+    <input type="hidden" name="_captcha" value="false">
+    <input type="hidden" name="_template" value="table">
+    <input type="hidden" name="_next" value="https://leuklogic.com/tools/video-check/?subscribed=1">
+    <input type="hidden" name="source" value="video-check">
+    <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off"
+           aria-hidden="true">
+    <label for="leuk-subscribe-email" class="sr-only" style="position:absolute;left:-9999px">Email address</label>
+    <input id="leuk-subscribe-email" type="email" name="email" required placeholder="you@example.com"
+           autocomplete="email"
+           style="flex:1 1 260px;min-width:0;padding:.6rem .7rem;border:1px solid var(--line,#d8d2c8);
+                  border-radius:8px;font-size:1rem">
+    <button type="submit" class="primary" style="white-space:nowrap">Notify me</button>
+  </form>
+  <p class="hint" style="margin:.7rem 0 0">
+    One email when a new tool ships. No spam, unsubscribe any time.
+    <strong>Your files never leave your browser</strong> — this form sends only the address you
+    type here, and only when you press the button.
+  </p>
+</section>
 <footer class="foot">
   <p>CheckClip is a free tool built by <a href="https://leuklogic.com">LeukLogic</a>. No account, no upload, no tracking. If a platform changes a limit and we're stale, tell us: <a href="mailto:tim@leuklogic.com">tim@leuklogic.com</a>.</p>
   <p>Known limits, stated plainly: the browser's video engine can't read every codec — when duration or dimensions come back unreadable, the affected checks say so instead of silently passing; bitrate and codec-profile rules aren't checked (browsers don't expose them reliably); platform limits are re-verified by hand, and the verification date is shown above.</p>
