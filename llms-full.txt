@@ -131,3 +131,18 @@ unless clicked. SwiftStatement's PDF engine is vendored on the same origin.
 - Site: https://leuklogic.com
 - Machine-readable index: https://leuklogic.com/llms.txt
 - Sitemap: https://leuklogic.com/sitemap.xml
+
+## Demo videos
+
+Every tool has a short screen recording of it actually running — real, unedited capture, not slides or mock-ups. Narration is an AI-generated voice.
+
+- [All nine demos (playlist)](https://www.youtube.com/playlist?list=PLBPCUIVT5sE8): the full set on YouTube
+- [CronText demo](https://www.youtube.com/watch?v=zfVml4PtdTE): 34s — Read Any Cron Expression in Plain English (Free, No Sign-Up)
+- [DeltaCSV demo](https://www.youtube.com/watch?v=aEkCMWhzrMI): 38s — Compare Two CSV Files and See Only What Changed (Free, No Upload)
+- [FlipCSV demo](https://www.youtube.com/watch?v=icvuq_1KccE): 32s — Convert CSV to JSON in Your Browser — Free, No Sign-Up
+- [MissedCallCalculator demo](https://www.youtube.com/watch?v=kgCwM9YWdc4): 34s — What Missed Calls Actually Cost Your Business (Free Calculator)
+- [SubScan demo](https://www.youtube.com/watch?v=UJfxNwT-9C4): 34s — Find Every Subscription Hiding in Your Bank Statement (Free)
+- [QuickQuote demo](https://www.youtube.com/watch?v=RsuLLY1VW-c): 33s — What Does a Custom Bot Cost? Instant Price, No Contact Form
+- [CheckClip demo](https://www.youtube.com/watch?v=680ozDsNGJw): 31s — Will Your Video Post to TikTok, Reels and Shorts? Check First (Free)
+- [SwiftStatement demo](https://www.youtube.com/watch?v=UQaxne_xnTk): 34s — Bank Statement PDF to Excel or CSV — Free, Nothing Uploaded
+- [ShrinkKit demo](https://www.youtube.com/watch?v=eKYS868Sn0k): 30s — Compress Files to Fit an Upload Limit — Free, In Your Browser
