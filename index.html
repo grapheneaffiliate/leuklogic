@@ -25,33 +25,47 @@
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://leuklogic.com/#org","name":"LeukLogic","url":"https://leuklogic.com/","email":"tim@leuklogic.com","description":"Discord and Slack bots, automations, internal tools and fast websites. Built in days, not months. Most projects $100-$500.","founder":{"@type":"Person","name":"Tim McGirl"},"areaServed":{"@type":"Country","name":"United States"},"logo":"https://leuklogic.com/og.png"},{"@type":"ProfessionalService","@id":"https://leuklogic.com/#service","name":"LeukLogic","url":"https://leuklogic.com/","email":"tim@leuklogic.com","image":"https://leuklogic.com/og.png","description":"One-person software shop: custom Discord and Slack bots, web scrapers, automations, internal tools and fast static websites at fixed prices, delivered in days.","founder":{"@type":"Person","name":"Tim McGirl"},"parentOrganization":{"@id":"https://leuklogic.com/#org"},"priceRange":"$100-$500","currenciesAccepted":"USD","paymentAccepted":"Credit card, debit card, Apple Pay, Google Pay (via Stripe)","areaServed":{"@type":"Country","name":"United States"},"hasOfferCatalog":{"@type":"OfferCatalog","name":"Services","itemListElement":[{"@type":"Offer","priceCurrency":"USD","priceSpecification":{"@type":"PriceSpecification","minPrice":100,"maxPrice":500,"priceCurrency":"USD"},"itemOffered":{"@type":"Service","name":"Discord and Slack bots","description":"FAQ answering, moderation, tickets and onboarding bots for Discord and Slack. Days, not weeks."}},{"@type":"Offer","priceCurrency":"USD","priceSpecification":{"@type":"PriceSpecification","minPrice":100,"maxPrice":500,"priceCurrency":"USD"},"itemOffered":{"@type":"Service","name":"Automations and scheduled reports","description":"Scheduled data pulls, web scrapers and automated reports, delivered on a schedule."}},{"@type":"Offer","priceCurrency":"USD","priceSpecification":{"@type":"PriceSpecification","minPrice":100,"maxPrice":500,"priceCurrency":"USD"},"itemOffered":{"@type":"Service","name":"AI triage and routing workflows","description":"Automations that read, categorise and route messages before you open the inbox."}},{"@type":"Offer","priceCurrency":"USD","itemOffered":{"@type":"Service","name":"Internal tools and dashboards","description":"Small web apps, dashboards and multi-step workflows. Fixed price, quoted flat before work starts."}},{"@type":"Offer","priceCurrency":"USD","itemOffered":{"@type":"Service","name":"Fast static websites","description":"Static sites that load instantly — no plugins to break. Fixed price, quoted before work starts."}}]}},{"@type":"WebSite","@id":"https://leuklogic.com/#website","name":"LeukLogic","url":"https://leuklogic.com/","publisher":{"@id":"https://leuklogic.com/#org"}},{"@type":"FAQPage","@id":"https://leuklogic.com/#faq","url":"https://leuklogic.com/","mainEntity":[{"@type":"Question","name":"Who can build a custom Discord or Slack bot for a small business?","acceptedAnswer":{"@type":"Answer","text":"LeukLogic builds custom Discord and Slack bots for small businesses and communities — FAQ answering, moderation, tickets, onboarding. Most bots run $100–$500 and ship in days, not weeks. It's one person, Tim McGirl; email tim@leuklogic.com with what you need."}},{"@type":"Question","name":"How much does a custom web scraper or automation cost?","acceptedAnswer":{"@type":"Answer","text":"At LeukLogic, a web scraper, a scheduled report or an automation that reads and routes runs $100–$500. Larger builds — internal tools, dashboards, multi-step workflows — get a flat quote before anything starts. The price you approve doesn't move unless you ask for something new."}},{"@type":"Question","name":"How fast can I get a small automation or bot built?","acceptedAnswer":{"@type":"Answer","text":"Days, not weeks, for most $100–$500 projects. You email the task, and you usually have a fixed price and a delivery date within a day. No discovery call required."}},{"@type":"Question","name":"Do I have to install anything to use the free tools?","acceptedAnswer":{"@type":"Answer","text":"No. All nine free tools on leuklogic.com — CSV diff, CSV-to-JSON, cron explainer, missed-call calculator, subscription scanner, instant quote, video checker, bank-statement converter and file compressor — run entirely in your browser. Nothing you load into them is uploaded, and there's no account or sign-up."}},{"@type":"Question","name":"How does payment work?","acceptedAnswer":{"@type":"Answer","text":"Payments run through Stripe — credit and debit cards, Apple Pay, Google Pay. When you accept a quote, work starts with a $100 deposit that comes off the project price, and the rest is due on delivery. Checkout requires a project reference, issued once the scope is signed off; an invoice is available if you prefer."}},{"@type":"Question","name":"Where is LeukLogic based?","acceptedAnswer":{"@type":"Answer","text":"LeukLogic is based in Virginia, in the United States, and works entirely by email with clients anywhere in the US — tim@leuklogic.com. No calls unless you want one, and replies usually come the same day."}},{"@type":"Question","name":"Do I own the code when the project is done?","acceptedAnswer":{"@type":"Answer","text":"Yes. You keep the code, the repo and the accounts — in your name, on your infrastructure. There's no retainer, no lock-in and no monthly fee to LeukLogic."}},{"@type":"Question","name":"What kinds of projects does LeukLogic take on?","acceptedAnswer":{"@type":"Answer","text":"Discord and Slack bots, web scrapers and scheduled data pulls, automated reports, AI triage and routing workflows, small web apps and internal dashboards, and fast static websites. It doesn't do mobile apps, six-month platform rebuilds or 24/7 on-call work — and if a $9/month tool already solves your problem, you'll be told so instead of sold to."}}]}]}</script>
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#FAF7F2">
+<script>document.documentElement.classList.add('js');</script>
 <style>
+/* =====================================================================
+   LeukLogic homepage — single file, zero external requests, no cookies.
+   Motion policy: everything is visible and readable with JavaScript off;
+   the .js class (set above) is the only thing that opts an element into
+   hidden-until-revealed, and prefers-reduced-motion turns all motion off.
+   ===================================================================== */
+
 /* ---------- tokens: complete light palette on bare :root ---------- */
 :root{
   --paper:#FAF7F2;
   --surface:#FFFFFF;
   --ink:#12161B;
   --body:#3D454E;
-  --muted:#6E7883;
+  --muted:#5F6973;          /* 5.6:1 on paper */
   --line:#E4DED4;
   --line-strong:#CFC7B9;
-  --accent:#D9502B;          /* brand persimmon: rules, strike, decoration */
-  --accent-text:#B03D1D;     /* AA-safe persimmon for small text (5.5:1 on paper) */
-  --accent-hover:#BF4021;
-  --btn-bg:#BF4021;          /* 5.3:1 with white label */
+  --accent:#D9502B;         /* brand persimmon: rules, strike, decoration */
+  --accent-text:#B03D1D;    /* AA-safe persimmon for small text */
+  --btn-bg:#BF4021;         /* 5.3:1 with white label */
   --btn-bg-hover:#A5361B;
   --accent-ink:#FFFFFF;
-  --teal:#10574F;
-  --moss:#4B6B3A;
-  --tooth:rgba(18,22,27,.02);
-  --halo:rgba(217,80,43,.14);
-  --btn-shadow:0 1px 0 rgba(18,22,27,.25);
-
+  --halo:rgba(217,80,43,.16);
+  --grid:rgba(18,22,27,.07);
+  --glass:rgba(255,255,255,.78);
+  --glass-line:rgba(18,22,27,.09);
+  --nav-bg:rgba(250,247,242,.84);
+  --hover-bg:rgba(18,22,27,.05);
+  --sh1:0 1px 2px rgba(18,22,27,.05),0 12px 32px -20px rgba(18,22,27,.22);
+  --sh2:0 2px 4px rgba(18,22,27,.06),0 28px 56px -24px rgba(18,22,27,.30);
+  --lat-line:40,44,54;      /* lattice stroke rgb */
+  --lat-dot:60,66,78;
   --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
-
+  --s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;--s7:48px;--s8:64px;
   --pad:clamp(20px,5vw,48px);
-  --rhythm:clamp(72px,11vh,132px);
+  --rhythm:clamp(72px,10vh,120px);
+  --r:14px;
+  --navh:64px;
+  --pb:26vh;--pm:12vh;--pf:-9vh;   /* parallax travel per layer over the first 120vh of scroll */
 }
 @media (prefers-color-scheme:dark){
   :root{
@@ -59,26 +73,31 @@
     --surface:#141A20;
     --ink:#F1EDE6;
     --body:#B9C0C8;
-    --muted:#838C96;
+    --muted:#8E979F;
     --line:#242C34;
     --line-strong:#333B44;
     --accent:#FF7448;
-    --accent-text:#FF7448;
-    --accent-hover:#FF8C67;
+    --accent-text:#FF8A64;
     --btn-bg:#FF7448;
     --btn-bg-hover:#FF8C67;
     --accent-ink:#12161B;
-    --teal:#45B9A6;
-    --moss:#8FBF6A;
-    --tooth:rgba(241,237,230,.02);
-    --halo:rgba(255,116,72,.13);
-    --btn-shadow:0 1px 0 rgba(0,0,0,.5);
+    --halo:rgba(255,116,72,.14);
+    --grid:rgba(241,237,230,.06);
+    --glass:rgba(20,26,32,.74);
+    --glass-line:rgba(241,237,230,.10);
+    --nav-bg:rgba(12,15,19,.80);
+    --hover-bg:rgba(241,237,230,.06);
+    --sh1:0 1px 2px rgba(0,0,0,.4),0 12px 32px -20px rgba(0,0,0,.7);
+    --sh2:0 2px 4px rgba(0,0,0,.5),0 28px 56px -24px rgba(0,0,0,.8);
+    --lat-line:190,196,206;
+    --lat-dot:170,178,190;
   }
 }
 
 /* ---------- base ---------- */
 *,*::before,*::after{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
+html{-webkit-text-size-adjust:100%;scroll-padding-top:calc(var(--navh) + 12px)}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
 body{
   margin:0;
   background-color:var(--paper);
@@ -90,14 +109,13 @@ body{
   font-variant-numeric:tabular-nums;
   overflow-x:hidden;
 }
-h1,h2,h3{color:var(--ink);line-height:1.1;margin:0}
+h1,h2,h3{color:var(--ink);line-height:1.1;margin:0;text-wrap:balance}
 p{margin:0}
 a{color:inherit}
 img,svg{max-width:100%}
-
-.wrap{width:100%;max-width:1080px;margin:0 auto;padding-left:var(--pad);padding-right:var(--pad)}
-.measure{max-width:62ch}
-
+ul{margin:0;padding:0;list-style:none}
+.wrap{width:100%;max-width:1120px;margin:0 auto;padding-left:var(--pad);padding-right:var(--pad)}
+.sr-only{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 .skip{
   position:absolute;left:-9999px;top:0;z-index:99;
   background:var(--btn-bg);color:var(--accent-ink);
@@ -105,543 +123,563 @@ img,svg{max-width:100%}
   padding:12px 18px;border-radius:0 0 8px 0;text-decoration:none;
 }
 .skip:focus{left:0}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:6px}
 
-:focus-visible{
-  outline:3px solid var(--accent);
-  outline-offset:2px;
-  box-shadow:0 0 0 1px var(--ink);
-  border-radius:3px;
-}
-
-/* ---------- shared type ---------- */
+/* ---------- type ---------- */
 .eyebrow{
-  font-family:var(--mono);
-  font-size:.72rem;
-  text-transform:uppercase;
-  letter-spacing:.15em;
-  color:var(--muted);
-  margin:0;
+  font-family:var(--mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.15em;
+  color:var(--muted);margin:0;
 }
-.smallprint{
-  font-family:var(--mono);
-  font-size:.72rem;
-  text-transform:uppercase;
-  letter-spacing:.14em;
-  color:var(--muted);
-}
-h2{font-size:clamp(1.75rem,3.6vw,2.6rem);letter-spacing:-.02em}
-.sublead{color:var(--muted);margin-top:12px;max-width:52ch;font-size:1.02rem}
+.smallprint{font-family:var(--mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.14em;color:var(--muted)}
+h2{font-size:clamp(1.75rem,3.6vw,2.6rem);letter-spacing:-.025em;margin-top:var(--s3)}
+h3{font-size:1.2rem;letter-spacing:-.01em;line-height:1.3}
+.sublead{color:var(--muted);margin-top:var(--s3);max-width:54ch;font-size:1.05rem}
 .section{padding-top:var(--rhythm);padding-bottom:var(--rhythm)}
+.section--tight{padding-top:calc(var(--rhythm) * .6);padding-bottom:calc(var(--rhythm) * .6)}
 .rule{border:0;border-top:1px solid var(--line);margin:0}
+.shead{max-width:64ch}
+.section--alt{background:var(--surface);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+@media (prefers-color-scheme:dark){.section--alt{background:#10151B}}
 
 /* ---------- buttons ---------- */
 .btn{
-  display:inline-flex;align-items:center;gap:.5em;
+  display:inline-flex;align-items:center;justify-content:center;gap:.5em;
   background:var(--btn-bg);color:var(--accent-ink);
-  font-weight:650;font-size:1rem;
-  text-decoration:none;
-  padding:14px 28px;border-radius:8px;
-  min-height:48px;
-  box-shadow:var(--btn-shadow);
-  transition:background-color .12s ease,transform .12s ease;
+  font-weight:650;font-size:1rem;text-decoration:none;
+  padding:12px 24px;border-radius:10px;min-height:48px;
+  border:0;cursor:pointer;font-family:inherit;
+  box-shadow:0 1px 0 rgba(18,22,27,.25),0 10px 24px -14px rgba(191,64,33,.7);
+  transition:background-color .15s ease,transform .15s ease,box-shadow .15s ease;
 }
 .btn:hover{background:var(--btn-bg-hover)}
-.btn--lg{font-size:1.075rem;padding:18px 34px;min-height:56px}
-.btn .arw{transition:transform .12s ease}
-.btn:hover .arw{transform:translateX(2px)}
+.btn--lg{font-size:1.075rem;padding:16px 30px;min-height:56px}
+.btn--sm{font-size:.92rem;padding:0 16px;min-height:44px}
+.btn .arw{transition:transform .15s ease}
+.btn:hover .arw{transform:translateX(3px)}
 @media (prefers-reduced-motion:no-preference){
-  .btn:hover{transform:translateY(-1px)}
+  .btn:hover{transform:translateY(-1px);box-shadow:0 1px 0 rgba(18,22,27,.25),0 14px 28px -14px rgba(191,64,33,.75)}
 }
+.btn--ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1px var(--line-strong)}
+.btn--ghost:hover{background:var(--surface);color:var(--ink)}
 .plainmail{
-  font-family:var(--mono);
-  font-size:.9rem;
-  color:var(--body);
-  text-decoration:underline;
-  text-decoration-color:var(--accent);
-  text-underline-offset:3px;
+  font-family:var(--mono);font-size:.9rem;color:var(--body);
+  text-decoration:underline;text-decoration-color:var(--accent);text-underline-offset:3px;
 }
 .plainmail:hover{color:var(--accent-text)}
 
-/* ---------- header ---------- */
-.masthead{
-  padding-top:26px;padding-bottom:6px;
-  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+/* ---------- sticky nav ---------- */
+.nav{
+  position:sticky;top:0;z-index:50;
+  background:var(--nav-bg);
+  -webkit-backdrop-filter:saturate(1.5) blur(14px);backdrop-filter:saturate(1.5) blur(14px);
+  border-bottom:1px solid transparent;
+  transition:border-color .2s ease,box-shadow .2s ease;
 }
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.nav{background:var(--paper)}}
+.nav.is-scrolled{border-bottom-color:var(--line);box-shadow:0 10px 30px -24px rgba(18,22,27,.35)}
+.nav__in{display:flex;align-items:center;justify-content:space-between;gap:var(--s4);min-height:var(--navh)}
 .wordmark{
-  display:inline-flex;align-items:center;gap:10px;
-  text-decoration:none;color:var(--ink);
-  font-weight:700;letter-spacing:-.02em;font-size:1.06rem;
+  display:inline-flex;align-items:center;gap:10px;min-height:44px;
+  text-decoration:none;color:var(--ink);font-weight:700;letter-spacing:-.02em;font-size:1.06rem;
 }
-.wordmark .mk{display:block}
-.masthead .plainmail{font-size:.82rem}
+.wordmark .mk{display:block;flex:none}
+.nav__links{display:none;gap:2px}
+.nav__links a{
+  display:inline-flex;align-items:center;min-height:44px;padding:0 14px;border-radius:10px;
+  text-decoration:none;color:var(--body);font-size:.95rem;font-weight:600;
+  transition:background-color .15s ease,color .15s ease;
+}
+.nav__links a:hover{background:var(--hover-bg);color:var(--ink)}
+@media (min-width:760px){.nav__links{display:flex}}
+.nav .btn--sm .lbl-long{display:none}
+@media (min-width:480px){.nav .btn--sm .lbl-long{display:inline}.nav .btn--sm .lbl-short{display:none}}
 
-/* ---------- hero ---------- */
+/* ---------- hero: three layers at three scroll rates ---------- */
 .hero{
-  position:relative;
-  padding-top:clamp(48px,8vh,84px);
-  padding-bottom:clamp(56px,9vh,96px);
+  position:relative;overflow:hidden;isolation:isolate;
+  padding-top:clamp(40px,6vh,72px);padding-bottom:clamp(56px,8vh,104px);
+}
+.hero::before{ /* static warm halo behind the headline, both layouts */
+  content:"";position:absolute;inset:-20% 0 0 0;z-index:-2;pointer-events:none;
+  background:radial-gradient(110% 80% at 18% 0%,var(--halo),transparent 60%);
+}
+.stage{position:absolute;inset:0;z-index:-1;pointer-events:none}
+.layer{position:absolute;inset:0;will-change:transform;transform:translate3d(0,0,0)}
+.layer--back{
+  inset:-30% 0;
+  background:
+    linear-gradient(var(--grid) 1px,transparent 1px) 0 0/44px 44px,
+    linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/44px 44px;
+  -webkit-mask-image:radial-gradient(70% 60% at 76% 40%,#000 20%,transparent 78%);
+  mask-image:radial-gradient(70% 60% at 76% 40%,#000 20%,transparent 78%);
+}
+.layer--mid{display:block;width:100%;height:100%;opacity:.9;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0%,transparent 40%,rgba(0,0,0,.6) 54%,#000 70%);
+  mask-image:linear-gradient(90deg,transparent 0%,transparent 40%,rgba(0,0,0,.6) 54%,#000 70%);
+}
+.layer--front{left:56%;right:0}
+.hero__copy{position:relative;z-index:1;max-width:640px}
+@media (min-width:900px){.hero__copy{max-width:60%}}
+
+/* floating cards: specific, quiet, obviously illustrative */
+.fc{
+  position:absolute;padding:14px 16px;border-radius:14px;
+  background:var(--glass);border:1px solid var(--glass-line);box-shadow:var(--sh2);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+  font-family:var(--mono);font-size:.72rem;line-height:1.5;color:var(--body);
+  transform:rotate(var(--rot,0deg));
+  display:flex;flex-direction:column;gap:6px;
+}
+.fc b{color:var(--ink);font-weight:600}
+.fc .k{font-size:.62rem;text-transform:uppercase;letter-spacing:.14em;color:var(--muted)}
+.fc .msg{display:block;padding:6px 10px;border-radius:9px;background:var(--hover-bg);width:fit-content;max-width:100%}
+.fc .msg--bot{background:var(--halo);color:var(--ink)}
+.fc .row{display:flex;justify-content:space-between;gap:12px;border-top:1px dashed var(--line);padding-top:6px}
+.fc .k + .row{border-top:0;padding-top:0}
+.fc .bars{display:flex;align-items:flex-end;gap:5px;height:36px;padding:2px 0}
+.fc .bars i{flex:1;background:var(--line-strong);border-radius:3px 3px 0 0;height:var(--h)}
+.fc .bars i.acc{background:var(--accent)}
+.fc--bot{top:12%;left:6%;width:270px;--rot:-2.5deg;z-index:1}
+.fc--report{top:42%;right:5%;width:250px;--rot:1.5deg;z-index:2}
+.fc--quote{top:68%;left:16%;width:240px;--rot:-1deg;z-index:3}
+@media (prefers-reduced-motion:no-preference){
+  .fc{animation:bob var(--bd,9s) ease-in-out var(--bdel,0s) infinite alternate}
+  @keyframes bob{from{transform:translate3d(0,0,0) rotate(var(--rot,0deg))}to{transform:translate3d(0,-10px,0) rotate(var(--rot,0deg))}}
 }
 
-/* ---------- hero float: the ad's world, faint (CSS-only, zero requests) ---------- */
-.heroFloat{position:absolute;inset:-140px 0 0 0;z-index:-1;overflow:hidden;pointer-events:none;perspective:900px}
-.heroFloat i{position:absolute;display:block;border-radius:14px;background:var(--line-strong);opacity:.12;
-  animation:cardDrift var(--fd,26s) ease-in-out var(--fdel,0s) infinite alternate;
-  transform:rotateX(55deg) rotateZ(-14deg) translate3d(0,0,0)}
-.heroFloat i.acc{background:var(--accent);opacity:.16;box-shadow:0 0 34px var(--halo)}
-@keyframes cardDrift{
-  from{transform:rotateX(55deg) rotateZ(-14deg) translate3d(0,0,0)}
-  to{transform:rotateX(48deg) rotateZ(-10deg) translate3d(var(--fx,18px),var(--fy,-26px),60px)}
+/* small screens: the stage becomes its own band under the copy, same three layers */
+@media (max-width:899px){
+  :root{--pb:9vh;--pm:5vh;--pf:-4vh}
+  .stage{position:relative;inset:auto;height:260px;margin-top:var(--s6);z-index:0}
+  .layer--back{inset:-20% 0;
+    -webkit-mask-image:radial-gradient(60% 70% at 50% 50%,#000 30%,transparent 80%);
+    mask-image:radial-gradient(60% 70% at 50% 50%,#000 30%,transparent 80%)}
+  .layer--mid{opacity:.7;
+    -webkit-mask-image:radial-gradient(70% 80% at 50% 50%,#000 40%,transparent 85%);
+    mask-image:radial-gradient(70% 80% at 50% 50%,#000 40%,transparent 85%)}
+  .layer--front{left:0;right:0}
+  .fc{font-size:.66rem;padding:10px 12px}
+  .fc--bot{top:6%;left:3%;width:60%}
+  .fc--report{top:44%;right:3%;width:54%;left:auto}
+  .fc--quote{display:none}
 }
-@media (prefers-reduced-motion:reduce){.heroFloat i{animation:none}}
-.hero::before{
-  content:"";position:absolute;inset:-140px 0 0 0;z-index:-2;
-  background:radial-gradient(120% 90% at 20% 0%,var(--halo),transparent 60%);
-  pointer-events:none;
+
+/* CSS-only parallax (scroll-driven animations). The JS below only steps in where this is unsupported. */
+@supports (animation-timeline:scroll()){
+  @media (prefers-reduced-motion:no-preference){
+    .layer--back{animation:parBack linear both;animation-timeline:scroll(root);animation-range:0 120vh}
+    .layer--mid{animation:parMid linear both;animation-timeline:scroll(root);animation-range:0 120vh}
+    .layer--front{animation:parFront linear both;animation-timeline:scroll(root);animation-range:0 120vh}
+    @keyframes parBack{to{transform:translate3d(0,var(--pb),0)}}
+    @keyframes parMid{to{transform:translate3d(0,var(--pm),0)}}
+    @keyframes parFront{to{transform:translate3d(0,var(--pf),0)}}
+  }
 }
-.hero::after{
-  content:"";position:absolute;inset:-140px 0 0 0;z-index:-1;
-  background:repeating-linear-gradient(135deg,var(--tooth) 0 2px,transparent 2px 5px);
-  pointer-events:none;
-}
+
 h1{
-  font-size:clamp(2.35rem,6.2vw,4.4rem);
-  font-weight:700;letter-spacing:-.035em;line-height:1.02;
-  max-width:16ch;
-  margin-top:22px;
+  font-size:clamp(2.35rem,5.6vw,4rem);
+  font-weight:700;letter-spacing:-.035em;line-height:1.04;
+  max-width:19ch;margin-top:var(--s4);
 }
 .strikeword{position:relative;display:inline-block;white-space:nowrap}
 .strikeword .strike{
   position:absolute;left:-2%;top:50%;width:104%;height:.34em;
-  transform:translateY(-50%) translateY(.09em);
-  overflow:visible;pointer-events:none;
+  transform:translateY(-50%) translateY(.03em);overflow:visible;pointer-events:none;
 }
-.strikeword .strike path{
-  stroke:var(--accent);stroke-width:5.5;fill:none;
-  stroke-linecap:round;stroke-linejoin:round;
-  opacity:.92;
-}
+.strikeword .strike path{stroke:var(--accent);stroke-width:5.5;fill:none;stroke-linecap:round;stroke-linejoin:round;opacity:.92}
 @media (prefers-reduced-motion:no-preference){
-  .strikeword .strike path{
-    stroke-dasharray:520;stroke-dashoffset:520;
-    animation:draw .7s cubic-bezier(.6,.05,.35,1) .4s forwards;
-  }
+  .strikeword .strike path{stroke-dasharray:520;stroke-dashoffset:520;animation:draw .7s cubic-bezier(.6,.05,.35,1) .5s forwards}
   @keyframes draw{to{stroke-dashoffset:0}}
 }
-.subhead{
-  font-size:clamp(1.1rem,2.2vw,1.4rem);
-  font-weight:400;color:var(--body);
-  max-width:46ch;line-height:1.5;
-  margin-top:24px;
-}
+.subhead{font-size:clamp(1.1rem,2vw,1.28rem);font-weight:400;color:var(--body);max-width:50ch;line-height:1.5;margin-top:var(--s4)}
 
-/* price strip */
-.strip{
-  margin-top:32px;
-  max-width:58ch;
-  border-top:1px solid var(--line);
-  border-bottom:1px solid var(--line);
-  padding:4px 0;
-}
-.striprow{
-  display:flex;align-items:baseline;gap:8px;
-  font-family:var(--mono);font-size:.82rem;
-  padding:11px 0;
-  color:var(--ink);
-}
+.strip{margin-top:var(--s5);max-width:58ch;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:4px 0}
+.striprow{display:flex;align-items:baseline;gap:8px;font-family:var(--mono);font-size:.82rem;padding:11px 0;color:var(--ink)}
 .striprow + .striprow{border-top:1px dashed var(--line)}
 .striprow .lbl{color:var(--body);white-space:nowrap}
-.striprow .dots{
-  flex:1 1 auto;min-width:14px;height:1px;
-  transform:translateY(-3px);
-  border-bottom:2px dotted var(--line-strong);
-}
+.striprow .dots{flex:1 1 auto;min-width:14px;height:1px;transform:translateY(-3px);border-bottom:2px dotted var(--line-strong)}
 .striprow .val{color:var(--accent-text);font-weight:650;white-space:nowrap;text-align:right}
 @media (max-width:430px){
   .striprow{flex-wrap:wrap;font-size:.78rem}
   .striprow .dots{min-width:20px}
   .striprow .val{flex:1 0 100%;text-align:left;margin-top:2px}
 }
-
-.ctablock{margin-top:34px}
-.trustline{
-  margin-top:16px;font-size:.92rem;color:var(--muted);max-width:50ch;
-}
-
-/* tighten the hero on small screens so the CTA sits as close to the
-   first screenful as the copy allows */
+.ctablock{margin-top:var(--s5);display:flex;flex-wrap:wrap;gap:var(--s3) var(--s4);align-items:center}
+.trustline{margin-top:var(--s4);font-size:.92rem;color:var(--muted);max-width:50ch;flex:1 0 100%}
 @media (max-width:520px){
-  .masthead{padding-top:18px}
-  .strikeword .strike{transform:translateY(-50%) translateY(.135em)}
-  .hero{padding-top:26px;padding-bottom:44px}
-  h1{margin-top:16px}
-  .subhead{margin-top:18px;font-size:1.06rem}
-  .strip{margin-top:22px}
+  .hero{padding-top:32px;padding-bottom:40px}
+  h1{margin-top:var(--s4)}
+  .subhead{margin-top:var(--s4);font-size:1.06rem}
+  .strip{margin-top:var(--s5)}
   .striprow{padding:9px 0}
-  .ctablock{margin-top:24px}
-  .trustline{margin-top:14px}
+  .ctablock{margin-top:var(--s5)}
+  .ctablock .btn{flex:1 1 100%}
 }
 
-/* ---------- pain rows ---------- */
-.painlist{list-style:none;margin:34px 0 0;padding:0;border-top:1px solid var(--line);max-width:60ch}
-.painlist li{
-  border-bottom:1px solid var(--line);
-  padding:22px 0 22px 1.9em;
-  position:relative;
-  font-size:1.25rem;line-height:1.45;font-style:italic;
-  color:var(--ink);
+/* ---------- stat band ---------- */
+.stats{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--surface)}
+@media (prefers-color-scheme:dark){.stats{background:#10151B}}
+.statgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:0}
+.statgrid li{padding:var(--s5) var(--s4) var(--s5) 0;border-top:1px solid var(--line)}
+.statgrid li:nth-child(-n+2){border-top:0}
+@media (min-width:760px){
+  .statgrid{grid-template-columns:repeat(4,1fr)}
+  .statgrid li{border-top:0;border-left:1px solid var(--line);padding:var(--s6) var(--s5)}
+  .statgrid li:first-child{border-left:0;padding-left:0}
 }
-.painlist li::before{
-  content:"\201C";
-  position:absolute;left:0;top:.28em;
-  font-style:normal;font-weight:700;
-  font-size:2.1rem;line-height:1;color:var(--accent);
+.stat__n{display:block;font-family:var(--mono);font-size:clamp(1.7rem,3.6vw,2.4rem);color:var(--ink);letter-spacing:-.02em;line-height:1.1}
+.stat__l{display:block;margin-top:6px;font-size:.9rem;color:var(--muted);max-width:22ch}
+
+/* ---------- cards (shared tactile surface) ---------- */
+.card{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+  box-shadow:var(--sh1);
+  transition:transform .2s cubic-bezier(.2,.7,.2,1),box-shadow .2s ease,border-color .2s ease;
 }
-@media (max-width:520px){.painlist li{font-size:1.1rem}}
-.paincloser{margin-top:26px;max-width:56ch;color:var(--body)}
+@media (prefers-reduced-motion:no-preference){
+  .card--lift:hover,.card--lift:focus-within{transform:translateY(-4px);box-shadow:var(--sh2);border-color:var(--line-strong)}
+}
+@media (prefers-reduced-motion:reduce){
+  .card--lift:hover,.card--lift:focus-within{box-shadow:var(--sh2);border-color:var(--line-strong)}
+}
+
+/* ---------- sound familiar ---------- */
+.paingrid{display:grid;grid-template-columns:1fr;gap:var(--s4);margin-top:var(--s7)}
+@media (min-width:700px){.paingrid{grid-template-columns:1fr 1fr}}
+.pain{padding:var(--s5) var(--s5) var(--s5) calc(var(--s5) + 1.5em);position:relative;font-size:1.12rem;line-height:1.5;font-style:italic;color:var(--ink)}
+.pain::before{content:"\201C";position:absolute;left:var(--s5);top:calc(var(--s5) - .1em);font-style:normal;font-weight:700;font-size:2.2rem;line-height:1;color:var(--accent)}
+.paincloser{margin-top:var(--s6);max-width:56ch;color:var(--body);font-size:1.1rem}
 
 /* ---------- outcomes ---------- */
-.outcomes{
-  display:grid;grid-template-columns:1fr;
-  gap:clamp(28px,4vw,56px);
-  margin-top:44px;
-}
-@media (min-width:721px){.outcomes{grid-template-columns:1.15fr 1fr}}
-.outcome h3{font-size:1.28rem;letter-spacing:-.015em;line-height:1.25;margin-bottom:10px}
+.outcomes{display:grid;grid-template-columns:1fr;gap:var(--s4);margin-top:var(--s7)}
+@media (min-width:700px){.outcomes{grid-template-columns:1fr 1fr}}
+.outcome{padding:var(--s5);display:flex;flex-direction:column}
+.outcome h3{margin-bottom:var(--s2)}
 .outcome p{max-width:46ch}
-.glyph{display:block;width:34px;height:34px;margin-bottom:14px}
-.glyph .st{fill:none;stroke:var(--teal);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.glyph .st--moss{stroke:var(--moss)}
-.outcome .smallprint{display:block;margin-top:14px;line-height:1.6}
-.outcome-wide{
-  grid-column:1/-1;
-  border-top:1px solid var(--line);
-  padding-top:26px;margin-top:4px;
-  color:var(--muted);max-width:70ch;font-size:1rem;
-}
-.aftercta{margin-top:44px}
+.glyph{display:block;width:36px;height:36px;margin-bottom:var(--s4)}
+.glyph .st{fill:none;stroke:var(--ink);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.glyph .st--acc{stroke:var(--accent)}
+.outcome .smallprint{display:block;margin-top:auto;padding-top:var(--s4);line-height:1.6}
+.outcome-wide{grid-column:1/-1;padding:var(--s5);color:var(--body);max-width:none;font-size:1rem;border-style:dashed;box-shadow:none}
+.aftercta{margin-top:var(--s6)}
 
 /* ---------- steps ---------- */
-.steps{margin-top:40px;border-top:1px solid var(--line)}
-.step{
-  display:grid;grid-template-columns:auto 1fr;gap:20px;
-  padding:28px 0;border-bottom:1px solid var(--line);
-  align-items:start;
-}
+.steps{display:grid;grid-template-columns:1fr;gap:var(--s4);margin-top:var(--s7);counter-reset:step}
+@media (min-width:760px){.steps{grid-template-columns:repeat(3,1fr)}}
+.step{padding:var(--s5);position:relative}
 .num{
-  width:46px;height:46px;border-radius:50%;
-  border:1px solid var(--line-strong);
-  display:grid;place-items:center;
-  font-family:var(--mono);font-size:1rem;color:var(--accent-text);
-  flex:none;
+  width:44px;height:44px;border-radius:50%;border:1px solid var(--line-strong);
+  display:grid;place-items:center;font-family:var(--mono);font-size:.95rem;color:var(--accent-text);
+  margin-bottom:var(--s4);background:var(--paper);
 }
-.step h3{font-size:1.2rem;letter-spacing:-.01em;margin-bottom:8px}
-.step p{max-width:58ch}
-@media (max-width:520px){
-  .step{grid-template-columns:1fr;gap:14px}
+.step h3{margin-bottom:var(--s2)}
+
+/* ---------- tools grid ---------- */
+.tgrid{display:grid;grid-template-columns:1fr;gap:var(--s3);margin-top:var(--s7)}
+@media (min-width:560px){.tgrid{grid-template-columns:1fr 1fr;gap:var(--s4)}}
+@media (min-width:900px){.tgrid{grid-template-columns:repeat(3,1fr)}}
+.tgrid li{display:flex}
+.tcard{
+  flex:1 1 auto;width:100%;
+  display:grid;grid-template-columns:auto 1fr auto;grid-template-rows:auto auto;gap:2px var(--s4);
+  align-items:center;padding:var(--s4) var(--s5);min-height:88px;
+  text-decoration:none;color:var(--body);
 }
+.tcard__idx{grid-column:1;grid-row:1/3;font-family:var(--mono);font-size:.72rem;color:var(--muted);letter-spacing:.1em}
+.tcard__name{grid-column:2;grid-row:1;color:var(--ink);font-weight:650;font-size:1.05rem;letter-spacing:-.01em}
+.tcard__desc{grid-column:2;grid-row:2;font-size:.95rem;color:var(--body)}
+.tcard__go{grid-column:3;grid-row:1/3;color:var(--accent-text);font-weight:650;transition:transform .15s ease}
+.tcard:hover .tcard__go{transform:translateX(3px)}
+.toolsfoot{margin-top:var(--s6);display:flex;flex-wrap:wrap;gap:var(--s3) var(--s5);align-items:center;font-size:.95rem;color:var(--muted)}
+
+/* subscribe (the same form the nine tool pages carry) */
+.subscribe{margin-top:var(--s7);padding:clamp(22px,4vw,36px);display:grid;grid-template-columns:1fr;gap:var(--s4)}
+@media (min-width:860px){.subscribe{grid-template-columns:1.1fr 1fr;align-items:center;gap:var(--s6)}}
+.subscribe h3{font-size:1.3rem}
+.subscribe p{margin-top:var(--s2);max-width:48ch}
+.subform{display:flex;gap:var(--s2);flex-wrap:wrap;align-items:center}
+.subform input[type=email]{
+  flex:1 1 220px;min-width:0;min-height:48px;padding:.6rem .8rem;
+  border:1px solid var(--line-strong);border-radius:10px;font-size:1rem;font-family:inherit;
+  background:var(--paper);color:var(--ink);
+}
+.subform input[type=email]::placeholder{color:var(--muted)}
+.subform .btn{flex:0 0 auto}
+.hint{grid-column:1/-1;font-size:.88rem;color:var(--muted);max-width:70ch}
 
 /* ---------- pricing ---------- */
-.prices{margin-top:40px;border-top:1px solid var(--line)}
-.price{
-  display:grid;grid-template-columns:1fr;gap:6px;
-  padding:26px 0;border-bottom:1px solid var(--line);
-}
-@media (min-width:721px){
-  .price{grid-template-columns:minmax(190px,.7fr) 1.4fr;gap:12px 32px;align-items:baseline}
-}
-.price .fig{
-  font-family:var(--mono);
-  font-size:clamp(1.6rem,4vw,2.05rem);
-  color:var(--ink);letter-spacing:-.02em;line-height:1.1;
-}
-.price .fig--sm{font-size:clamp(1.15rem,2.6vw,1.4rem)}
-.price .desc{max-width:52ch}
-.pricefoot{margin-top:24px;color:var(--muted);max-width:56ch;font-size:.95rem}
-.paynote{margin-top:34px;padding:22px 24px;border:1px solid var(--line);border-radius:12px;max-width:62ch}
-.paynote p{margin:0 0 12px}.paynote p:last-child{margin-bottom:0}
-.paybtn{margin-top:16px}
-.payfine{color:var(--muted);font-size:.85rem}
+.prices{display:grid;grid-template-columns:1fr;gap:var(--s4);margin-top:var(--s7)}
+@media (min-width:760px){.prices{grid-template-columns:repeat(3,1fr)}}
+.price{padding:var(--s5);display:flex;flex-direction:column;gap:var(--s3)}
+.price .fig{font-family:var(--mono);font-size:clamp(1.6rem,3.6vw,2.05rem);color:var(--ink);letter-spacing:-.02em;line-height:1.1}
+.price .fig--sm{font-size:clamp(1.15rem,2.4vw,1.35rem)}
+.price--hero{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent),var(--sh1)}
+.price .desc{max-width:40ch}
+.pricefoot{margin-top:var(--s5);color:var(--muted);max-width:56ch;font-size:.95rem}
+.paynote{margin-top:var(--s6);padding:clamp(22px,4vw,36px);display:grid;grid-template-columns:1fr;gap:var(--s4)}
+@media (min-width:860px){.paynote{grid-template-columns:1.4fr 1fr;align-items:center;gap:var(--s6)}}
+.paynote .kicker{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-text);margin-bottom:var(--s3)}
+.paynote .payfine{color:var(--muted);font-size:.85rem;margin-top:var(--s3)}
+.payside{display:flex;flex-direction:column;align-items:flex-start;gap:var(--s3)}
+@media (min-width:860px){.payside{align-items:center;text-align:center;padding:var(--s5);border-left:1px dashed var(--line)}}
 
-/* ---------- proof note ---------- */
-.proof{
-  background:var(--surface);
-  border:1px solid var(--line);
-  border-radius:12px;
-  padding:clamp(26px,4vw,44px);
-  max-width:64ch;
-}
+/* ---------- proof ---------- */
+.proof{padding:clamp(26px,4vw,44px);max-width:66ch}
 .proof p{max-width:54ch}
-.proof p + p{margin-top:16px}
-.proof .kicker{
-  font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;
-  text-transform:uppercase;color:var(--accent-text);margin-bottom:14px;
-}
+.proof p + p{margin-top:var(--s4)}
+.proof .kicker{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-text);margin-bottom:var(--s4)}
 
 /* ---------- won't do ---------- */
-.wont{list-style:none;margin:34px 0 0;padding:0;max-width:62ch;border-top:1px solid var(--line)}
-.wont li{
-  border-bottom:1px solid var(--line);
-  padding:18px 0 18px 30px;position:relative;
-}
-.wont li::before{
-  content:"";position:absolute;left:2px;top:1.55em;
-  width:14px;height:2px;background:var(--accent);border-radius:2px;
-}
+.wont{margin-top:var(--s6);max-width:64ch;border-top:1px solid var(--line)}
+.wont li{border-bottom:1px solid var(--line);padding:18px 0 18px 30px;position:relative}
+.wont li::before{content:"";position:absolute;left:2px;top:1.55em;width:14px;height:2px;background:var(--accent);border-radius:2px}
 
 /* ---------- faq ---------- */
-.faq{margin-top:36px;max-width:64ch;border-top:1px solid var(--line)}
+.faqgroups{display:grid;grid-template-columns:1fr;gap:var(--s7);margin-top:var(--s6)}
+@media (min-width:960px){.faqgroups{grid-template-columns:1fr 1fr;gap:var(--s8)}}
+.faq{border-top:1px solid var(--line);margin-top:var(--s4)}
 .faq details{border-bottom:1px solid var(--line)}
 .faq summary{
-  list-style:none;cursor:pointer;
-  padding:20px 34px 20px 0;position:relative;
-  font-weight:620;color:var(--ink);font-size:1.05rem;
-  min-height:44px;
+  list-style:none;cursor:pointer;padding:18px 36px 18px 0;position:relative;
+  font-weight:620;color:var(--ink);font-size:1.02rem;min-height:44px;
 }
 .faq summary::-webkit-details-marker{display:none}
 .faq summary::after{
-  content:"";position:absolute;right:6px;top:50%;
-  width:10px;height:10px;
+  content:"";position:absolute;right:8px;top:50%;width:10px;height:10px;
   border-right:2px solid var(--accent);border-bottom:2px solid var(--accent);
-  transform:translateY(-70%) rotate(45deg);
-  transition:transform .15s ease;
+  transform:translateY(-70%) rotate(45deg);transition:transform .18s ease;
 }
 .faq details[open] summary::after{transform:translateY(-20%) rotate(225deg)}
-.faq .ans{padding:0 0 22px;max-width:58ch;color:var(--body)}
+.faq .ans{padding:0 0 20px;max-width:58ch;color:var(--body)}
+.faqgroup h3{font-size:1.05rem;color:var(--muted);font-weight:600;letter-spacing:0}
 
 /* ---------- final cta ---------- */
 .final{text-align:center}
-.final .measure{margin-left:auto;margin-right:auto}
-.final h2{max-width:18ch;margin:0 auto}
-.final .lede{margin:20px auto 0;max-width:52ch;color:var(--body)}
+.final .shead{margin-left:auto;margin-right:auto}
+.final h2{max-width:18ch;margin-left:auto;margin-right:auto}
+.final .lede{margin:var(--s4) auto 0;max-width:52ch;color:var(--body)}
 .mailcard{
-  margin:36px auto 0;max-width:56ch;text-align:left;
-  background:var(--surface);border:1px solid var(--line);border-radius:12px;
-  font-family:var(--mono);font-size:.82rem;line-height:1.7;
-  color:var(--body);
-  overflow-x:auto;
+  margin:var(--s6) auto 0;max-width:56ch;text-align:left;
+  font-family:var(--mono);font-size:.82rem;line-height:1.7;color:var(--body);overflow-x:auto;
 }
-.mailcard .hd{
-  border-bottom:1px solid var(--line);
-  padding:14px 20px;color:var(--muted);
-}
+.mailcard .hd{border-bottom:1px solid var(--line);padding:14px 20px;color:var(--muted)}
 .mailcard .hd b{color:var(--ink);font-weight:600}
 .mailcard .bd{padding:16px 20px;white-space:pre-wrap;color:var(--ink)}
-.final .btn{margin-top:32px}
-.finalfoot{margin-top:18px;color:var(--muted);font-size:.92rem}
+.final .btn{margin-top:var(--s6)}
+.finalfoot{margin-top:var(--s4);color:var(--muted);font-size:.92rem}
 .finalfoot .plainmail{display:inline-block;margin-bottom:6px}
 
 /* ---------- footer ---------- */
-footer{border-top:1px solid var(--line);padding:30px 0 calc(30px + env(safe-area-inset-bottom))}
-.footline{
-  font-family:var(--mono);font-size:.78rem;color:var(--muted);
-  display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;
-}
-
-/* ---------- sticky mobile bar ---------- */
-.sticky{
-  position:fixed;left:0;right:0;bottom:0;z-index:40;
-  display:none;
-  align-items:center;justify-content:center;
-  min-height:56px;
-  padding:0 16px env(safe-area-inset-bottom);
-  background:var(--btn-bg);color:var(--accent-ink);
-  text-decoration:none;font-weight:650;
-  box-shadow:0 -1px 0 rgba(18,22,27,.2);
-  transform:translateY(110%);
-  transition:transform .2s ease;
-}
-.sticky span{display:block;padding:16px 0}
-@media (max-width:719px){
-  .sticky{display:flex}
-  body{padding-bottom:0}
-  .sticky.on{transform:translateY(0)}
-  footer{padding-bottom:calc(86px + env(safe-area-inset-bottom))}
-}
-@media (prefers-reduced-motion:reduce){.sticky{transition:none}}
+footer{border-top:1px solid var(--line);padding:var(--s6) 0 calc(var(--s6) + env(safe-area-inset-bottom))}
+.footline{font-family:var(--mono);font-size:.78rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
+.footline a,.toolsfoot a{display:inline-flex;align-items:center;min-height:44px}
 
 /* ---------- scroll reveal ----------
-   Default state is FULLY VISIBLE. Only JS may hide an element, and only one
-   that starts below the fold, so no-JS, no-IntersectionObserver and
-   reduced-motion all render the complete page. */
+   Default is FULLY VISIBLE. Only a JS-enabled, motion-tolerant page hides
+   anything, and the script un-hides everything if the observer never fires. */
 .reveal{opacity:1;transform:none}
 @media (prefers-reduced-motion:no-preference){
-  .reveal{transition:opacity .5s ease,transform .5s ease}
-  .reveal.pending{opacity:0;transform:translateY(10px)}
+  .js .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s cubic-bezier(.2,.7,.2,1) var(--d,0ms),transform .6s cubic-bezier(.2,.7,.2,1) var(--d,0ms)}
+  .js .reveal.in{opacity:1;transform:none}
+  .stagger>:nth-child(2){--d:70ms}.stagger>:nth-child(3){--d:140ms}.stagger>:nth-child(4){--d:210ms}
+  .stagger>:nth-child(5){--d:280ms}.stagger>:nth-child(6){--d:350ms}.stagger>:nth-child(7){--d:420ms}
+  .stagger>:nth-child(8){--d:490ms}.stagger>:nth-child(9){--d:560ms}
 }
-
-/* leuk-hero3d:css:start */
-#hero3d{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0;
-        pointer-events:none;opacity:.9;
-        /* Fade the lattice out across the text column. Decoration must never cost readability,
-           and an unmasked field over the headline reads as noise rather than depth. */
-        -webkit-mask-image:linear-gradient(90deg,transparent 0%,transparent 38%,rgba(0,0,0,.55) 52%,#000 68%);
-        mask-image:linear-gradient(90deg,transparent 0%,transparent 38%,rgba(0,0,0,.55) 52%,#000 68%)}
-@media (max-width:820px){#hero3d{opacity:.5;
-        -webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 45%);
-        mask-image:linear-gradient(180deg,transparent 0%,#000 45%)}}
-/* The hero's own content must sit above the canvas, and the canvas must never eat a click. */
-.eyebrow,h1,.subhead,.strip,.ctablock{position:relative;z-index:1}
-@media (prefers-reduced-motion: reduce){#hero3d{opacity:.35}}
-/* leuk-hero3d:css:end */
+@media print{.reveal{opacity:1!important;transform:none!important}.nav{position:static}.stage{display:none}}
 </style>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
 
-<header class="wrap masthead">
-  <a class="wordmark" href="#main">
-    <svg class="mk" width="22" height="22" viewBox="0 0 22 22" role="img" aria-label="LeukLogic mark: a square bracket around a filled dot">
-      <title>LeukLogic mark</title>
-      <path d="M7 2H3v18h4M15 2h4v18h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      <circle cx="11" cy="11" r="3" fill="var(--accent)"/>
-    </svg>
-    LeukLogic
-  </a>
-  <a class="plainmail" href="mailto:tim@leuklogic.com?subject=Something%27s%20eating%20my%20week&amp;body=What%20eats%20my%20week%3A%0D%0A%0D%0AHow%20it%20happens%20today%3A%0D%0A%0D%0ARough%20budget%3A%0D%0A%0D%0A">tim@leuklogic.com</a>
+<header class="nav" id="nav">
+  <div class="wrap nav__in">
+    <a class="wordmark" href="#top">
+      <svg class="mk" width="22" height="22" viewBox="0 0 22 22" role="img" aria-label="LeukLogic mark: a square bracket around a filled dot">
+        <title>LeukLogic mark</title>
+        <path d="M7 2H3v18h4M15 2h4v18h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="11" cy="11" r="3" fill="var(--accent)"/>
+      </svg>
+      LeukLogic
+    </a>
+    <nav class="nav__links" aria-label="Sections">
+      <a href="#services">Services</a>
+      <a href="#tools">Free tools</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <a class="btn btn--sm" href="mailto:tim@leuklogic.com?subject=Something%27s%20eating%20my%20week&amp;body=What%20eats%20my%20week%3A%0D%0A%0D%0AHow%20it%20happens%20today%3A%0D%0A%0D%0ARough%20budget%3A%0D%0A%0D%0A"><span class="lbl-long">Email me the task</span><span class="lbl-short">Email me</span> <span class="arw" aria-hidden="true">&rarr;</span></a>
+  </div>
 </header>
 
 <main id="main">
 
   <!-- ============ HERO ============ -->
-  <section class="wrap hero">
-    <div class="heroFloat" aria-hidden="true">
-      <i style="width:120px;height:74px;top:8%;left:63%;--fd:24s;--fx:22px;--fy:-30px"></i>
-      <i style="width:86px;height:54px;top:30%;left:78%;--fd:31s;--fdel:-8s;--fx:-16px;--fy:-22px"></i>
-      <i style="width:150px;height:92px;top:56%;left:70%;--fd:27s;--fdel:-14s;--fx:26px;--fy:-18px"></i>
-      <i style="width:70px;height:44px;top:16%;left:88%;--fd:22s;--fdel:-4s;--fx:-12px;--fy:-28px"></i>
-      <i style="width:100px;height:62px;top:70%;left:86%;--fd:34s;--fdel:-20s;--fx:18px;--fy:-24px"></i>
-      <i style="width:60px;height:38px;top:44%;left:60%;--fd:29s;--fdel:-11s;--fx:-20px;--fy:-16px"></i>
-      <i class="acc" style="width:56px;height:56px;top:38%;left:83%;--fd:26s;--fdel:-6s;--fx:14px;--fy:-34px;border-radius:16px"></i>
-    </div>
-    <!-- leuk-hero3d:start -->
-    <canvas id="hero3d" aria-hidden="true"></canvas>
-    <!-- leuk-hero3d:end -->
-    <p class="eyebrow">LeukLogic — automation, bots and small tools, built fast</p>
+  <section class="hero" id="top" aria-labelledby="h1">
+    <div class="wrap">
+      <div class="hero__copy">
+        <p class="eyebrow">LeukLogic — automation, bots and small tools, built fast</p>
+        <h1 id="h1">The task that <span class="strikeword">eats your week<svg class="strike" viewBox="0 0 300 26" preserveAspectRatio="none" role="img" aria-label="crossed out"><title>crossed out</title><path d="M3 14.5 C 62 10.5, 104 18, 150 13 S 244 10.5, 297 13.5"/></svg></span> — gone by next week.</h1>
 
-    <h1>The task that <span class="strikeword">eats your week<svg class="strike" viewBox="0 0 300 26" preserveAspectRatio="none" role="img" aria-label="crossed out"><title>crossed out</title><path d="M3 14.5 C 62 10.5, 104 18, 150 13 S 244 10.5, 297 13.5"/></svg></span> — gone by next week.</h1>
+        <p class="subhead">Answering the same question for the fortieth time. Rebuilding the same report every Monday. A workflow that breaks whenever one person is on vacation. I build the bot, the automation, or the small tool that takes it off your plate — usually in days, often for a few hundred dollars.</p>
 
-    <p class="subhead">Answering the same question for the fortieth time. Rebuilding the same report every Monday. A workflow that breaks whenever one person is on vacation. I build the bot, the automation, or the small tool that takes it off your plate — usually in days, often for a few hundred dollars.</p>
+        <div class="strip">
+          <p class="striprow"><span class="lbl">A bot, an automation, a scheduled report</span><span class="dots" aria-hidden="true"></span><span class="val">$100–$500 · days, not weeks</span></p>
+          <p class="striprow"><span class="lbl">Anything larger</span><span class="dots" aria-hidden="true"></span><span class="val">fixed price, quoted before I start</span></p>
+        </div>
 
-    <div class="strip">
-      <p class="striprow"><span class="lbl">A bot, an automation, a scheduled report</span><span class="dots" aria-hidden="true"></span><span class="val">$100–$500 · days, not weeks</span></p>
-      <p class="striprow"><span class="lbl">Anything larger</span><span class="dots" aria-hidden="true"></span><span class="val">fixed price, quoted before I start</span></p>
-    </div>
+        <div class="ctablock">
+          <a class="btn btn--lg" href="mailto:tim@leuklogic.com?subject=Something%27s%20eating%20my%20week&amp;body=What%20eats%20my%20week%3A%0D%0A%0D%0AHow%20it%20happens%20today%3A%0D%0A%0D%0ARough%20budget%3A%0D%0A%0D%0A">Email me the task <span class="arw" aria-hidden="true">&rarr;</span></a>
+          <a class="btn btn--lg btn--ghost" href="#tools">Try a free tool</a>
+          <p class="trustline">Tell me what the task is. You get a straight yes-or-no, a fixed price, and a date — not a discovery call. Or just write to <a class="plainmail" href="mailto:tim@leuklogic.com?subject=Something%27s%20eating%20my%20week&amp;body=What%20eats%20my%20week%3A%0D%0A%0D%0AHow%20it%20happens%20today%3A%0D%0A%0D%0ARough%20budget%3A%0D%0A%0D%0A">tim@leuklogic.com</a>.</p>
+        </div>
+      </div>
 
-    <div class="ctablock">
-      <a class="btn btn--lg" href="mailto:tim@leuklogic.com?subject=Something%27s%20eating%20my%20week&amp;body=What%20eats%20my%20week%3A%0D%0A%0D%0AHow%20it%20happens%20today%3A%0D%0A%0D%0ARough%20budget%3A%0D%0A%0D%0A">Email me the task <span class="arw" aria-hidden="true">&rarr;</span></a>
-      <p class="trustline">Tell me what the task is. You get a straight yes-or-no, a fixed price, and a date — not a discovery call. Or just write to <a class="plainmail" href="mailto:tim@leuklogic.com?subject=Something%27s%20eating%20my%20week&amp;body=What%20eats%20my%20week%3A%0D%0A%0D%0AHow%20it%20happens%20today%3A%0D%0A%0D%0ARough%20budget%3A%0D%0A%0D%0A">tim@leuklogic.com</a>.</p>
+      <!-- three layers, three scroll rates: grid (back) · lattice (mid) · cards (front) -->
+      <div class="stage" aria-hidden="true">
+        <div class="layer layer--back"></div>
+        <canvas id="hero3d" class="layer layer--mid"></canvas>
+        <div class="layer layer--front">
+          <div class="fc fc--bot" style="--bd:9s">
+            <span class="k">Discord · #support</span>
+            <span class="msg">how do I reset my password?</span>
+            <span class="msg msg--bot"><b>bot</b> · Settings → Security → Reset. Want the link?</span>
+          </div>
+          <div class="fc fc--report" style="--bd:11s;--bdel:-4s">
+            <span class="k">Monday report · sent 07:00</span>
+            <span class="bars"><i style="--h:40%"></i><i style="--h:68%"></i><i style="--h:52%"></i><i class="acc" style="--h:86%"></i><i style="--h:60%"></i><i style="--h:74%"></i></span>
+            <span class="msg">Pulled, summed, emailed. You just read it.</span>
+          </div>
+          <div class="fc fc--quote" style="--bd:10s;--bdel:-7s">
+            <span class="k">Example quote</span>
+            <span class="row"><span>Discord FAQ bot</span><b>fixed price</b></span>
+            <span class="row"><span>Delivery</span><b>days, not weeks</b></span>
+            <span class="row"><span>Code, repo, accounts</span><b>yours</b></span>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <hr class="rule">
+  <!-- ============ AT A GLANCE ============ -->
+  <section class="stats" aria-label="At a glance">
+    <div class="wrap">
+      <ul class="statgrid stagger">
+        <li class="reveal"><span class="stat__n"><span data-count="9">9</span></span><span class="stat__l">free tools that run in your browser — nothing uploaded</span></li>
+        <li class="reveal"><span class="stat__n">0</span><span class="stat__l">external requests on this page — no cookies, no trackers</span></li>
+        <li class="reveal"><span class="stat__n">$<span data-count="100">100</span>–<span data-count="500">500</span></span><span class="stat__l">for most bots, scrapers and automations</span></li>
+        <li class="reveal"><span class="stat__n">1</span><span class="stat__l">person, by email — no account manager, no discovery call</span></li>
+      </ul>
+    </div>
+  </section>
 
   <!-- ============ SOUND FAMILIAR ============ -->
-  <section class="wrap section reveal" aria-labelledby="familiar">
-    <h2 id="familiar">Sound familiar?</h2>
-    <p class="sublead">If any of these is your week, you're in the right place.</p>
-
-    <ul class="painlist">
-      <li>I answer the same five questions in our Discord every single day. Sometimes I answer them at midnight.</li>
-      <li>Every Monday I open six tabs, copy numbers into a spreadsheet, and email it to four people. It takes two hours and I dread it.</li>
-      <li>Someone has to read the inbox and decide where each message goes. That someone is me, and it's most of my morning.</li>
-      <li>The thing I need is simple. Every agency I ask wants a six-week engagement and a call on Tuesday.</li>
-    </ul>
-
-    <p class="paincloser">None of these are hard problems. They're just problems nobody has had a spare week to delete.</p>
+  <section class="section" aria-labelledby="familiar">
+    <div class="wrap">
+      <div class="shead reveal">
+        <p class="eyebrow">Sound familiar?</p>
+        <h2 id="familiar">If any of these is your week, you're in the right place.</h2>
+      </div>
+      <ul class="paingrid stagger">
+        <li class="card pain reveal">I answer the same five questions in our Discord every single day. Sometimes I answer them at midnight.</li>
+        <li class="card pain reveal">Every Monday I open six tabs, copy numbers into a spreadsheet, and email it to four people. It takes two hours and I dread it.</li>
+        <li class="card pain reveal">Someone has to read the inbox and decide where each message goes. That someone is me, and it's most of my morning.</li>
+        <li class="card pain reveal">The thing I need is simple. Every agency I ask wants a six-week engagement and a call on Tuesday.</li>
+      </ul>
+      <p class="paincloser reveal">None of these are hard problems. They're just problems nobody has had a spare week to delete.</p>
+    </div>
   </section>
 
   <hr class="rule">
 
   <!-- ============ WHAT YOU GET BACK ============ -->
-  <section class="wrap section reveal" aria-labelledby="getback">
-    <h2 id="getback">What you get back</h2>
-    <p class="sublead">You don't buy a bot. You buy the hour back.</p>
+  <section class="section" id="services" aria-labelledby="getback">
+    <div class="wrap">
+      <div class="shead reveal">
+        <p class="eyebrow">What you get back</p>
+        <h2 id="getback">You don't buy a bot. You buy the hour back.</h2>
+      </div>
 
-    <div class="outcomes">
+      <div class="outcomes stagger">
+        <article class="card card--lift outcome reveal">
+          <svg class="glyph" viewBox="0 0 32 32" role="img" aria-labelledby="g1t">
+            <title id="g1t">A chat bubble with a check mark inside</title>
+            <path class="st" d="M4 8a3 3 0 0 1 3-3h18a3 3 0 0 1 3 3v11a3 3 0 0 1-3 3H13l-6 5v-5H7a3 3 0 0 1-3-3z"/>
+            <path class="st st--acc" d="M11 13.5 14.5 17 21 10.5"/>
+          </svg>
+          <h3>Nobody asks you that question again.</h3>
+          <p>The bot answers your community's repeat questions instantly, welcomes new members, handles tickets and keeps the rule-breakers in check while you sleep.</p>
+          <span class="smallprint">Discord or Slack bot — FAQ, moderation, tickets, onboarding</span>
+        </article>
 
-      <article class="outcome">
-        <svg class="glyph" viewBox="0 0 32 32" role="img" aria-labelledby="g1t">
-          <title id="g1t">A chat bubble with a check mark inside</title>
-          <path class="st" d="M4 8a3 3 0 0 1 3-3h18a3 3 0 0 1 3 3v11a3 3 0 0 1-3 3H13l-6 5v-5H7a3 3 0 0 1-3-3z"/>
-          <path class="st" d="M11 13.5 14.5 17 21 10.5"/>
-        </svg>
-        <h3>Nobody asks you that question again.</h3>
-        <p>The bot answers your community's repeat questions instantly, welcomes new members, handles tickets and keeps the rule-breakers in check while you sleep.</p>
-        <span class="smallprint">Discord or Slack bot — FAQ, moderation, tickets, onboarding</span>
-      </article>
+        <article class="card card--lift outcome reveal">
+          <svg class="glyph" viewBox="0 0 32 32" role="img" aria-labelledby="g2t">
+            <title id="g2t">A calendar with an arrow leaving it</title>
+            <path class="st" d="M3 9a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v15a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <path class="st" d="M3 13.5h16M8 4v5M14 4v5"/>
+            <path class="st st--acc" d="M22 19.5h7M26 16.5l3 3-3 3"/>
+          </svg>
+          <h3>Monday's report is already in your inbox.</h3>
+          <p>It pulls the numbers, does the arithmetic and sends the summary on a schedule. You read it. You don't build it.</p>
+          <span class="smallprint">Scheduled data pulls, scrapers, automated reports</span>
+        </article>
 
-      <article class="outcome">
-        <svg class="glyph" viewBox="0 0 32 32" role="img" aria-labelledby="g2t">
-          <title id="g2t">A calendar with an arrow leaving it</title>
-          <path class="st" d="M3 9a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v15a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-          <path class="st" d="M3 13.5h16M8 4v5M14 4v5"/>
-          <path class="st st--moss" d="M22 19.5h7M26 16.5l3 3-3 3"/>
-        </svg>
-        <h3>Monday's report is already in your inbox.</h3>
-        <p>It pulls the numbers, does the arithmetic and sends the summary on a schedule. You read it. You don't build it.</p>
-        <span class="smallprint">Scheduled data pulls, scrapers, automated reports</span>
-      </article>
+        <article class="card card--lift outcome reveal">
+          <svg class="glyph" viewBox="0 0 32 32" role="img" aria-labelledby="g3t">
+            <title id="g3t">An inbox splitting into three lanes</title>
+            <path class="st" d="M3 12.5h12v9H3z"/>
+            <path class="st" d="M3 16.5h3l1.2 2.2h3.6L12 16.5h3"/>
+            <path class="st st--acc" d="M16 17h5"/>
+            <path class="st st--acc" d="M21 17c3.6 0 3.6-8 7.2-8"/>
+            <path class="st st--acc" d="M21 17h7.2"/>
+            <path class="st st--acc" d="M21 17c3.6 0 3.6 8 7.2 8"/>
+          </svg>
+          <h3>The inbox sorts itself before you open it.</h3>
+          <p>Every message read, categorised, routed and summarised, so you start the morning at the top of a short list instead of the bottom of a long one.</p>
+          <span class="smallprint">AI triage and routing workflows</span>
+        </article>
 
-      <article class="outcome">
-        <svg class="glyph" viewBox="0 0 32 32" role="img" aria-labelledby="g3t">
-          <title id="g3t">An inbox splitting into three lanes</title>
-          <path class="st" d="M3 12.5h12v9H3z"/>
-          <path class="st" d="M3 16.5h3l1.2 2.2h3.6L12 16.5h3"/>
-          <path class="st st--moss" d="M16 17h5"/>
-          <path class="st st--moss" d="M21 17c3.6 0 3.6-8 7.2-8"/>
-          <path class="st st--moss" d="M21 17h7.2"/>
-          <path class="st st--moss" d="M21 17c3.6 0 3.6 8 7.2 8"/>
-        </svg>
-        <h3>The inbox sorts itself before you open it.</h3>
-        <p>Every message read, categorised, routed and summarised, so you start the morning at the top of a short list instead of the bottom of a long one.</p>
-        <span class="smallprint">AI triage and routing workflows</span>
-      </article>
+        <article class="card card--lift outcome reveal">
+          <svg class="glyph" viewBox="0 0 32 32" role="img" aria-labelledby="g4t">
+            <title id="g4t">A dashboard panel containing two bars</title>
+            <path class="st" d="M3 6a2 2 0 0 1 2-2h22a2 2 0 0 1 2 2v20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <path class="st" d="M3 11h26"/>
+            <path class="st st--acc" d="M10 23v-6M18 23v-9"/>
+          </svg>
+          <h3>The thing you keep tracking in a spreadsheet gets a real screen.</h3>
+          <p>A small internal tool or dashboard your team can actually open, with the numbers live instead of pasted.</p>
+          <span class="smallprint">Small web apps, dashboards, internal tools</span>
+        </article>
 
-      <article class="outcome">
-        <svg class="glyph" viewBox="0 0 32 32" role="img" aria-labelledby="g4t">
-          <title id="g4t">A dashboard panel containing two bars</title>
-          <path class="st" d="M3 6a2 2 0 0 1 2-2h22a2 2 0 0 1 2 2v20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-          <path class="st" d="M3 11h26"/>
-          <path class="st st--moss" d="M10 23v-6M18 23v-9"/>
-        </svg>
-        <h3>The thing you keep tracking in a spreadsheet gets a real screen.</h3>
-        <p>A small internal tool or dashboard your team can actually open, with the numbers live instead of pasted.</p>
-        <span class="smallprint">Small web apps, dashboards, internal tools</span>
-      </article>
+        <p class="card outcome-wide reveal">And if you just need a site that loads instantly — I build those too. Static, fast, no plugins to break. This page is one of them: a single file, zero external requests, no cookies. That's the same way I'd build yours.</p>
+      </div>
 
-      <p class="outcome-wide">And if you just need a site that loads instantly — I build those too. Static, fast, no plugins to break. This page is one of them: a single file, zero external requests, no cookies. That's the same way I'd build yours.</p>
+      <p class="aftercta reveal">
+        <a class="btn" href="mailto:tim@leuklogic.com?subject=Discord%20bot&amp;body=What%20eats%20my%20week%3A%0D%0A%0D%0AHow%20it%20happens%20today%3A%0D%0A%0D%0ARough%20budget%3A%0D%0A%0D%0A">That's the one. Email me <span class="arw" aria-hidden="true">&rarr;</span></a>
+      </p>
     </div>
-
-    <p class="aftercta">
-      <a class="btn" href="mailto:tim@leuklogic.com?subject=Discord%20bot&amp;body=What%20eats%20my%20week%3A%0D%0A%0D%0AHow%20it%20happens%20today%3A%0D%0A%0D%0ARough%20budget%3A%0D%0A%0D%0A">That's the one. Email me <span class="arw" aria-hidden="true">&rarr;</span></a>
-    </p>
   </section>
 
-  <hr class="rule">
-
   <!-- ============ HOW THIS GOES ============ -->
-  <section class="wrap section reveal" aria-labelledby="how">
-    <h2 id="how">How this actually goes</h2>
-    <p class="sublead">No calls unless you want one.</p>
+  <section class="section section--alt" aria-labelledby="how">
+    <div class="wrap">
+      <div class="shead reveal">
+        <p class="eyebrow">How this actually goes</p>
+        <h2 id="how">No calls unless you want one.</h2>
+      </div>
 
-    <div class="steps">
-      <div class="step">
-        <span class="num" aria-hidden="true">01</span>
-        <div>
+      <div class="steps stagger">
+        <div class="card step reveal">
+          <span class="num" aria-hidden="true">01</span>
           <h3>You email me the annoyance.</h3>
           <p>Plain English. &ldquo;Every Monday I&hellip;&rdquo; is enough — no spec, no requirements document.</p>
         </div>
-      </div>
-      <div class="step">
-        <span class="num" aria-hidden="true">02</span>
-        <div>
+        <div class="card step reveal">
+          <span class="num" aria-hidden="true">02</span>
           <h3>You get a fixed price and a delivery date.</h3>
           <p>Usually within a day. If it's not worth building, or someone already sells it for $9 a month, I'll tell you that instead and it costs you nothing.</p>
         </div>
-      </div>
-      <div class="step">
-        <span class="num" aria-hidden="true">03</span>
-        <div>
+        <div class="card step reveal">
+          <span class="num" aria-hidden="true">03</span>
           <h3>It ships, and it's yours.</h3>
           <p>You use it, I fix what's off, and you keep the code, the repo and the accounts — in your name, on your infrastructure. If a vendor can hold your automation hostage, so can I. Neither should be possible. No retainer, no lock-in, no monthly fee to me.</p>
         </div>
@@ -649,233 +687,320 @@ footer{border-top:1px solid var(--line);padding:30px 0 calc(30px + env(safe-area
     </div>
   </section>
 
+  <!-- ============ FREE TOOLS ============ -->
+  <section class="section" id="tools" aria-labelledby="toolsh">
+    <div class="wrap">
+      <div class="shead reveal">
+        <p class="eyebrow">Nine free tools · no account · nothing uploaded</p>
+        <h2 id="toolsh">Try the work before you email about it.</h2>
+        <p class="sublead">Each one runs entirely on your machine — nothing you load into it is uploaded. They're built the same way I'd build yours: fast, self-contained, zero external requests.</p>
+      </div>
+
+      <ul class="tgrid stagger">
+        <li class="reveal"><a class="card card--lift tcard" href="/tools/csv-diff/"><span class="tcard__idx">01</span><span class="tcard__name">DeltaCSV</span><span class="tcard__desc">compare two CSVs</span><span class="tcard__go" aria-hidden="true">&rarr;</span></a></li>
+        <li class="reveal"><a class="card card--lift tcard" href="/tools/csv-json/"><span class="tcard__idx">02</span><span class="tcard__name">FlipCSV</span><span class="tcard__desc">CSV ↔ JSON converter</span><span class="tcard__go" aria-hidden="true">&rarr;</span></a></li>
+        <li class="reveal"><a class="card card--lift tcard" href="/tools/cron/"><span class="tcard__idx">03</span><span class="tcard__name">CronText</span><span class="tcard__desc">explain a cron schedule</span><span class="tcard__go" aria-hidden="true">&rarr;</span></a></li>
+        <li class="reveal"><a class="card card--lift tcard" href="/tools/missed-call-calculator/"><span class="tcard__idx">04</span><span class="tcard__name">Missed-call calculator</span><span class="tcard__desc">what missed calls cost your business</span><span class="tcard__go" aria-hidden="true">&rarr;</span></a></li>
+        <li class="reveal"><a class="card card--lift tcard" href="/tools/subscription-scanner/"><span class="tcard__idx">05</span><span class="tcard__name">SubScan</span><span class="tcard__desc">find subscriptions draining your account</span><span class="tcard__go" aria-hidden="true">&rarr;</span></a></li>
+        <li class="reveal"><a class="card card--lift tcard" href="/tools/quote/"><span class="tcard__idx">06</span><span class="tcard__name">QuickQuote</span><span class="tcard__desc">instant fixed-price quote</span><span class="tcard__go" aria-hidden="true">&rarr;</span></a></li>
+        <li class="reveal"><a class="card card--lift tcard" href="/tools/video-check/"><span class="tcard__idx">07</span><span class="tcard__name">CheckClip</span><span class="tcard__desc">will your video pass on each platform?</span><span class="tcard__go" aria-hidden="true">&rarr;</span></a></li>
+        <li class="reveal"><a class="card card--lift tcard" href="/tools/statement-csv/"><span class="tcard__idx">08</span><span class="tcard__name">SwiftStatement</span><span class="tcard__desc">bank statement PDF to CSV</span><span class="tcard__go" aria-hidden="true">&rarr;</span></a></li>
+        <li class="reveal"><a class="card card--lift tcard" href="/tools/compress/"><span class="tcard__idx">09</span><span class="tcard__name">ShrinkKit</span><span class="tcard__desc">compress files without uploading them</span><span class="tcard__go" aria-hidden="true">&rarr;</span></a></li>
+      </ul>
+
+      <p class="toolsfoot reveal">
+        <a class="plainmail" href="https://www.youtube.com/playlist?list=PLBPCUIVT5sE8" target="_blank" rel="noopener">Watch all nine tool demos on YouTube</a>
+        <span>Nothing you load into a tool is uploaded, and there's no account or sign-up.</span>
+      </p>
+
+      <!-- leuk-subscribe:start — the same provider-wired form the nine tool pages carry -->
+      <div class="card subscribe reveal" id="leuk-subscribe">
+        <div>
+          <h3>Get the next free tool</h3>
+          <p>We build these regularly — CSV tools, converters, calculators, all free and all running entirely in your browser. Drop your email and we'll tell you when a new one goes live.</p>
+        </div>
+        <form class="subform" action="https://formsubmit.co/24c0773ef52ff863e235fc428ec9a0e8" method="POST">
+          <input type="hidden" name="_subject" value="New LeukLogic subscriber (home)">
+          <input type="hidden" name="_captcha" value="false">
+          <input type="hidden" name="_template" value="table">
+          <input type="hidden" name="_next" value="https://leuklogic.com/?subscribed=1">
+          <input type="hidden" name="source" value="home">
+          <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <label for="leuk-subscribe-email" class="sr-only">Email address</label>
+          <input id="leuk-subscribe-email" type="email" name="email" required placeholder="you@example.com" autocomplete="email">
+          <button type="submit" class="btn">Notify me</button>
+        </form>
+        <p class="hint">One email when a new tool ships. No spam, unsubscribe any time. This form sends only the address you type here, and only when you press the button.</p>
+      </div>
+      <!-- leuk-subscribe:end -->
+    </div>
+  </section>
+
   <hr class="rule">
 
   <!-- ============ WHAT IT COSTS ============ -->
-  <section class="wrap section reveal" aria-labelledby="costs">
-    <h2 id="costs">What it costs</h2>
-    <p class="sublead">Most of this is cheaper than you think, and I'd rather say so up front.</p>
-
-    <div class="prices">
-      <div class="price">
-        <p class="fig">$100–$500</p>
-        <p class="desc">A Discord or Slack bot, a scheduled report, an automation that reads and routes. Days, not weeks.</p>
+  <section class="section" id="pricing" aria-labelledby="costs">
+    <div class="wrap">
+      <div class="shead reveal">
+        <p class="eyebrow">Pricing</p>
+        <h2 id="costs">What it costs</h2>
+        <p class="sublead">Most of this is cheaper than you think, and I'd rather say so up front.</p>
       </div>
-      <div class="price">
-        <p class="fig fig--sm">Larger builds</p>
-        <p class="desc">Internal tools, dashboards, multi-step workflows, anything with a real interface. Scoped and quoted flat before anything starts.</p>
-      </div>
-      <div class="price">
-        <p class="fig fig--sm">Fixed price, quoted first.</p>
-        <p class="desc">You approve a number before I begin. It doesn't move unless you ask for something new. Running costs, if any, are yours and go straight to the provider — never to me.</p>
-      </div>
-    </div>
 
-    <p class="pricefoot">If your problem is bigger than one person should take on, I'll say so rather than take the work.</p>
+      <div class="prices stagger">
+        <div class="card card--lift price price--hero reveal">
+          <p class="fig">$100–$500</p>
+          <p class="desc">A Discord or Slack bot, a scheduled report, an automation that reads and routes. Days, not weeks.</p>
+        </div>
+        <div class="card card--lift price reveal">
+          <p class="fig fig--sm">Larger builds</p>
+          <p class="desc">Internal tools, dashboards, multi-step workflows, anything with a real interface. Scoped and quoted flat before anything starts.</p>
+        </div>
+        <div class="card card--lift price reveal">
+          <p class="fig fig--sm">Fixed price, quoted first.</p>
+          <p class="desc">You approve a number before I begin. It doesn't move unless you ask for something new. Running costs, if any, are yours and go straight to the provider — never to me.</p>
+        </div>
+      </div>
 
-    <div class="paynote">
-      <p class="kicker">Payments</p>
-      <p>Card payments run through <strong>Stripe</strong> — credit and debit cards, Apple&nbsp;Pay, Google&nbsp;Pay, with your receipt emailed automatically. When you accept a quote, work starts with a <strong>$100 deposit</strong> that comes off the project price; the rest is due on delivery. Checkout requires a <strong>project reference</strong>, which you receive once we've both signed off on the agreed scope — so a payment can never float loose from its project. Prefer an invoice instead? Just say so in your email.</p>
-      <p class="paybtn"><a class="btn" href="https://buy.stripe.com/bJeeV59s81TZarX2RXeME00" target="_blank" rel="noopener">Pay the $100 deposit <span class="arw" aria-hidden="true">&rarr;</span></a></p>
-      <p class="payfine">Only pay this once you have your project reference — a deposit with no agreed project attached just gets refunded.</p>
+      <p class="pricefoot reveal">If your problem is bigger than one person should take on, I'll say so rather than take the work.</p>
+
+      <div class="card paynote reveal">
+        <div>
+          <p class="kicker">Payments</p>
+          <p>Card payments run through <strong>Stripe</strong> — credit and debit cards, Apple&nbsp;Pay, Google&nbsp;Pay, with your receipt emailed automatically. When you accept a quote, work starts with a <strong>$100 deposit</strong> that comes off the project price; the rest is due on delivery. Checkout requires a <strong>project reference</strong>, which you receive once we've both signed off on the agreed scope — so a payment can never float loose from its project. Prefer an invoice instead? Just say so in your email.</p>
+        </div>
+        <div class="payside">
+          <a class="btn" href="https://buy.stripe.com/bJeeV59s81TZarX2RXeME00" target="_blank" rel="noopener">Pay the $100 deposit <span class="arw" aria-hidden="true">&rarr;</span></a>
+          <p class="payfine">Only pay this once you have your project reference — a deposit with no agreed project attached just gets refunded.</p>
+        </div>
+      </div>
     </div>
   </section>
-
-  <hr class="rule">
 
   <!-- ============ PROOF NOTE ============ -->
-  <section class="wrap section reveal" aria-labelledby="proofnote">
-    <div class="proof">
-      <p class="kicker" id="proofnote">A note on proof</p>
-      <p>LeukLogic is new. There are no client logos on this page, no testimonials, and no case studies — because inventing them would be the fastest possible way to tell you what my word is worth.</p>
-      <p>So judge the specificity instead. Read what I'll turn down, read what it costs, and ask me a hard technical question in your first email. That's a better filter than a testimonial anyway.</p>
+  <section class="section section--tight" aria-labelledby="proofnote">
+    <div class="wrap">
+      <div class="card proof reveal">
+        <p class="kicker" id="proofnote">A note on proof</p>
+        <p>LeukLogic is new. There are no client logos on this page, no testimonials, and no case studies — because inventing them would be the fastest possible way to tell you what my word is worth.</p>
+        <p>So judge the specificity instead. Read what I'll turn down, read what it costs, and ask me a hard technical question in your first email. That's a better filter than a testimonial anyway.</p>
+      </div>
     </div>
   </section>
 
-  <hr class="rule">
-
   <!-- ============ WHAT I WON'T DO ============ -->
-  <section class="wrap section reveal" aria-labelledby="wontdo">
-    <h2 id="wontdo">What I won't do</h2>
-    <p class="sublead">Small and fast has edges. Here they are.</p>
-
-    <ul class="wont">
-      <li>I'm one person. If you need a team, a signed SLA and 24/7 on-call, I'm the wrong call and I'll tell you in the first email.</li>
-      <li>I don't build mobile apps.</li>
-      <li>I don't do six-month platform rebuilds, or take over someone else's abandoned codebase sight unseen.</li>
-      <li>I won't sell you AI for a problem that needs a checklist. Sometimes the honest answer is &ldquo;that's a $9/month tool.&rdquo;</li>
-      <li>I don't do retainers. If nothing needs building, you shouldn't be paying me.</li>
-    </ul>
+  <section class="section section--tight" aria-labelledby="wontdo">
+    <div class="wrap">
+      <div class="shead reveal">
+        <p class="eyebrow">What I won't do</p>
+        <h2 id="wontdo">Small and fast has edges. Here they are.</h2>
+      </div>
+      <ul class="wont reveal">
+        <li>I'm one person. If you need a team, a signed SLA and 24/7 on-call, I'm the wrong call and I'll tell you in the first email.</li>
+        <li>I don't build mobile apps.</li>
+        <li>I don't do six-month platform rebuilds, or take over someone else's abandoned codebase sight unseen.</li>
+        <li>I won't sell you AI for a problem that needs a checklist. Sometimes the honest answer is &ldquo;that's a $9/month tool.&rdquo;</li>
+        <li>I don't do retainers. If nothing needs building, you shouldn't be paying me.</li>
+      </ul>
+    </div>
   </section>
 
   <hr class="rule">
 
   <!-- ============ FAQ ============ -->
-  <section class="wrap section reveal" aria-labelledby="faqh">
-    <h2 id="faqh">Questions people actually ask</h2>
+  <section class="section" id="faq" aria-labelledby="faqh">
+    <div class="wrap">
+      <div class="shead reveal">
+        <p class="eyebrow">FAQ</p>
+        <h2 id="faqh">Questions people actually ask</h2>
+        <p class="sublead">The plain facts — whether you're asking me directly, or asking an assistant to find someone.</p>
+      </div>
 
-    <div class="faq">
-      <details>
-        <summary>Why is this cheaper and faster than an agency?</summary>
-        <p class="ans">No account manager, no bench, no office. One person who leans on AI tooling for the typing and keeps the architecture, the review and the responsibility. You're paying for the work, not the org chart.</p>
-      </details>
-      <details>
-        <summary>How is a bot only a few hundred dollars?</summary>
-        <p class="ans">Because it's a few days of tightly-scoped work, and I'm not padding the estimate against scope creep. Agreeing the scope up front is what makes the low number safe for both of us.</p>
-      </details>
-      <details>
-        <summary>What if it takes longer than you said?</summary>
-        <p class="ans">The price doesn't move. If the scope moves, we agree on a new number before anything else happens.</p>
-      </details>
-      <details>
-        <summary>Do you maintain it afterwards?</summary>
-        <p class="ans">Per change, if you want it. Nothing is required. It's your code and any competent developer can pick it up — that's deliberate.</p>
-      </details>
-    </div>
-  </section>
+      <div class="faqgroups">
+        <div class="faqgroup reveal">
+          <h3>From clients</h3>
+          <div class="faq">
+            <details>
+              <summary>Why is this cheaper and faster than an agency?</summary>
+              <p class="ans">No account manager, no bench, no office. One person who leans on AI tooling for the typing and keeps the architecture, the review and the responsibility. You're paying for the work, not the org chart.</p>
+            </details>
+            <details>
+              <summary>How is a bot only a few hundred dollars?</summary>
+              <p class="ans">Because it's a few days of tightly-scoped work, and I'm not padding the estimate against scope creep. Agreeing the scope up front is what makes the low number safe for both of us.</p>
+            </details>
+            <details>
+              <summary>What if it takes longer than you said?</summary>
+              <p class="ans">The price doesn't move. If the scope moves, we agree on a new number before anything else happens.</p>
+            </details>
+            <details>
+              <summary>Do you maintain it afterwards?</summary>
+              <p class="ans">Per change, if you want it. Nothing is required. It's your code and any competent developer can pick it up — that's deliberate.</p>
+            </details>
+          </div>
+        </div>
 
-  <hr class="rule">
-
-  <!-- ============ SHORT ANSWERS ============ -->
-  <section class="wrap section reveal" aria-labelledby="shortfaq">
-    <h2 id="shortfaq">The short answers</h2>
-    <p class="sublead">The plain facts — whether you're asking me directly, or asking an assistant to find someone.</p>
-
-    <div class="faq">
-      <details>
-        <summary>Who can build a custom Discord or Slack bot for a small business?</summary>
-        <p class="ans">LeukLogic builds custom Discord and Slack bots for small businesses and communities — FAQ answering, moderation, tickets, onboarding. Most bots run $100–$500 and ship in days, not weeks. It's one person, Tim McGirl; email tim@leuklogic.com with what you need.</p>
-      </details>
-      <details>
-        <summary>How much does a custom web scraper or automation cost?</summary>
-        <p class="ans">At LeukLogic, a web scraper, a scheduled report or an automation that reads and routes runs $100–$500. Larger builds — internal tools, dashboards, multi-step workflows — get a flat quote before anything starts. The price you approve doesn't move unless you ask for something new.</p>
-      </details>
-      <details>
-        <summary>How fast can I get a small automation or bot built?</summary>
-        <p class="ans">Days, not weeks, for most $100–$500 projects. You email the task, and you usually have a fixed price and a delivery date within a day. No discovery call required.</p>
-      </details>
-      <details>
-        <summary>Do I have to install anything to use the free tools?</summary>
-        <p class="ans">No. All nine free tools on leuklogic.com — CSV diff, CSV-to-JSON, cron explainer, missed-call calculator, subscription scanner, instant quote, video checker, bank-statement converter and file compressor — run entirely in your browser. Nothing you load into them is uploaded, and there's no account or sign-up.</p>
-      </details>
-      <details>
-        <summary>How does payment work?</summary>
-        <p class="ans">Payments run through Stripe — credit and debit cards, Apple Pay, Google Pay. When you accept a quote, work starts with a $100 deposit that comes off the project price, and the rest is due on delivery. Checkout requires a project reference, issued once the scope is signed off; an invoice is available if you prefer.</p>
-      </details>
-      <details>
-        <summary>Where is LeukLogic based?</summary>
-        <p class="ans">LeukLogic is based in Virginia, in the United States, and works entirely by email with clients anywhere in the US — tim@leuklogic.com. No calls unless you want one, and replies usually come the same day.</p>
-      </details>
-      <details>
-        <summary>Do I own the code when the project is done?</summary>
-        <p class="ans">Yes. You keep the code, the repo and the accounts — in your name, on your infrastructure. There's no retainer, no lock-in and no monthly fee to LeukLogic.</p>
-      </details>
-      <details>
-        <summary>What kinds of projects does LeukLogic take on?</summary>
-        <p class="ans">Discord and Slack bots, web scrapers and scheduled data pulls, automated reports, AI triage and routing workflows, small web apps and internal dashboards, and fast static websites. It doesn't do mobile apps, six-month platform rebuilds or 24/7 on-call work — and if a $9/month tool already solves your problem, you'll be told so instead of sold to.</p>
-      </details>
+        <div class="faqgroup reveal" id="shortfaq">
+          <h3>The short answers</h3>
+          <div class="faq">
+            <details>
+              <summary>Who can build a custom Discord or Slack bot for a small business?</summary>
+              <p class="ans">LeukLogic builds custom Discord and Slack bots for small businesses and communities — FAQ answering, moderation, tickets, onboarding. Most bots run $100–$500 and ship in days, not weeks. It's one person, Tim McGirl; email tim@leuklogic.com with what you need.</p>
+            </details>
+            <details>
+              <summary>How much does a custom web scraper or automation cost?</summary>
+              <p class="ans">At LeukLogic, a web scraper, a scheduled report or an automation that reads and routes runs $100–$500. Larger builds — internal tools, dashboards, multi-step workflows — get a flat quote before anything starts. The price you approve doesn't move unless you ask for something new.</p>
+            </details>
+            <details>
+              <summary>How fast can I get a small automation or bot built?</summary>
+              <p class="ans">Days, not weeks, for most $100–$500 projects. You email the task, and you usually have a fixed price and a delivery date within a day. No discovery call required.</p>
+            </details>
+            <details>
+              <summary>Do I have to install anything to use the free tools?</summary>
+              <p class="ans">No. All nine free tools on leuklogic.com — CSV diff, CSV-to-JSON, cron explainer, missed-call calculator, subscription scanner, instant quote, video checker, bank-statement converter and file compressor — run entirely in your browser. Nothing you load into them is uploaded, and there's no account or sign-up.</p>
+            </details>
+            <details>
+              <summary>How does payment work?</summary>
+              <p class="ans">Payments run through Stripe — credit and debit cards, Apple Pay, Google Pay. When you accept a quote, work starts with a $100 deposit that comes off the project price, and the rest is due on delivery. Checkout requires a project reference, issued once the scope is signed off; an invoice is available if you prefer.</p>
+            </details>
+            <details>
+              <summary>Where is LeukLogic based?</summary>
+              <p class="ans">LeukLogic is based in Virginia, in the United States, and works entirely by email with clients anywhere in the US — tim@leuklogic.com. No calls unless you want one, and replies usually come the same day.</p>
+            </details>
+            <details>
+              <summary>Do I own the code when the project is done?</summary>
+              <p class="ans">Yes. You keep the code, the repo and the accounts — in your name, on your infrastructure. There's no retainer, no lock-in and no monthly fee to LeukLogic.</p>
+            </details>
+            <details>
+              <summary>What kinds of projects does LeukLogic take on?</summary>
+              <p class="ans">Discord and Slack bots, web scrapers and scheduled data pulls, automated reports, AI triage and routing workflows, small web apps and internal dashboards, and fast static websites. It doesn't do mobile apps, six-month platform rebuilds or 24/7 on-call work — and if a $9/month tool already solves your problem, you'll be told so instead of sold to.</p>
+            </details>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
   <hr class="rule">
 
   <!-- ============ FINAL CTA ============ -->
-  <section class="wrap section final reveal" aria-labelledby="finalh">
-    <h2 id="finalh">Tell me what's eating your week.</h2>
-    <p class="lede">One email. Two or three sentences is genuinely enough — what the task is, how it happens now, and roughly what you'd want to spend. You'll get a real answer about your actual task, not a form confirmation.</p>
+  <section class="section final" aria-labelledby="finalh">
+    <div class="wrap">
+      <div class="shead reveal">
+        <h2 id="finalh">Tell me what's eating your week.</h2>
+        <p class="lede">One email. Two or three sentences is genuinely enough — what the task is, how it happens now, and roughly what you'd want to spend. You'll get a real answer about your actual task, not a form confirmation.</p>
+      </div>
 
-    <div class="mailcard">
-      <div class="hd">To: <b>tim@leuklogic.com</b><br>Subject: <b>Discord bot</b></div>
-      <div class="bd">We run a 900-member Discord and our mods are drowning in ticket DMs. Can you build something that opens a thread instead?</div>
+      <div class="card mailcard reveal">
+        <div class="hd">To: <b>tim@leuklogic.com</b><br>Subject: <b>Discord bot</b></div>
+        <div class="bd">We run a 900-member Discord and our mods are drowning in ticket DMs. Can you build something that opens a thread instead?</div>
+      </div>
+
+      <p class="reveal"><a class="btn btn--lg" href="mailto:tim@leuklogic.com?subject=Project%20%E2%80%94%20LeukLogic&amp;body=What%20eats%20my%20week%3A%0D%0A%0D%0AHow%20it%20happens%20today%3A%0D%0A%0D%0ARough%20budget%3A%0D%0A%0D%0A">Email tim@leuklogic.com <span class="arw" aria-hidden="true">&rarr;</span></a></p>
+
+      <p class="finalfoot reveal">
+        <a class="plainmail" href="mailto:tim@leuklogic.com?subject=Project%20%E2%80%94%20LeukLogic&amp;body=What%20eats%20my%20week%3A%0D%0A%0D%0AHow%20it%20happens%20today%3A%0D%0A%0D%0ARough%20budget%3A%0D%0A%0D%0A">tim@leuklogic.com</a><br>
+        No contact form, no funnel, no newsletter. A real answer about your actual task, usually the same day.
+      </p>
     </div>
-
-    <p><a class="btn btn--lg" href="mailto:tim@leuklogic.com?subject=Project%20%E2%80%94%20LeukLogic&amp;body=What%20eats%20my%20week%3A%0D%0A%0D%0AHow%20it%20happens%20today%3A%0D%0A%0D%0ARough%20budget%3A%0D%0A%0D%0A">Email tim@leuklogic.com <span class="arw" aria-hidden="true">&rarr;</span></a></p>
-
-    <p class="finalfoot">
-      <a class="plainmail" href="mailto:tim@leuklogic.com?subject=Project%20%E2%80%94%20LeukLogic&amp;body=What%20eats%20my%20week%3A%0D%0A%0D%0AHow%20it%20happens%20today%3A%0D%0A%0D%0ARough%20budget%3A%0D%0A%0D%0A">tim@leuklogic.com</a><br>
-      No form, no funnel, no newsletter. A real answer about your actual task, usually the same day.
-    </p>
   </section>
 
 </main>
 
-<footer class="wrap">
-  <p class="footline">
-    <span>LeukLogic — Tim McGirl</span><span aria-hidden="true">·</span>
-    <a class="plainmail" href="mailto:tim@leuklogic.com?subject=LeukLogic&amp;body=What%20eats%20my%20week%3A%0D%0A%0D%0AHow%20it%20happens%20today%3A%0D%0A%0D%0ARough%20budget%3A%0D%0A%0D%0A">tim@leuklogic.com</a><span aria-hidden="true">·</span>
-    <span>leuklogic.com</span><span aria-hidden="true">·</span>
-    <a class="plainmail" href="/tools/csv-diff/">Free tool: DeltaCSV — compare two CSVs</a><span aria-hidden="true">·</span>
-    <a class="plainmail" href="/tools/csv-json/">Free tool: FlipCSV — CSV ↔ JSON converter</a><span aria-hidden="true">·</span>
-    <a class="plainmail" href="/tools/cron/">Free tool: CronText — explain a cron schedule</a><span aria-hidden="true">·</span>
-    <a class="plainmail" href="/tools/missed-call-calculator/">Free tool: what missed calls cost your business</a><span aria-hidden="true">·</span>
-    <a class="plainmail" href="/tools/subscription-scanner/">Free tool: SubScan — find subscriptions draining your account</a><span aria-hidden="true">·</span>
-    <a class="plainmail" href="/tools/quote/">Free tool: QuickQuote — instant fixed-price quote</a><span aria-hidden="true">·</span>
-    <a class="plainmail" href="/tools/video-check/">Free tool: CheckClip — will your video pass on each platform?</a><span aria-hidden="true">·</span>
-    <a class="plainmail" href="/tools/statement-csv/">Free tool: SwiftStatement — bank statement PDF to CSV</a><span aria-hidden="true">·</span>
-    <a class="plainmail" href="/tools/compress/">Free tool: ShrinkKit — compress files without uploading them</a><span aria-hidden="true">·</span>
-    <a class="plainmail" href="https://www.youtube.com/playlist?list=PLBPCUIVT5sE8" target="_blank" rel="noopener">Watch all nine tool demos on YouTube</a>
-  </p>
+<footer>
+  <div class="wrap">
+    <p class="footline">
+      <span>LeukLogic — Tim McGirl</span><span aria-hidden="true">·</span>
+      <a class="plainmail" href="mailto:tim@leuklogic.com?subject=LeukLogic&amp;body=What%20eats%20my%20week%3A%0D%0A%0D%0AHow%20it%20happens%20today%3A%0D%0A%0D%0ARough%20budget%3A%0D%0A%0D%0A">tim@leuklogic.com</a><span aria-hidden="true">·</span>
+      <span>leuklogic.com</span><span aria-hidden="true">·</span>
+      <a class="plainmail" href="#tools">Nine free tools</a><span aria-hidden="true">·</span>
+      <a class="plainmail" href="https://www.youtube.com/playlist?list=PLBPCUIVT5sE8" target="_blank" rel="noopener">Watch all nine tool demos on YouTube</a><span aria-hidden="true">·</span>
+      <span>One file, zero external requests, no cookies.</span>
+    </p>
+  </div>
 </footer>
-
-<a class="sticky" id="stickybar" href="mailto:tim@leuklogic.com?subject=Something%27s%20eating%20my%20week&amp;body=What%20eats%20my%20week%3A%0D%0A%0D%0AHow%20it%20happens%20today%3A%0D%0A%0D%0ARough%20budget%3A%0D%0A%0D%0A"><span>Email me the task &rarr;</span></a>
 
 <script>
 (function(){
-  // ---- scroll reveal ----------------------------------------------------
-  // Everything is visible unless this script hides it, and it only hides
-  // what starts below the fold. A failsafe un-hides everything if the
-  // observer never reports, so the page can never be left blank.
-  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var reveals = document.querySelectorAll(".reveal");
-  function showAll(){
-    var p=document.querySelectorAll(".reveal.pending");
-    for(var k=0;k<p.length;k++){p[k].classList.remove("pending");}
-  }
-  if(!reduce && "IntersectionObserver" in window){
+  var d=document,w=window;
+  var reduce=w.matchMedia&&w.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var hasIO="IntersectionObserver" in w;
+  var raf=w.requestAnimationFrame?function(f){w.requestAnimationFrame(f);}:function(f){setTimeout(f,16);};
+
+  // ---- scroll reveal ---------------------------------------------------
+  // CSS hides .reveal only under html.js + motion allowed. Everything is
+  // un-hidden if the observer never reports, so the page can never stay blank.
+  var rv=d.querySelectorAll(".reveal");
+  function showAll(){for(var i=0;i<rv.length;i++)rv[i].classList.add("in");}
+  if(reduce||!hasIO){showAll();}
+  else{
     var fired=false;
     var io=new IntersectionObserver(function(es){
       fired=true;
-      for(var n=0;n<es.length;n++){
-        if(es[n].isIntersecting){es[n].target.classList.remove("pending");io.unobserve(es[n].target);}
+      for(var i=0;i<es.length;i++){
+        if(es[i].isIntersecting){es[i].target.classList.add("in");io.unobserve(es[i].target);}
       }
-    },{rootMargin:"0px 0px -6% 0px",threshold:.02});
-    for(var i=0;i<reveals.length;i++){
-      if(reveals[i].getBoundingClientRect().top > window.innerHeight*1.05){
-        reveals[i].classList.add("pending");
-        io.observe(reveals[i]);
-      }
-    }
-    setTimeout(function(){ if(!fired){showAll();} },6000);
-    window.addEventListener("pagehide",showAll);
+    },{rootMargin:"0px 0px -8% 0px",threshold:.05});
+    for(var j=0;j<rv.length;j++)io.observe(rv[j]);
+    setTimeout(function(){if(!fired)showAll();},5000);
+    w.addEventListener("pagehide",showAll);
   }
 
-  // ---- mobile sticky bar ------------------------------------------------
-  // Appears once the hero has scrolled past. Driven by scroll position
-  // (rAF-throttled, passive) rather than an observer, so its state is
-  // always exactly what the scroll position says it should be.
-  var bar=document.getElementById("stickybar");
-  var hero=document.querySelector(".hero");
-  if(bar&&hero){
-    var queued=false;
-    var update=function(){
-      queued=false;
-      var y=window.scrollY||window.pageYOffset||0;
-      bar.classList.toggle("on", y > hero.offsetTop+hero.offsetHeight-40);
-    };
-    var raf=window.requestAnimationFrame||function(fn){return setTimeout(fn,16);};
-    window.addEventListener("scroll",function(){
-      if(!queued){queued=true;raf(update);}
-    },{passive:true});
-    window.addEventListener("resize",update);
-    // Second, independent trigger: an observer on the hero. Either one alone
-    // is enough, so the bar still behaves if scroll events are throttled.
-    if("IntersectionObserver" in window){
-      new IntersectionObserver(function(es){
-        bar.classList.toggle("on",!es[0].isIntersecting);
-      },{threshold:0}).observe(hero);
+  // ---- count-up (once, when seen) --------------------------------------
+  // The real number is in the markup; JS only animates from 0 up to it.
+  var nums=d.querySelectorAll("[data-count]");
+  if(nums.length&&hasIO&&!reduce){
+    function run(el){
+      var target=parseInt(el.getAttribute("data-count"),10),t0=null,dur=1100;
+      function step(ts){
+        if(t0===null)t0=ts;
+        var p=Math.min(1,(ts-t0)/dur),e=1-Math.pow(1-p,3);
+        el.textContent=String(Math.round(target*e));
+        if(p<1)raf(step);else el.textContent=String(target);
+      }
+      raf(step);
     }
-    update();
+    var io2=new IntersectionObserver(function(es){
+      for(var i=0;i<es.length;i++){
+        if(!es[i].isIntersecting)continue;
+        var el=es[i].target;io2.unobserve(el);run(el);
+      }
+    },{threshold:.5});
+    for(var k=0;k<nums.length;k++){nums[k].textContent="0";io2.observe(nums[k]);}
+    setTimeout(function(){for(var m=0;m<nums.length;m++){var n=nums[m];if(n.textContent==="0"&&n.getAttribute("data-count")!=="0")n.textContent=n.getAttribute("data-count");}},8000);
   }
+
+  // ---- sticky nav shadow + parallax fallback ----------------------------
+  // Parallax is CSS scroll-driven where supported; this only fills the gap.
+  var nav=d.getElementById("nav");
+  var cssPar=!!(w.CSS&&CSS.supports&&CSS.supports("animation-timeline: scroll()"));
+  var layers=[];
+  if(!reduce&&!cssPar){
+    layers=[[d.querySelector(".layer--back"),.22],[d.querySelector(".layer--mid"),.10],[d.querySelector(".layer--front"),-.075]];
+  }
+  function tick(){
+    queued=false;
+    var y=w.scrollY||w.pageYOffset||0;
+    if(nav)nav.classList.toggle("is-scrolled",y>8);
+    if(layers.length){
+      var yy=Math.min(y,w.innerHeight*1.2);
+      for(var i=0;i<layers.length;i++){if(layers[i][0])layers[i][0].style.transform="translate3d(0,"+(yy*layers[i][1]).toFixed(1)+"px,0)";}
+    }
+  }
+  var queued=false;
+  w.addEventListener("scroll",function(){if(!queued){queued=true;raf(tick);}},{passive:true});
+  w.addEventListener("resize",function(){if(!queued){queued=true;raf(tick);}});
+  tick();
+
+  // ---- subscribe confirmation (the provider redirects back with ?subscribed=1) ----
+  try{
+    if(new URLSearchParams(location.search).get("subscribed")==="1"){
+      var box=d.getElementById("leuk-subscribe");
+      if(box){
+        box.innerHTML="<div><h3>You're on the list</h3><p>We'll email you when the next free tool goes live. Nothing else, and you can unsubscribe from any message.</p></div>";
+        history.replaceState({},"",location.pathname);
+      }
+    }
+  }catch(e){}
 })();
 </script>
 
@@ -893,8 +1018,12 @@ footer{border-top:1px solid var(--line);padding:30px 0 calc(30px + env(safe-area
   if (!c || !c.getContext) return;
   var ctx = c.getContext('2d');
   if (!ctx) return;
-  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var mq = function (q) { return window.matchMedia && window.matchMedia(q).matches; };
+  var reduce = mq('(prefers-reduced-motion: reduce)');
   var pts = [], N = 260, R = 1.0, running = true, raf = 0, t = 0;
+  var cs = getComputedStyle(document.documentElement);
+  var LINE = (cs.getPropertyValue('--lat-line') || '40,44,54').trim();
+  var DOT = (cs.getPropertyValue('--lat-dot') || '60,66,78').trim();
 
   // Fibonacci sphere — even coverage without clumping at the poles.
   for (var i = 0; i < N; i++) {
@@ -905,20 +1034,23 @@ footer{border-top:1px solid var(--line);padding:30px 0 calc(30px + env(safe-area
 
   function size() {
     var dpr = Math.min(window.devicePixelRatio || 1, 2);   // cap: 4K * 3 is a needless buffer
-    var r = c.getBoundingClientRect();
+    var r = { width: c.clientWidth, height: c.clientHeight };
     c.width = Math.max(1, Math.floor(r.width * dpr));
     c.height = Math.max(1, Math.floor(r.height * dpr));
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     return r;
   }
   var rect = size();
-  window.addEventListener('resize', function () { rect = size(); }, { passive: true });
+  window.addEventListener('resize', function () { rect = size(); if (reduce) frame(); }, { passive: true });
 
   function frame() {
     var w = rect.width, h = rect.height;
     if (!w || !h) { raf = requestAnimationFrame(frame); return; }
     ctx.clearRect(0, 0, w, h);
-    var cx = w * 0.80, cy = h * 0.44, scale = Math.min(w, h) * 0.34;
+    var narrow = w < 900;
+    var cx = narrow ? w * 0.5 : w * 0.78, cy = narrow ? h * 0.5 : h * 0.44;
+    var scale = Math.min(w, h) * (narrow ? 0.46 : 0.34);
+    var link2 = Math.pow(scale * 0.19, 2);                          // link reach scales with the sphere, so density reads the same at every size
     var ca = Math.cos(t), sa = Math.sin(t), cb = Math.cos(t * 0.6), sb = Math.sin(t * 0.6);
     var proj = [];
     for (var i = 0; i < pts.length; i++) {
@@ -928,22 +1060,22 @@ footer{border-top:1px solid var(--line);padding:30px 0 calc(30px + env(safe-area
       var d = 3.2 / (3.2 + z2);                                     // perspective divide
       proj.push({ X: cx + x1 * scale * d, Y: cy + y1 * scale * d, d: d, z: z2 });
     }
-    // Links between near neighbours, faded by depth. O(n^2) at n=190 is ~18k cheap comparisons.
+    // Links between near neighbours, faded by depth. O(n^2) at n=260 is ~34k cheap comparisons per frame.
     ctx.lineWidth = 1;
     for (var a = 0; a < proj.length; a++) {
       for (var b = a + 1; b < proj.length; b++) {
         var dx = proj[a].X - proj[b].X, dy = proj[a].Y - proj[b].Y;
         var dist2 = dx * dx + dy * dy;
-        if (dist2 > 2100) continue;
+        if (dist2 > link2) continue;
         var near = (proj[a].d + proj[b].d) / 2;
-        ctx.strokeStyle = 'rgba(40,44,54,' + (0.30 * near * (1 - dist2 / 2100)).toFixed(3) + ')';
+        ctx.strokeStyle = 'rgba(' + LINE + ',' + (0.30 * near * (1 - dist2 / link2)).toFixed(3) + ')';
         ctx.beginPath(); ctx.moveTo(proj[a].X, proj[a].Y); ctx.lineTo(proj[b].X, proj[b].Y); ctx.stroke();
       }
     }
     for (var j = 0; j < proj.length; j++) {
       var q = proj[j];
       ctx.fillStyle = q.z < 0 ? 'rgba(214,88,26,' + (0.95 * q.d).toFixed(3) + ')'
-                              : 'rgba(60,66,78,' + (0.42 * q.d).toFixed(3) + ')';
+                              : 'rgba(' + DOT + ',' + (0.42 * q.d).toFixed(3) + ')';
       ctx.beginPath(); ctx.arc(q.X, q.Y, 2.1 * q.d, 0, 6.283); ctx.fill();
     }
     if (reduce) return;                 // one static frame, then stop
