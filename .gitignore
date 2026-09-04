@@ -10,3 +10,6 @@
 
 # showcase poster is a DELIVERABLE the hero video references; the blanket *.jpg would 404 it live.
 !media/showcase-poster.jpg
+
+# demo dashboard board the showcase references; the blanket *.jpg would 404 it live.
+!media/dash-roster.jpg

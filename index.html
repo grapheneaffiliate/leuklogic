@@ -578,13 +578,18 @@ footer{border-top:1px solid var(--line);padding:var(--s6) 0 calc(var(--s6) + env
       border:1px solid var(--line-strong);box-shadow:var(--sh2);background:#0C0F13;aspect-ratio:16/9}
     .showcase__film video{display:block;width:100%;height:100%;object-fit:cover}
     .showcase__label{margin:.35rem 0 0;font-size:.82rem;color:var(--muted)}
+    .board{margin:clamp(1.25rem,3vw,2rem) 0 0;border:1px solid var(--line-strong);border-radius:14px;overflow:hidden;
+      background:#0C0F13;box-shadow:var(--sh2)}
+    .board img{display:block;width:100%;height:auto;background:#0C0F13}
+    .board figcaption{padding:.85rem 1rem;font-size:.9rem;color:var(--body);background:var(--surface);border-top:1px solid var(--line)}
+    .board figcaption b{color:var(--ink)}
   </style>
   <section class="section" id="showcase" aria-labelledby="showh">
     <div class="wrap">
       <div class="shead reveal">
         <p class="eyebrow">See it in action</p>
         <h2 id="showh">We run our own systems like this. It's how we'd build yours.</h2>
-        <p class="lede">An autonomous build team, watched around the clock — three monitors, alert rules replay-tested against days of history before they can speak, and two machines on separate networks cross-checking each other.</p>
+        <p class="lede">An autonomous build team, watched around the clock — three monitors, alert rules replay-tested against days of history before they can speak, and two machines on separate networks cross-checking each other. Watch it, then see a real monitor.</p>
       </div>
 
       <figure class="showcase__film reveal">
@@ -592,9 +597,15 @@ footer{border-top:1px solid var(--line);padding:var(--s6) 0 calc(var(--s6) + env
           <source src="media/showcase.mp4" type="video/mp4">
         </video>
       </figure>
-      <p class="showcase__label reveal">Cinematic sequences are AI-generated.</p>
+      <p class="showcase__label reveal">Cinematic sequences are AI-generated. The monitor below is one of the real dashboards, shown in demo mode with synthetic data.</p>
+
+      <figure class="board reveal">
+        <img src="media/dash-roster.jpg" alt="Roster Watch monitor in demo mode: every worker's status, dependency and certificate checks, the recorded incident timeline, and a panel listing what the monitor cannot see" loading="lazy" width="1920" height="1700">
+        <figcaption><b>A real monitor, in demo mode.</b> Every worker and its status, each dependency's reachability and certificate, the recorded incident timeline — and, at the bottom, <b>what this monitor cannot see</b>. A monitor that says &ldquo;fine&rdquo; when it can't see is worse than none, so ours names its own blind spots. Every name, host and number here is synthetic.</figcaption>
+      </figure>
     </div>
   </section>
+
   <!-- ============ SOUND FAMILIAR ============ -->
   <section class="section" aria-labelledby="familiar">
     <div class="wrap">
