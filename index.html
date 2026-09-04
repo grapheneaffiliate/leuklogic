@@ -572,6 +572,29 @@ footer{border-top:1px solid var(--line);padding:var(--s6) 0 calc(var(--s6) + env
     </div>
   </section>
 
+  <!-- ============ SHOWCASE ============ -->
+  <style>
+    .showcase__film{position:relative;margin:0 0 clamp(.75rem,2vw,1.25rem);border-radius:16px;overflow:hidden;
+      border:1px solid var(--line-strong);box-shadow:var(--sh2);background:#0C0F13;aspect-ratio:16/9}
+    .showcase__film video{display:block;width:100%;height:100%;object-fit:cover}
+    .showcase__label{margin:.35rem 0 0;font-size:.82rem;color:var(--muted)}
+  </style>
+  <section class="section" id="showcase" aria-labelledby="showh">
+    <div class="wrap">
+      <div class="shead reveal">
+        <p class="eyebrow">See it in action</p>
+        <h2 id="showh">We run our own systems like this. It's how we'd build yours.</h2>
+        <p class="lede">An autonomous build team, watched around the clock — three monitors, alert rules replay-tested against days of history before they can speak, and two machines on separate networks cross-checking each other.</p>
+      </div>
+
+      <figure class="showcase__film reveal">
+        <video controls playsinline preload="none" poster="media/showcase-poster.jpg" aria-label="LeukLogic monitoring showcase film">
+          <source src="media/showcase.mp4" type="video/mp4">
+        </video>
+      </figure>
+      <p class="showcase__label reveal">Cinematic sequences are AI-generated.</p>
+    </div>
+  </section>
   <!-- ============ SOUND FAMILIAR ============ -->
   <section class="section" aria-labelledby="familiar">
     <div class="wrap">

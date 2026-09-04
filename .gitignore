@@ -7,3 +7,6 @@
 # tags went live pointing at images that 404'd. Un-ignore them explicitly.
 !og.png
 !og/*.png
+
+# showcase poster is a DELIVERABLE the hero video references; the blanket *.jpg would 404 it live.
+!media/showcase-poster.jpg
