@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Remove Duplicate Records - and Stop Them Coming Back</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'><rect width='22' height='22' rx='5' fill='%23D9502B'/><rect x='5' y='5' width='8' height='8' rx='1.6' fill='none' stroke='%23FAF7F2' stroke-width='1.8'/><path d='M9.5 9.5h7.2v7.2' fill='none' stroke='%23FAF7F2' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+<meta name="description" content="Merge and de-duplicate a customer list, mailing list or CRM export - clean file plus the script, yours to keep. Fixed price from $500, quoted the same day. tim@leuklogic.com.">
+<link rel="canonical" href="https://leuklogic.com/services/dedupe/">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#FAF7F2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#12161B" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="LeukLogic">
+<meta property="og:url" content="https://leuklogic.com/services/dedupe/">
+<meta property="og:title" content="Remove duplicate records - and stop them coming back">
+<meta property="og:description" content="Merge and de-duplicate a customer list, mailing list or CRM export - clean file plus the script, yours to keep. Fixed price from $500, quoted the same day. tim@leuklogic.com.">
+<meta property="og:image" content="https://leuklogic.com/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Service","@id":"https://leuklogic.com/services/dedupe/#service","name":"Data de-duplication and list cleanup","url":"https://leuklogic.com/services/dedupe/","description":"Merge, de-duplicate and normalise a customer list, mailing list or CRM export - delivered as a clean file plus the script that produced it, with an optional scheduled version that keeps it clean.","provider":{"@type":"Organization","name":"LeukLogic","url":"https://leuklogic.com/","email":"tim@leuklogic.com"},"areaServed":{"@type":"Country","name":"United States"},"offers":[{"@type":"Offer","priceCurrency":"USD","price":500,"name":"One-time clean","description":"Merge and de-duplicate your files, delivered as a clean export plus the script, yours to keep and re-run."},{"@type":"Offer","priceCurrency":"USD","priceSpecification":{"@type":"PriceSpecification","minPrice":1200,"priceCurrency":"USD"},"name":"Kept clean","description":"The same de-duplication wired to run on a schedule against your source, with a report of what it merged on every run."}]},{"@type":"FAQPage","@id":"https://leuklogic.com/services/dedupe/#faq","url":"https://leuklogic.com/services/dedupe/","mainEntity":[{"@type":"Question","name":"Is my data safe if I send you a customer list?","acceptedAnswer":{"@type":"Answer","text":"You never have to send a full list to get a price. A description, or a 20-row sample with the names changed, is enough to quote from. When we do handle real data it stays in the accounts you control, it is not used for anything else, and it is deleted when the job is done. The nine free tools on this site never upload anything at all - they run entirely in your browser."}},{"@type":"Question","name":"What actually counts as a duplicate?","acceptedAnswer":{"@type":"Answer","text":"That is the part worth deciding before any code runs, and we decide it with you. Exact matches are easy. The ones that cost you are the near-matches: the same person with a middle initial, a maiden name, a work address and a home address, or an email that differs by one character. We agree the matching rules against your real data first, then apply them - and every merge the script makes is listed so you can audit it rather than trust it."}},{"@type":"Question","name":"What if I only have one messy file, not two?","acceptedAnswer":{"@type":"Answer","text":"That is the common case and it is fine. Comparing two exports is a separate job - the free DeltaCSV tool on this site does that one for nothing. De-duplication works on a single file, or on several that need merging into one."}},{"@type":"Question","name":"Do I own the result?","acceptedAnswer":{"@type":"Answer","text":"Yes - the clean file and the script that produced it. You can re-run it yourself whenever you like. There is no retainer, no lock-in and no monthly fee unless you ask for the scheduled version, in which case it runs in your accounts and you own that too."}},{"@type":"Question","name":"How fast is it?","acceptedAnswer":{"@type":"Answer","text":"You get a fixed price and a delivery date the same day you describe the job. Most one-time cleans are done within a few days of that."}},{"@type":"Question","name":"My data is genuinely a mess. Is that a problem?","acceptedAnswer":{"@type":"Answer","text":"No. Inconsistent columns, mixed date formats, stray quotes, rows with the wrong field count and three spellings of the same city are the normal starting condition. If the file is so far gone that cleaning it honestly is not possible, you will be told that instead of being sold a job that cannot work."}}]}]}</script>
+<style>
+:root{
+  --paper:#FAF7F2; --surface:#FFFFFF; --sunk:#F3EEE6; --ink:#12161B; --body:#3D454E;
+  --muted:#616A75; --line:#E4DED4; --accent:#D9502B; --accent-text:#B03D1D;
+  --accent-soft:#FBEAE3; --teal:#10574F; --teal-soft:#E3F0ED; --btn-bg:#B03D1D;
+  --btn-fg:#FFFFFF; --focus:#B03D1D;
+  --shadow:0 1px 2px rgba(18,22,27,.06), 0 8px 24px rgba(18,22,27,.05); --radius:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#12161B; --surface:#181D24; --sunk:#1E242C; --ink:#FAF7F2; --body:#C6CCD4;
+    --muted:#98A1AC; --line:#2C333C; --accent:#F0764E; --accent-text:#F5906C;
+    --accent-soft:#3A2018; --teal:#5FD3C2; --teal-soft:#12302C; --btn-bg:#F0764E;
+    --btn-fg:#12161B; --focus:#F5906C;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--body);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Noto Sans",sans-serif;font-size:16px;line-height:1.6}
+.wrap{max-width:60rem;margin:0 auto;padding:1.5rem 1rem 4rem}
+h1,h2,h3{color:var(--ink);line-height:1.25;margin:0 0 .5rem}
+h1{font-size:1.9rem;letter-spacing:-.02em}
+h2{font-size:1.25rem;margin-top:0}
+p{margin:0 0 1rem}
+a{color:var(--accent-text);text-decoration:underline;text-underline-offset:2px}
+a:hover{text-decoration-thickness:2px}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:4px}
+header.masthead{border-bottom:1px solid var(--line);padding-bottom:1.25rem;margin-bottom:1.5rem}
+.eyebrow{display:inline-block;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-text);font-weight:700;margin-bottom:.4rem}
+.lede{font-size:1.06rem;max-width:60ch}
+.note{background:var(--teal-soft);border-left:3px solid var(--teal);padding:.75rem .9rem;border-radius:0 var(--radius) var(--radius) 0;margin:0 0 1rem;font-size:.94rem}
+.note strong{color:var(--ink)}
+section.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:1.1rem;margin:0 0 1.25rem;box-shadow:var(--shadow)}
+label{display:block;font-size:.9rem;color:var(--ink);font-weight:600;margin-bottom:.25rem}
+.inline{display:flex;align-items:center;gap:.5rem;margin:.45rem 0}
+.inline label{display:inline;margin:0;font-weight:500;color:var(--body)}
+select,input[type=number]{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:.45rem .55rem;width:100%}
+input[type=checkbox]{width:1.05rem;height:1.05rem;accent-color:var(--accent);flex:none;margin:0}
+.controls{display:grid;gap:1rem;grid-template-columns:1fr}
+@media (min-width:640px){.controls{grid-template-columns:2fr 1fr 1fr}}
+.price{background:var(--accent-soft);border:1px solid var(--accent);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0}
+.price .band{font-size:2rem;font-weight:800;color:var(--accent-text);letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.2}
+.price .for{color:var(--ink);font-weight:600}
+.price .per{font-size:.9rem;color:var(--muted);margin-top:.2rem}
+.monthly{font-size:.95rem;color:var(--ink);font-weight:600;margin-top:.4rem}
+ul.applied{margin:.6rem 0 0;padding-left:1.1rem;font-size:.9rem}
+ul.applied li{margin-bottom:.2rem}
+.hint{font-size:.88rem;color:var(--muted)}
+.cta-row{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;margin-top:.9rem}
+a.button{display:inline-block;font-weight:700;border-radius:6px;background:var(--btn-bg);color:var(--btn-fg);padding:.55rem .95rem;text-decoration:none}
+a.button:hover{filter:brightness(1.06)}
+footer.foot{border-top:1px solid var(--line);margin-top:2.5rem;padding-top:1.1rem;font-size:.9rem;color:var(--muted)}
+</style>
+<style>
+details{border:1px solid var(--line);border-radius:var(--radius);padding:.7rem .9rem;margin:0 0 .6rem;background:var(--surface)}
+details h3{margin:0;font-size:1rem}
+details summary{cursor:pointer;color:var(--ink);font-weight:600}
+details p{margin:.6rem 0 0}
+.tiers{display:grid;gap:1rem;grid-template-columns:1fr}
+@media(min-width:44rem){.tiers{grid-template-columns:1fr 1fr}}
+.tier{border:1px solid var(--line);border-radius:var(--radius);padding:1rem;background:var(--surface)}
+.tier.lead{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.tier ul{margin:.6rem 0 0;padding-left:1.1rem}
+.tier li{margin:.3rem 0}
+.steps{counter-reset:s;list-style:none;padding:0;margin:0}
+.steps li{counter-increment:s;position:relative;padding-left:2.1rem;margin:0 0 .8rem}
+.steps li::before{content:counter(s);position:absolute;left:0;top:.05rem;width:1.5rem;height:1.5rem;
+  border-radius:50%;background:var(--accent-soft);color:var(--accent-text);font-weight:700;
+  display:grid;place-items:center;font-size:.85rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="masthead">
+  <span class="eyebrow">Data cleanup</span>
+  <h1>Your list has duplicates. Cleaning it once will not fix that.</h1>
+  <p class="lede">Merge, de-duplicate and normalise a customer list, mailing list or CRM export - and
+  get back the clean file <em>and</em> the script that produced it. Fixed price, quoted the same day.</p>
+</header>
+
+<main>
+
+<section class="card">
+  <h2>The part most cleanups get wrong</h2>
+  <p>A one-time clean is a photograph. It is accurate the day it is taken and wrong a month later,
+  because whatever created the duplicates is still running - two intake forms that do not talk to
+  each other, a spreadsheet someone imports by hand, a sync that re-adds contacts it has already
+  added, and a customer who is Bob Smith on one line and Robert Smith on another.</p>
+  <p>So a de-duplication job that is worth paying for delivers two things: the clean file, and the
+  rule that keeps it clean. You get both, and you keep both.</p>
+  <div class="note">
+    <p><strong>Every merge is listed.</strong> The output includes a record of which rows were
+    merged into which, and why. You audit the decisions instead of trusting them - which matters,
+    because a de-duplicator that quietly picks the wrong survivor loses real customers.</p>
+  </div>
+</section>
+
+<section class="card">
+  <h2>Look at how we handle data before you send us any</h2>
+  <p>Nine tools on this site are free, need no sign-up, and run entirely inside your browser -
+  nothing you load into them is uploaded anywhere. They are the actual work, not a slide:</p>
+  <p><a href="/tools/csv-diff/"><strong>DeltaCSV</strong></a> compares two exports by key and tells
+  you what really moved between them. <a href="/tools/csv-json/"><strong>FlipCSV</strong></a> turns
+  a CSV into clean JSON. <a href="/tools/statement-csv/"><strong>SwiftStatement</strong></a> pulls a
+  bank statement PDF into a spreadsheet.</p>
+  <p class="hint">If one of those already solves your problem, use it and keep your money. You will
+  be told that here rather than sold something.</p>
+</section>
+
+<section class="card">
+  <h2>What you get</h2>
+  <div class="tiers">
+    <div class="tier lead">
+      <p class="price">$500</p>
+      <h3>One-time clean</h3>
+      <ul>
+        <li>Your files merged into one, de-duplicated on rules we agree against your real data first</li>
+        <li>Near-match handling for the cases that actually cost you: middle initials, maiden names,
+            second addresses, an email off by one character</li>
+        <li>Columns, dates and formats normalised so the file is usable, not just shorter</li>
+        <li>A full merge log - every decision, auditable</li>
+        <li>The script itself, yours to keep and re-run whenever you like</li>
+      </ul>
+    </div>
+    <div class="tier">
+      <p class="price">from $1,200</p>
+      <h3>Kept clean</h3>
+      <ul>
+        <li>Everything above, wired to run on a schedule against your live source</li>
+        <li>A short report after each run: what it merged, what it skipped, what needs a human</li>
+        <li>Runs inside your accounts, on your infrastructure</li>
+        <li>You own the code. No retainer, no lock-in</li>
+      </ul>
+    </div>
+  </div>
+  <p class="hint">Fixed scope, fixed price. The number you approve does not move unless you ask for
+  something new - and if it does, you get the new number before any work happens.</p>
+</section>
+
+<section class="card">
+  <h2>How it works</h2>
+  <ol class="steps">
+    <li><strong>Tell us what you have.</strong> One sentence is enough to start. A 20-row sample with
+    the names changed is enough to quote precisely - you never need to hand over a real list to get a price.</li>
+    <li><strong>Get a fixed price and a date, the same day.</strong> Along with the matching rules we
+    propose, in plain English, before anything is written.</li>
+    <li><strong>Built, tested, handed over.</strong> With a short walkthrough so you can run it
+    yourself. Every build here is reviewed independently of whoever wrote it before it reaches you.</li>
+  </ol>
+  <div class="note">
+    <p><strong>The guarantee:</strong> it is tested before hand-off, and any defect in the delivered
+    scope that you report within 30 days is fixed free. That is a promise about our work, on our
+    time - not a promise about your revenue.</p>
+  </div>
+</section>
+
+<section class="card">
+  <h2>Honest scope</h2>
+  <p>This is a good fit for customer lists, mailing lists, CRM and e-commerce exports, membership
+  rosters, supplier tables and event registrations - anything that arrives as CSV, Excel, JSON or a
+  database export.</p>
+  <p>It is not a fit for de-duplicating images or documents by content, for anything that needs a
+  human to decide record by record at scale, or for a live migration of a system that must not go
+  down. If that is what you have, say so and you will get a straight answer about whether we are
+  the right people.</p>
+</section>
+
+<section class="card">
+  <h2>Questions people ask first</h2>
+    <details>
+      <h3><summary>Is my data safe if I send you a customer list?</summary></h3>
+      <p>You never have to send a full list to get a price. A description, or a 20-row sample with the names changed, is enough to quote from. When we do handle real data it stays in the accounts you control, it is not used for anything else, and it is deleted when the job is done. The nine free tools on this site never upload anything at all - they run entirely in your browser.</p>
+    </details>
+    <details>
+      <h3><summary>What actually counts as a duplicate?</summary></h3>
+      <p>That is the part worth deciding before any code runs, and we decide it with you. Exact matches are easy. The ones that cost you are the near-matches: the same person with a middle initial, a maiden name, a work address and a home address, or an email that differs by one character. We agree the matching rules against your real data first, then apply them - and every merge the script makes is listed so you can audit it rather than trust it.</p>
+    </details>
+    <details>
+      <h3><summary>What if I only have one messy file, not two?</summary></h3>
+      <p>That is the common case and it is fine. Comparing two exports is a separate job - the free DeltaCSV tool on this site does that one for nothing. De-duplication works on a single file, or on several that need merging into one.</p>
+    </details>
+    <details>
+      <h3><summary>Do I own the result?</summary></h3>
+      <p>Yes - the clean file and the script that produced it. You can re-run it yourself whenever you like. There is no retainer, no lock-in and no monthly fee unless you ask for the scheduled version, in which case it runs in your accounts and you own that too.</p>
+    </details>
+    <details>
+      <h3><summary>How fast is it?</summary></h3>
+      <p>You get a fixed price and a delivery date the same day you describe the job. Most one-time cleans are done within a few days of that.</p>
+    </details>
+    <details>
+      <h3><summary>My data is genuinely a mess. Is that a problem?</summary></h3>
+      <p>No. Inconsistent columns, mixed date formats, stray quotes, rows with the wrong field count and three spellings of the same city are the normal starting condition. If the file is so far gone that cleaning it honestly is not possible, you will be told that instead of being sold a job that cannot work.</p>
+    </details>
+</section>
+
+<section class="card">
+  <h2>Start here</h2>
+  <p>Email <a href="mailto:tim@leuklogic.com?subject=Duplicate%20records">tim@leuklogic.com</a> with
+  one sentence about your list - what it is, roughly how many rows, and what a duplicate means to
+  you. You will have a fixed price and a delivery date the same day.</p>
+  <p class="cta-row"><a class="button" href="mailto:tim@leuklogic.com?subject=Duplicate%20records">Email tim@leuklogic.com</a></p>
+</section>
+
+</main>
+
+<footer class="foot">
+  <p>De-duplication and list cleanup by <a href="https://leuklogic.com">LeukLogic</a> - bots,
+  scrapers, automations and internal tools, built and delivered fast, in Virginia.
+  <a href="mailto:tim@leuklogic.com">tim@leuklogic.com</a>.</p>
+  <p><a href="/tools/csv-diff/">Free: compare two CSV exports by key</a> &middot;
+     <a href="/tools/csv-json/">Free: CSV to JSON</a> &middot;
+     <a href="https://leuklogic.com">All nine free tools</a></p>
+</footer>
+
+</div>
+</body>
+</html>
