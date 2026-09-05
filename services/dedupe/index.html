@@ -71,6 +71,16 @@ ul.applied li{margin-bottom:.2rem}
 a.button{display:inline-block;font-weight:700;border-radius:6px;background:var(--btn-bg);color:var(--btn-fg);padding:.55rem .95rem;text-decoration:none}
 a.button:hover{filter:brightness(1.06)}
 footer.foot{border-top:1px solid var(--line);margin-top:2.5rem;padding-top:1.1rem;font-size:.9rem;color:var(--muted)}
+.demo table{width:100%;border-collapse:collapse;font-size:.85rem;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.demo th,.demo td{border:1px solid var(--line);padding:.3rem .45rem;text-align:left;white-space:nowrap}
+.demo th{background:var(--sunk);color:var(--ink);font-weight:600}
+.demo .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:.6rem 0}
+.demo tr.gone td{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--accent)}
+.demo pre{background:var(--sunk);border:1px solid var(--line);border-radius:var(--radius);
+  padding:.8rem;overflow-x:auto;font-size:.82rem;line-height:1.5;margin:.6rem 0}
+.demo pre b{color:var(--accent-text)}
+.tag{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+  background:var(--accent-soft);color:var(--accent-text);border-radius:4px;padding:.12rem .4rem;vertical-align:middle}
 </style>
 <style>
 details{border:1px solid var(--line);border-radius:var(--radius);padding:.7rem .9rem;margin:0 0 .6rem;background:var(--surface)}
@@ -129,6 +139,73 @@ details p{margin:.6rem 0 0}
   be told that here rather than sold something.</p>
 </section>
 
+<section class="card demo">
+  <h2>See it work on a deliberately messy file <span class="tag">worked example</span></h2>
+  <p>Everything below is real output from a real de-duplication pass, run on the invented 13-row
+  file shown here. The data is synthetic - no client's records appear on this page, ever - but the
+  rules, the log and the counts are exactly what the script produced.</p>
+
+  <div class="scroll">
+    <table>
+      <caption class="hint" style="text-align:left;padding-bottom:.35rem">Before &mdash; 13 rows. Struck-through rows are the ones the pass merged away.</caption>
+      <thead><tr><th>id</th><th>name</th><th>email</th><th>phone</th><th>city</th></tr></thead>
+      <tbody>
+        <tr><td>1001</td><td>Robert Smith</td><td>rsmith@example.com</td><td>(703) 555-0142</td><td>Manassas</td></tr>
+        <tr class="gone"><td>1002</td><td>Bob Smith</td><td>rsmith@example.com</td><td>703-555-0142</td><td>Manassas VA</td></tr>
+        <tr><td>1003</td><td>Jennifer Ruiz-Alvarez</td><td>j.ruiz@example.org</td><td>703 555 0188</td><td>Fairfax</td></tr>
+        <tr class="gone"><td>1004</td><td>Jennifer Alvarez</td><td>j.ruiz@example.org</td><td>&mdash;</td><td>Fairfax</td></tr>
+        <tr><td>1005</td><td>Michael O'Connor</td><td>mike.oconnor@example.net</td><td>(571) 555-0110</td><td>Arlington</td></tr>
+        <tr class="gone"><td>1006</td><td>Mike OConnor</td><td>mike.oconnnor@example.net</td><td>571-555-0110</td><td>Arlington</td></tr>
+        <tr><td>1007</td><td>Dana Whitfield</td><td>dana.w@example.com</td><td>(703) 555-0163</td><td>Vienna</td></tr>
+        <tr><td>1008</td><td>Priya Raman</td><td>praman@example.com</td><td>(571) 555-0177</td><td>Reston</td></tr>
+        <tr class="gone"><td>1009</td><td>Robert Smith</td><td>rsmith@example.com</td><td>&mdash;</td><td>Manassas</td></tr>
+        <tr class="gone"><td>1010</td><td>Dana Whitfield</td><td>dwhitfield@example.com</td><td>(703) 555-0163</td><td>Vienna</td></tr>
+        <tr class="gone"><td>1011</td><td>Priya Ramann</td><td>priya.raman@example.com</td><td>(571) 555-0234</td><td>Reston</td></tr>
+        <tr><td>1012</td><td>David Nguyen</td><td>dnguyen@example.com</td><td>(703) 555-0199</td><td>Vienna</td></tr>
+        <tr><td>1013</td><td>Daniel Nguyen</td><td>dan.nguyen@example.com</td><td>(703) 555-0201</td><td>Vienna</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>The three matching rules, in the order they were applied: <strong>R1</strong> same normalised
+  email, <strong>R2</strong> same phone once punctuation is stripped, <strong>R3</strong> a
+  near-identical name in the same city. The surviving record is the earliest sign-up, with any empty
+  fields back-filled from the rows merged into it, so a merge never loses data.</p>
+
+  <p><strong>The merge log, verbatim:</strong></p>
+  <pre>IN  13 rows   OUT 7 rows   MERGED 6
+
+<b>KEPT 1001 (Robert Smith)</b>  &lt;-  merged 1002, 1009
+     rule: R1 same email (rsmith@example.com)
+
+<b>KEPT 1003 (Jennifer Ruiz-Alvarez)</b>  &lt;-  merged 1004
+     rule: R1 same email (j.ruiz@example.org)
+
+<b>KEPT 1005 (Michael O'Connor)</b>  &lt;-  merged 1006
+     rule: R2 same phone (5715550110)
+
+<b>KEPT 1007 (Dana Whitfield)</b>  &lt;-  merged 1010
+     rule: R2 same phone (7035550163)
+
+<b>KEPT 1008 (Priya Raman)</b>  &lt;-  merged 1011
+     rule: R3 name 96&#37; + same city (reston)</pre>
+
+  <p>13 rows in, 7 out. Read the log rather than the count: every survivor names what was folded
+  into it and which rule decided, so you can disagree with a specific line instead of the whole run.</p>
+
+  <div class="note">
+    <p><strong>What it deliberately did NOT merge, and why that matters more.</strong>
+    <em>David Nguyen</em> and <em>Daniel Nguyen</em> sit in the same city with adjacent phone
+    numbers, and their names score 80&#37; similar - under the 85&#37; threshold, so they were left
+    alone and flagged for a human. Two different people collapsed into one is the expensive
+    mistake, because you only find out when one of them stops getting email.</p>
+    <p>The same run is why matching never rests on names alone. <em>Robert / Bob Smith</em> scores
+    76&#37; and <em>Michael / Mike O'Connor</em> 82&#37; - both under the threshold, both genuine
+    duplicates. They were caught by the email and phone rules instead. Nicknames are why one clever
+    rule is worse than three plain ones.</p>
+  </div>
+</section>
+
 <section class="card">
   <h2>What you get</h2>
   <div class="tiers">
@@ -150,8 +227,13 @@ details p{margin:.6rem 0 0}
       <ul>
         <li>Everything above, wired to run on a schedule against your live source</li>
         <li>A short report after each run: what it merged, what it skipped, what needs a human</li>
-        <li>Runs inside your accounts, on your infrastructure</li>
-        <li>You own the code. No retainer, no lock-in</li>
+        <li>Set up as a scheduled job in something you already have - a cron entry on your server,
+            your cloud provider's scheduler, or a scheduled GitHub Action - in your account, on your
+            credentials</li>
+        <li><strong>A one-time build price, not a subscription.</strong> Once it is running there is
+            nothing further to pay us: no per-run fee, no retainer, no licence</li>
+        <li>Optional, only if you want it: we watch it and fix what breaks, from $100/month. Decline
+            it and the thing still runs</li>
       </ul>
     </div>
   </div>
@@ -173,6 +255,11 @@ details p{margin:.6rem 0 0}
     <p><strong>The guarantee:</strong> it is tested before hand-off, and any defect in the delivered
     scope that you report within 30 days is fixed free. That is a promise about our work, on our
     time - not a promise about your revenue.</p>
+    <p>A wrong merge, though, usually surfaces long after any warranty window - the month someone
+    emails the wrong Bob. That is the real reason for the merge log and for handing you the script:
+    the log names exactly which rows were combined and on which rule, so a bad merge is traced to a
+    decision rather than guessed at, and the script re-runs with the rule corrected. You are not
+    dependent on us still being around to fix it.</p>
   </div>
 </section>
 
