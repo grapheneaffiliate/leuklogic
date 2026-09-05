@@ -18,7 +18,7 @@ LeukLogic is a US software shop — human-owned, with an AI-agent build team —
 
 ## How the work is built
 
-- A gated test suite — **1,341 behavioral assertions** — stands behind the tooling. What we hand over has already been checked; you are not the test.
+- A gated test suite — **more than 1,300 behavioral assertions** — stands behind the tooling. What we hand over has already been checked; you are not the test.
 - **Every change gets an independent adversarial review.** The builder never signs off on its own work.
 - The privacy line above is **measured, not asserted**: every page has been instrumented for zero external requests — measured during use, not just on load — and every new publish must pass that same gate.
 
