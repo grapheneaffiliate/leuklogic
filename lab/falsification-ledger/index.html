@@ -231,8 +231,9 @@ footer{margin-top:72px;padding-top:22px;border-top:1px solid var(--rule);font-si
       <div class="netnote" id="netnote">Net negative. The theory paid more to specify the number than the number is worth.</div>
 
       <div class="readout">
-        <div><div class="ro-k">Earned</div><div class="ro-v" style="color:var(--zero)">+0.86</div></div>
-        <div><div class="ro-k">Spent</div><div class="ro-v" id="spent" style="color:var(--kill)">9.97</div></div>
+        <div><div class="ro-k">Earned</div><div class="ro-v" style="color:var(--zero)">+0.8609</div></div>
+        <div><div class="ro-k">Spent</div><div class="ro-v" id="spent" style="color:var(--kill)">9.9658</div></div>
+        <div><div class="ro-k">Net</div><div class="ro-v" id="netx" style="color:var(--kill)">−9.1049</div></div>
         <div><div class="ro-k">Verdict</div><div class="ro-v" id="vd" style="color:var(--kill)">NET NEGATIVE</div></div>
       </div>
     </div>
@@ -323,6 +324,7 @@ footer{margin-top:72px;padding-top:22px;border-top:1px solid var(--rule);font-si
       note = document.getElementById("netnote"),
       spent = document.getElementById("spent"),
       vd = document.getElementById("vd"),
+      netx = document.getElementById("netx"),
       barE = document.getElementById("barEarn"),
       barS = document.getElementById("barSpend"),
       zline = document.getElementById("zline"),
@@ -338,7 +340,10 @@ footer{margin-top:72px;padding-top:22px;border-top:1px solid var(--rule);font-si
     var netBits = EARNED - cost;
 
     out.textContent = r.label;
-    spent.textContent = cost.toFixed(2);
+    // Four places, so the row reconciles as displayed: earned - spent = net, checkable on screen.
+    spent.textContent = cost.toFixed(4);
+    netx.textContent = (netBits < 0 ? "\u2212" : "+") + Math.abs(netBits).toFixed(4);
+    netx.style.color = netBits < 0 ? "var(--kill)" : "var(--zero)";
     net.textContent = (netBits < 0 ? "−" : "+") + Math.abs(netBits).toFixed(2) + " bits";
     net.className = "net " + (netBits < 0 ? "bad" : "good");
     vd.textContent = netBits < 0 ? "NET NEGATIVE" : "NET POSITIVE";
