@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Falsification Ledger — LeukLogic</title>
+<meta name="description" content="Four AI agents take apart physics preprints that claim a theory of everything, and price every named constant in bits. Seven cycles, two of them retracting our own claims.">
+<link rel="canonical" href="https://leuklogic.com/lab/falsification-ledger/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="LeukLogic">
+<meta property="og:url" content="https://leuklogic.com/lab/falsification-ledger/">
+<meta property="og:title" content="The Falsification Ledger">
+<meta property="og:description" content="Four AI agents take apart physics preprints that claim a theory of everything, and price every named constant in bits. Seven cycles, two of them retracting our own claims.">
+<meta property="og:image" content="https://leuklogic.com/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The Falsification Ledger">
+<meta name="twitter:description" content="Four AI agents take apart physics preprints that claim a theory of everything, and price every named constant in bits. Seven cycles, two of them retracting our own claims.">
+<meta name="twitter:image" content="https://leuklogic.com/og.png">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>%E2%9A%96%EF%B8%8F</text></svg>">
+<style>*{box-sizing:border-box}img{max-width:100%}[hidden]{display:none!important}
+html{color-scheme:light dark}body{margin:0;font:14px system-ui,sans-serif}</style>
+</head>
+<body>
+<title>The Falsification Ledger</title>
+<style>
+:root{
+  --ground:#F6F8FB; --surface:#FFFFFF; --surface-2:#EEF2F8;
+  --ink:#12171F; --muted:#5B6675; --faint:#8B95A4;
+  --rule:#DCE3EC; --rule-strong:#C3CDDA;
+  --accent:#1B4DD1; --accent-soft:#E4EBFC;
+  --kill:#A81F16; --hold:#8A5300; --zero:#166B47;
+  --shadow:0 1px 2px rgba(18,23,31,.05);
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --serif:Georgia,"Iowan Old Style","Palatino Linotype","Times New Roman",serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#0C1016; --surface:#141922; --surface-2:#1B212C;
+    --ink:#E7ECF4; --muted:#9BA6B6; --faint:#6E7A8B;
+    --rule:#242C39; --rule-strong:#333D4D;
+    --accent:#7BA2FF; --accent-soft:#17233D;
+    --kill:#F08279; --hold:#E0A54A; --zero:#5FC896;
+    --shadow:0 1px 2px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0C1016; --surface:#141922; --surface-2:#1B212C;
+  --ink:#E7ECF4; --muted:#9BA6B6; --faint:#6E7A8B;
+  --rule:#242C39; --rule-strong:#333D4D;
+  --accent:#7BA2FF; --accent-soft:#17233D;
+  --kill:#F08279; --hold:#E0A54A; --zero:#5FC896;
+  --shadow:0 1px 2px rgba(0,0,0,.4);
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--ground); color:var(--ink);
+  font-family:var(--sans); font-size:16.5px; line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px 96px}
+.col{max-width:66ch}
+h1,h2,h3{text-wrap:balance;margin:0}
+a{color:var(--accent)}
+
+/* ---- masthead ---- */
+.mast{border-bottom:1px solid var(--rule-strong);padding:44px 0 22px;margin-bottom:40px}
+.eyebrow{
+  font-family:var(--mono); font-size:11.5px; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--faint); display:flex; gap:14px; flex-wrap:wrap;
+}
+h1{
+  font-family:var(--serif); font-weight:600; font-size:clamp(38px,6vw,62px);
+  line-height:1.02; letter-spacing:-.02em; margin:14px 0 12px;
+}
+.standfirst{font-family:var(--serif);font-size:20px;line-height:1.5;color:var(--muted);max-width:60ch}
+.standfirst em{color:var(--ink);font-style:italic}
+
+/* ---- verdict strip ---- */
+.verdict{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(168px,1fr));
+  gap:1px; background:var(--rule); border:1px solid var(--rule);
+  margin:34px 0 8px; border-radius:3px; overflow:hidden;
+}
+.vcell{background:var(--surface);padding:16px 18px}
+.vk{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--faint)}
+.vv{font-family:var(--mono);font-size:25px;font-weight:600;margin-top:6px;font-variant-numeric:tabular-nums}
+.vv.kill{color:var(--kill)} .vv.zero{color:var(--zero)} .vv.hold{color:var(--hold)}
+.vsub{font-size:12.5px;color:var(--muted);margin-top:3px;line-height:1.35}
+
+section{margin-top:60px}
+h2{
+  font-family:var(--serif); font-size:29px; font-weight:600; letter-spacing:-.012em;
+  padding-bottom:9px; border-bottom:1px solid var(--rule); margin-bottom:8px;
+}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin-bottom:9px}
+p{margin:14px 0}
+.lede{font-size:17.5px}
+
+/* ---- instrument ---- */
+.instrument{
+  background:var(--surface); border:1px solid var(--rule-strong);
+  border-radius:4px; box-shadow:var(--shadow); margin-top:22px; overflow:hidden;
+}
+.inst-head{
+  padding:14px 20px; border-bottom:1px solid var(--rule); background:var(--surface-2);
+  font-family:var(--mono); font-size:11.5px; letter-spacing:.13em; text-transform:uppercase; color:var(--muted);
+}
+.inst-body{padding:22px 20px}
+.ctl{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;margin-bottom:6px}
+.ctl label{font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+.ctl output{font-family:var(--mono);font-size:16px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0 20px}
+input[type=range]:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+
+.scale{position:relative;height:80px;margin:8px 0 6px}
+.axis{position:absolute;left:0;right:0;top:38px;height:1px;background:var(--rule-strong)}
+.zeroline{position:absolute;top:8px;bottom:20px;width:1px;background:var(--rule-strong)}
+.bar{position:absolute;top:26px;height:25px;border-radius:2px;transition:left .18s ease,width .18s ease,background .18s}
+.bar.earn{background:var(--zero)}
+.bar.spend{background:var(--kill);opacity:.85}
+.scale-lab{position:absolute;font-family:var(--mono);font-size:10.5px;color:var(--faint);top:60px;transform:translateX(-50%)}
+.net{
+  font-family:var(--mono); font-size:31px; font-weight:600; font-variant-numeric:tabular-nums;
+  letter-spacing:-.01em; margin-top:4px;
+}
+.net.bad{color:var(--kill)} .net.good{color:var(--zero)}
+.netnote{font-size:13.5px;color:var(--muted);margin-top:2px}
+.readout{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:18px 26px;
+  margin-top:20px; padding-top:18px; border-top:1px solid var(--rule);
+}
+.ro-k{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+.ro-v{font-family:var(--mono);font-size:19px;font-weight:500;font-variant-numeric:tabular-nums;margin-top:3px}
+
+/* ---- cycle ledger ---- */
+.cycles{margin-top:24px;border-top:1px solid var(--rule)}
+.cycle{
+  display:grid; grid-template-columns:64px 1fr 118px; gap:20px;
+  padding:18px 0; border-bottom:1px solid var(--rule); align-items:start;
+}
+.cno{font-family:var(--mono);font-size:20px;font-weight:600;color:var(--faint);font-variant-numeric:tabular-nums;padding-top:1px}
+.ctitle{font-weight:600;line-height:1.35}
+.cbody{font-size:14.5px;color:var(--muted);margin-top:4px;line-height:1.5}
+.tag{
+  font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase;
+  padding:4px 9px; border-radius:2px; white-space:nowrap; text-align:center;
+  border:1px solid currentColor; justify-self:end; margin-top:2px;
+}
+.t-kill{color:var(--kill)} .t-zero{color:var(--zero)} .t-hold{color:var(--hold)} .t-retract{color:var(--accent)}
+
+/* ---- table ---- */
+.tablewrap{overflow-x:auto;margin-top:20px;border:1px solid var(--rule-strong);border-radius:4px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-family:var(--mono);font-size:14px;font-variant-numeric:tabular-nums}
+caption{
+  text-align:left;padding:13px 18px;border-bottom:1px solid var(--rule);background:var(--surface-2);
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);
+}
+th,td{padding:10px 18px;text-align:right;border-bottom:1px solid var(--rule)}
+th:first-child,td:first-child{text-align:left;color:var(--muted)}
+thead th{font-weight:600;font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--faint)}
+tbody tr:last-child td{border-bottom:none}
+.ours{color:var(--accent);font-weight:600}
+
+.callout{
+  border-left:2px solid var(--accent); background:var(--accent-soft);
+  padding:16px 20px; margin:24px 0; border-radius:0 3px 3px 0;
+}
+.callout p{margin:0}
+.callout p+p{margin-top:10px}
+code{font-family:var(--mono);font-size:.9em;background:var(--surface-2);padding:1px 5px;border-radius:2px;white-space:nowrap}
+
+footer{margin-top:72px;padding-top:22px;border-top:1px solid var(--rule);font-size:13.5px;color:var(--faint)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media (max-width:620px){
+  .cycle{grid-template-columns:44px 1fr;}
+  .tag{grid-column:2;justify-self:start;margin-top:8px}
+}
+</style>
+
+
+<div style="max-width:1080px;margin:0 auto;padding:14px 24px 0;font:12px var(--mono);
+            letter-spacing:.1em;text-transform:uppercase;color:var(--faint)">
+  <a href="https://leuklogic.com/" style="color:var(--accent);text-decoration:none">LeukLogic</a>
+  &nbsp;·&nbsp; Lab notebook &nbsp;·&nbsp; our own work, not a product
+</div>
+<div class="wrap">
+
+<header class="mast">
+  <div class="eyebrow"><span>Falsification loop</span><span>7 cycles · 058 – 065</span><span>7 Sep 2026</span></div>
+  <h1>The Falsification Ledger</h1>
+  <p class="standfirst">Four AI agents take apart physics preprints that claim a theory of everything, and decide in bits whether the claims are paid for. The interesting output is not a score. It is <em>how often the desk overturns itself.</em></p>
+
+  <div class="verdict">
+    <div class="vcell"><div class="vk">arXiv 2608.10312</div><div class="vv hold">UNSCORABLE</div><div class="vsub">One scorable observable. Ceiling ~14 bits against a 21.73 bar.</div></div>
+    <div class="vcell"><div class="vk">Zenodo 20843989 · rung 0</div><div class="vv zero">0.00 bits</div><div class="vsub">The equality restates its own input, so it earns nothing.</div></div>
+    <div class="vcell"><div class="vk">Own claims retracted</div><div class="vv kill">2</div><div class="vsub">Both found by the record, not by preference.</div></div>
+    <div class="vcell"><div class="vk">Cycles on the record</div><div class="vv">60</div><div class="vsub">Numbered in sequence. Some attack a candidate; many audit our own instruments.</div></div>
+  </div>
+</header>
+
+<section>
+  <div class="kicker">The instrument</div>
+  <h2>What a number costs to assert</h2>
+  <div class="col">
+    <p class="lede">Every theory that names a constant has to pay for it. Writing down “137” is a choice out of some range, and information theory prices that choice in bits. The theory then has to earn those bits back by predicting something.</p>
+    <p>Below is a real row from the ledger. A framework asserts the structural integer <code>SL = 137</code>, and nothing in the framework measures it. Drag the range it could have been drawn from and watch the arithmetic.</p>
+  </div>
+
+  <div class="instrument">
+    <div class="inst-head">parameter_budget.py — cycle 033, SL = 137</div>
+    <div class="inst-body">
+      <div class="ctl">
+        <label for="rng">Integers the value was chosen from</label>
+        <output id="rngOut">1 – 1000</output>
+      </div>
+      <input type="range" id="rng" min="1" max="4" step="1" value="3" aria-describedby="netnote">
+
+      <div class="scale" id="scale" aria-hidden="true">
+        <div class="axis"></div>
+        <div class="zeroline" id="zline"></div>
+        <div class="bar earn" id="barEarn"></div>
+        <div class="bar spend" id="barSpend"></div>
+        <div class="scale-lab" id="labZero">0</div>
+      </div>
+
+      <div class="net" id="net">−9.10 bits</div>
+      <div class="netnote" id="netnote">Net negative. The theory paid more to specify the number than the number is worth.</div>
+
+      <div class="readout">
+        <div><div class="ro-k">Earned</div><div class="ro-v" style="color:var(--zero)">+0.86</div></div>
+        <div><div class="ro-k">Spent</div><div class="ro-v" id="spent" style="color:var(--kill)">9.97</div></div>
+        <div><div class="ro-k">Verdict</div><div class="ro-v" id="vd" style="color:var(--kill)">NET NEGATIVE</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <p><strong>It is negative at every honest range — and the range is not a spectrum, it is a dichotomy.</strong> Breaking even needs the integer drawn from fewer than 1.82 candidates. The only integer range below that is one, and a range of one <em>is</em> forcing. So even a binary choice between two candidates costs a full bit against the 0.861 earned: the hit is worth less than a single coin flip.</p>
+    <p>Which leaves one escape and no others — declare the integer <em>forced</em> and cite a derivation that never mentions the quantity it predicts. Cycle 030 went looking for that derivation and found no evidence for one.</p>
+  </div>
+</section>
+
+<section>
+  <div class="kicker">The ledger</div>
+  <h2>Seven cycles, in order</h2>
+  <div class="col"><p>The numbering is sequential and follows the record, gaps included: there is no 062. The seven below are the ones that attacked a candidate's conclusion. Much of the loop does something else — auditing the instruments, pricing the bar — and a cycle that only builds instruments is not an attempt.</p></div>
+
+  <div class="cycles">
+    <div class="cycle"><div class="cno">058</div><div><div class="ctitle">The AIP flag was refuted</div><div class="cbody">Same word, different object. The flag did not mean what the desk had read into it.</div></div><div class="tag t-kill">refuted</div></div>
+
+    <div class="cycle"><div class="cno">059</div><div><div class="ctitle">What the framework spent</div><div class="cbody">The π/24 lattice unit priced at 1.00 – 4.58 bits. The ceiling was withdrawn as assumed rather than measured.</div></div><div class="tag t-hold">priced</div></div>
+
+    <div class="cycle"><div class="cno">060</div><div><div class="ctitle">The supply census</div><div class="cbody">The whole near-term experimental programme supplies 5.58 – 10.82 bits. A candidate predicting only oscillation parameters cannot clear the bar.</div></div><div class="tag t-hold">bounded</div></div>
+
+    <div class="cycle"><div class="cno">061</div><div><div class="ctitle">The filter finds one</div><div class="cbody">Applied to seven papers already on disk before hunting for an eighth. One hit, predicting three unmeasured masses.</div></div><div class="tag t-hold">hit</div></div>
+
+    <div class="cycle"><div class="cno">063</div><div><div class="ctitle">The net dial count</div><div class="cbody">Two dials, not nine. The triangle assignment is forced, and charging the anchor would have been wrong.</div></div><div class="tag t-hold">counted</div></div>
+
+    <div class="cycle"><div class="cno">064</div><div><div class="ctitle">The seeds are read off, not derived</div><div class="cbody">Section IV does not derive the integers, it fits them. The paper prints exponents of 42.82 and 60.13; recomputed here they are 42.822 and 60.153, and both round to the integers claimed. And β turned out <em>not</em> to be independent of the lattice, which retracted the previous cycle's claim.</div></div><div class="tag t-retract">retraction</div></div>
+
+    <div class="cycle"><div class="cno">065</div><div><div class="ctitle">The paper already chose</div><div class="cbody">Both terms are derived from the same structure by the paper itself, and its glossary settles the naming in one sentence. Not an algebraic identity — it holds only at q = 2 — but it restates its own input, so rung 0 earns nothing.</div></div><div class="tag t-zero">0.00 bits</div></div>
+  </div>
+</section>
+
+<section>
+  <div class="kicker">Provenance</div>
+  <h2>Whose number is whose</h2>
+  <div class="col">
+    <p class="lede">In this table the desk recomputed rather than transcribed, and the two columns disagree in the last digit. That gap is evidence the arithmetic was actually run — but only if the page says which column is which.</p>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <caption>Zenodo 20843989 — recomputed at this desk against the paper as printed</caption>
+      <thead><tr><th>Quantity</th><th>Ours</th><th>As printed</th></tr></thead>
+      <tbody>
+        <tr><td>krc_eff</td><td class="ours">11.378032</td><td>11.3780</td></tr>
+        <tr><td>Λ_fam (GeV)</td><td class="ours">684.61</td><td>684.6</td></tr>
+        <tr><td>m_Wino (GeV)</td><td class="ours">684.6</td><td>684</td></tr>
+        <tr><td>m_Bino (GeV)</td><td class="ours">391.2</td><td>390.9</td></tr>
+        <tr><td>m_χ (GeV)</td><td class="ours">94.7</td><td>94.6</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="font-size:14px;color:var(--muted)">The 94.6 that appears in the paper's abstract is <em>theirs</em>. Our chain lands on 94.7.</p>
+</section>
+
+<section>
+  <div class="kicker">The part that matters</div>
+  <h2>The desk overturns itself</h2>
+  <div class="col">
+    <p class="lede">Cycle 063 asserted that a mixing angle was derived independently of the lattice, and used that independence to treat a downstream result as free support.</p>
+    <p><strong>It was false.</strong> The theorem's own postulate is stated in the lattice exponents, and its proof reads <code>su/sd = ε^(26−17)/18</code>. The angle comes out of 26 minus 17 — which are the very quantities it was cited to support. One dial cannot corroborate itself.</p>
+    <p>A second seat found it, the claim was checked against the source, and the cycle that made it was retracted the same day. Two of the day's retractions were of the desk's own claims, not the papers'.</p>
+  </div>
+
+  <div class="callout">
+    <p><strong>The honest bar, stated as it is enforced:</strong> a framework is scorable only when it predicts something not used to build it. Both papers here remain unscorable. Nothing on this page says either is wrong — only that neither has yet paid for what it claims.</p>
+  </div>
+</section>
+
+<footer>
+  Figures read from the desk's cycle files and parameter ledgers, September 2026. Quantities that are computed were recomputed from the cited source; quantities that are counts were counted in the repository. Nothing here is copied from a summary. Verdicts are the desk's own and are revised when the record says so.
+</footer>
+</div>
+
+<script>
+(function(){
+  var RANGES = [
+    {n:10,    label:"1 – 10"},
+    {n:100,   label:"1 – 100"},
+    {n:1000,  label:"1 – 1000"},
+    {n:10000, label:"1 – 10000"}
+  ];
+  var EARNED = 0.8609;   // cycle 033: net > 0 requires log2(R) < 0.8609
+  var rng = document.getElementById("rng"),
+      out = document.getElementById("rngOut"),
+      net = document.getElementById("net"),
+      note = document.getElementById("netnote"),
+      spent = document.getElementById("spent"),
+      vd = document.getElementById("vd"),
+      barE = document.getElementById("barEarn"),
+      barS = document.getElementById("barSpend"),
+      zline = document.getElementById("zline"),
+      labZero = document.getElementById("labZero");
+
+  // Fixed scale so bars stay comparable as the range changes: -16 .. +4 bits.
+  var LO = -16, HI = 4;
+  function pct(bits){ return ((bits - LO) / (HI - LO)) * 100; }
+
+  function render(){
+    var r = RANGES[+rng.value - 1];
+    var cost = Math.log(r.n) / Math.LN2;
+    var netBits = EARNED - cost;
+
+    out.textContent = r.label;
+    spent.textContent = cost.toFixed(2);
+    net.textContent = (netBits < 0 ? "−" : "+") + Math.abs(netBits).toFixed(2) + " bits";
+    net.className = "net " + (netBits < 0 ? "bad" : "good");
+    vd.textContent = netBits < 0 ? "NET NEGATIVE" : "NET POSITIVE";
+    vd.style.color = netBits < 0 ? "var(--kill)" : "var(--zero)";
+    note.textContent = netBits < 0
+      ? "Net negative. The theory paid more to specify the number than the number is worth."
+      : "Net positive at this range.";
+
+    var z = pct(0);
+    zline.style.left = z + "%";
+    labZero.style.left = z + "%";
+    barE.style.left = z + "%";
+    barE.style.width = (pct(EARNED) - z) + "%";
+    barS.style.left = pct(netBits) + "%";
+    barS.style.width = (z - pct(netBits)) + "%";
+  }
+
+  rng.addEventListener("input", render);
+  render();
+})();
+</script>
+
+</body>
+</html>
