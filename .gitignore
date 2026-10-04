@@ -13,3 +13,9 @@
 
 # demo dashboard board the showcase references; the blanket *.jpg would 404 it live.
 !media/dash-roster.jpg
+
+# Abundance v1 deliverables (the blanket *.png / *.jpg above would otherwise swallow them):
+!brand/*.png
+!og/*.png
+!img/**/*.png
+!press/**/*.png
