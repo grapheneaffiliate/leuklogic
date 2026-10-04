@@ -15,7 +15,7 @@ for x in n["needs"]:
     a(f"| {x['need']} | {x['stat_text']} | {x['year']} | [{x['indicator']}]({x['source_url']}) ({x['underlying_source']}) | [{x['licence']}]({x['licence_url']}) |")
 a("\nAll six come from the World Bank World Development Indicators API (`api.worldbank.org/v2/country/WLD/indicator/<id>?mrnev=1`, most recent value), world aggregate. Attribution: World Bank, WDI, CC BY 4.0, with the underlying agency named in each row.")
 a("Cross-check against Our World in Data (same agencies, read from its CSVs): undernourishment 8.5% (2023) and 8.2% (2024, FAO); safely managed water 73.7% (2024, JMP); electricity access 91.9% (2024). All agree with the WDI values or are a later year of the same series.")
-a("One disagreement, stated plainly: slums. WDI says 23.2% (2022); the UN-Habitat series on OWID says 24.8% for both 2022 and 2024, so WDI lags a UN-Habitat revision. The site shows the WDI figure and its year; the true figure is probably a little higher.\n")
+a("One disagreement, stated plainly: slums. WDI says 23.2% (2022); the UN-Habitat series on OWID says 24.8% for both 2022 and 2024, so WDI lags a UN-Habitat revision. The site shows the WDI figure with its year.\n")
 a("## The three ingredients (homepage)\n")
 a("| Ingredient | Figure | Year | Source | Licence |\n|---|---|---|---|---|")
 for x in n["ingredients"]:
