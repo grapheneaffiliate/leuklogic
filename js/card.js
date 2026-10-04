@@ -17,7 +17,12 @@
 
   function cleanName(s) {
     s = String(s || "").normalize ? String(s || "").normalize("NFC") : String(s || "");
-    s = s.replace(/[^\p{L}\p{M}\s'.\-]/gu, "").replace(/\s+/g, " ").trim();
+    // Drop any WORD that holds a digit or symbol rather than stripping characters out of it, so
+    // "Maria 2nd" becomes "Maria", never "Maria nd".
+    s = s.split(/\s+/).filter(function (w) { return w && /^[\p{L}\p{M}'.\-]+$/u.test(w); }).join(" ").trim();
+    // Names the self-hosted fonts cannot draw (outside Latin, Latin Extended and Vietnamese) print the
+    // card as "My abundant day" instead of risking empty boxes on a device with no fallback font.
+    if (/[^\u0000-ɏḀ-ỿ’]/.test(s)) s = "";
     if (s.length > 24) { var cut = s.slice(0, 24), sp = cut.lastIndexOf(" "); s = sp > 8 ? cut.slice(0, sp) : cut; }
     return s.trim();
   }
