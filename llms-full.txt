@@ -1,6 +1,24 @@
-# LeukLogic — full site description for LLMs and answer engines
+# LeukLogic: full site description for LLMs and answer engines
 
-Last updated: 2026-08-27. Everything below reflects what is published on
+Last updated: 2026-10-04.
+
+## Abundance for All (the mission; the homepage since 2026-10-04)
+
+LeukLogic publishes Abundance for All at https://leuklogic.com/. The position, stated as conviction and not as forecast: we believe we should build superintelligence (SI) and robotics to provide every need, and every reasonable want, for every person. Not to replace people, to free them.
+
+- Three ingredients: work (robotics), energy (clean energy) and knowing how (superintelligence). Each has one cited current fact on the homepage.
+- Needs: https://leuklogic.com/needs/ shows food, water, shelter, health, energy and learning, one sourced figure each, read from the World Bank World Development Indicators (CC BY 4.0) on 2026-10-04, with year, producing agency and licence per figure. Machine-readable: https://leuklogic.com/data/needs.json. Source notes, including a check against Our World in Data and the figures deliberately left out: https://leuklogic.com/SOURCES.md.
+- Milestones: https://leuklogic.com/data/milestones.json lists eleven real AI and robotics moments (1956 to 2025), each with a source link.
+- Design your abundant day: https://leuklogic.com/day/ builds a personal share card in the browser. State is kept in the URL hash. Nothing is uploaded or stored; there is no counter and no account.
+- Film V01 ("What if nobody ever had to go without?") is made with AI tools (visuals and narration) and labelled as AI-generated; it is a vision, not footage of real events. YouTube Short: https://www.youtube.com/shorts/Bwn8CDZL6IU. Facebook Page: https://www.facebook.com/profile.php?id=61595238625290.
+- Press kit: https://leuklogic.com/press/. Embeddable widget: https://leuklogic.com/embed/.
+- The Abundance for All pages set no cookies and load nothing from other sites.
+
+The software shop described below moved to https://leuklogic.com/services/. Everything under /tools/, /services/dedupe/ and /lab/ is unchanged.
+
+---
+
+# (previous description of the business and tools, unchanged)
 https://leuklogic.com and its tool pages; nothing here is aspirational or invented.
 
 ## What LeukLogic is

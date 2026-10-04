@@ -1,5 +1,18 @@
 # LeukLogic
 
+> LeukLogic publishes **Abundance for All**, a mission site arguing that we should build superintelligence and robotics to provide all needs and reasonable wants for humanity, and also builds small software for businesses. The mission pages are conviction backed by sourced, dated data; every number links to its source. Contact: tim@leuklogic.com.
+
+## Abundance for All (the mission)
+
+- [Home](https://leuklogic.com/): the thesis ("What if nobody ever had to go without?"), three ingredients (robotics, clean energy, superintelligence), where the gaps are today, a short AI-made film, and a timeline of real AI and robotics milestones
+- [Design your abundant day](https://leuklogic.com/day/): pick the chores you would hand to robots and AI and what you would do with the time; get a shareable card (1080x1350 or 1080x1920). Runs in the browser; nothing is uploaded
+- [Every human need](https://leuklogic.com/needs/): food, water, shelter, health, energy and learning, one sourced and dated World Bank statistic each, with what we believe superintelligence and robotics could change. Sources, years and licences are listed
+- [Press kit](https://leuklogic.com/press/): the mission in one paragraph, logo, cover art, keyframes and the film. All media is AI-generated and labelled
+- [Embed the needs explorer](https://leuklogic.com/embed/): one iframe, no scripts, no external requests
+- [Data](https://leuklogic.com/data/needs.json): needs and ingredient statistics with source URLs and licences; [milestones](https://leuklogic.com/data/milestones.json); [source notes](https://leuklogic.com/SOURCES.md)
+
+## LeukLogic, the software shop
+
 > LeukLogic builds small software for businesses — Discord and Slack bots, automations, scheduled reports, internal tools, dashboards, and fast static websites — built by one person in days. Most projects run $100–$500, always at a fixed price quoted before work starts. Contact: tim@leuklogic.com.
 
 LeukLogic is run by Tim McGirl, based in the United States. There are no retainers, no lock-in, and no monthly fees; clients keep the code, repo, and accounts in their own name. The site also hosts nine free tools that run entirely in the browser — nothing you put into them is uploaded anywhere. Every page on this site is self-contained: no external scripts, fonts, or analytics.
@@ -8,12 +21,12 @@ All nine tools are free and run entirely in your browser — files and data neve
 
 ## Services
 
-- [Discord and Slack bots](https://leuklogic.com/#getback): FAQ, moderation, tickets, onboarding — most projects $100–$500, days not weeks
-- [Automations and scheduled reports](https://leuklogic.com/#getback): scheduled data pulls, scrapers, automated reports, AI triage and routing — $100–$500 band
-- [Internal tools and dashboards](https://leuklogic.com/#getback): small web apps and anything with a real interface — larger builds, scoped and quoted flat before anything starts
-- [Fast static websites](https://leuklogic.com/#getback): a site that loads instantly — static, fast, no plugins to break
-- [Pricing](https://leuklogic.com/#costs): $100–$500 for a bot, automation, or scheduled report; larger builds fixed-price quoted first; the price doesn't move unless the scope does
-- [How an engagement works](https://leuklogic.com/#how): email the task → fixed price and delivery date (usually within a day) → $100 Stripe deposit that comes off the project price → build → the rest is due on delivery
+- [Discord and Slack bots](https://leuklogic.com/services/#getback): FAQ, moderation, tickets, onboarding — most projects $100–$500, days not weeks
+- [Automations and scheduled reports](https://leuklogic.com/services/#getback): scheduled data pulls, scrapers, automated reports, AI triage and routing — $100–$500 band
+- [Internal tools and dashboards](https://leuklogic.com/services/#getback): small web apps and anything with a real interface — larger builds, scoped and quoted flat before anything starts
+- [Fast static websites](https://leuklogic.com/services/#getback): a site that loads instantly — static, fast, no plugins to break
+- [Pricing](https://leuklogic.com/services/#costs): $100–$500 for a bot, automation, or scheduled report; larger builds fixed-price quoted first; the price doesn't move unless the scope does
+- [How an engagement works](https://leuklogic.com/services/#how): email the task → fixed price and delivery date (usually within a day) → $100 Stripe deposit that comes off the project price → build → the rest is due on delivery
 
 ## Free tools
 
@@ -29,8 +42,8 @@ All nine tools are free and run entirely in your browser — files and data neve
 
 ## Optional
 
-- [What LeukLogic won't do](https://leuklogic.com/#wontdo): no teams/SLA/24-7 on-call, no mobile apps, no six-month platform rebuilds, no retainers
-- [A note on proof](https://leuklogic.com/#proofnote): LeukLogic is new — no client logos, testimonials, or case studies, and it says so plainly rather than inventing them
+- [What LeukLogic won't do](https://leuklogic.com/services/#wontdo): no teams/SLA/24-7 on-call, no mobile apps, no six-month platform rebuilds, no retainers
+- [A note on proof](https://leuklogic.com/services/#proofnote): LeukLogic is new — no client logos, testimonials, or case studies, and it says so plainly rather than inventing them
 - [Full site details](https://leuklogic.com/llms-full.txt): expanded plain-text description of the business and every tool
 
 ## Demo videos

@@ -1,4 +1,38 @@
-# LeukLogic — Small-Business Automation
+# LeukLogic: Abundance for All
+
+[leuklogic.com](https://leuklogic.com) is a mission site. Its position, stated as conviction and not as forecast: **we believe we should build superintelligence and robotics to provide every need, and every reasonable want, for every person.** Not to replace people. To free them.
+
+| Page | What it is |
+|---|---|
+| `/` | Scrollytelling homepage: hero film, three ingredients, where the gaps are, day-card teaser, films, milestones, pledge, free tools |
+| `/day/` | "Design your abundant day": a canvas share card (1080x1350 and 1080x1920), Web Share with a download fallback, state in the URL hash |
+| `/needs/` | The six needs with year, source and licence; `data/needs.json` |
+| `/press/` | Mission paragraph and downloadable art; AI-generated media is labelled |
+| `/embed/` | One-iframe widget (`/embed/widget/`, no scripts) |
+| `/services/` | The software shop (previously the homepage) |
+| `/tools/*`, `/services/dedupe/`, `/lab/*` | Unchanged |
+
+## Rules this site keeps
+
+- **Static only, zero external requests.** Self-hosted fonts (Fraunces, Figtree: OFL, `fonts/`), self-hosted video, no iframes to YouTube or Facebook (it links out). Check: `python3 harness/net_instrument.py <url>` must print `ZERO EXTERNAL REQUESTS`.
+- **Every number has an inline source and an "as of" year.** They live in `data/needs.json` and `data/milestones.json` and are listed in `SOURCES.md`. A figure that cannot be verified at its source is left out.
+- **No fake counters, testimonials or user numbers.** A global pledge counter would need a backend (a database and an endpoint, plus spam control); on static hosting the pledge card is made in the visitor's browser and nothing is stored. Add a counter only together with a backend.
+- **AI-generated media is labelled** wherever it appears.
+
+## Editing
+
+```
+python3 _build/fetch_data.py     # re-read every figure from its provider (World Bank API, OWID CSV, IFR, EMBL-EBI) and re-verify cited pages
+python3 _build/make_sources.py   # regenerate SOURCES.md from the JSON
+python3 _build/build_pages.py    # regenerate index.html, day/, needs/, press/, embed/ from _build/templates + data + films.json
+node _build/og.mjs               # re-render the 1200x630 OG cards in og/
+```
+
+New film: add one object to `films.json` (the homepage renders the list at runtime). `_build/verify_pass.mjs`, `_build/home_exercise.mjs` and `_build/day_exercise.mjs` are the Playwright checks (console errors, external requests, full-page shots, the day card export). Files and folders starting with `_` are not published by GitHub Pages.
+
+---
+
+# LeukLogic: small-business automation (the software shop, at `/services/`)
 
 **Try the work before you talk to us.** Nine free tools, live at [leuklogic.com](https://leuklogic.com) — every one runs entirely in your browser, and nothing you paste or upload leaves your machine:
 
@@ -32,4 +66,4 @@ Typical bands: simple bot **$500–700** · automation **$1,000–2,500** · web
 
 ---
 
-*Repo notes: single-file static site, no build step, no dependencies, no external requests. Served by GitHub Pages from `index.html` on the `gh-pages` branch.*
+*Repo notes: static site, no build step required to serve it, no external requests on the Abundance for All pages. Served by GitHub Pages from the `gh-pages` branch.*

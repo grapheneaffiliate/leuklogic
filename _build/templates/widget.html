@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Abundance for All: where the gaps are today</title>
+<meta name="description" content="Six human needs and one sourced figure for each, from the World Bank. A widget from Abundance for All.">
+<link rel="canonical" href="https://leuklogic.com/embed/">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:,">
+<base target="_blank">
+<style>
+@font-face{font-family:Fraunces;font-weight:100 900;font-display:swap;src:url(/fonts/fraunces-latin-wght-normal.woff2) format("woff2")}
+@font-face{font-family:Figtree;font-weight:300 900;font-display:swap;src:url(/fonts/figtree-latin-wght-normal.woff2) format("woff2")}
+:root{--cream:#fbf3e4;--amber:#e8a23b;--amber-hi:#f3b95f;--teal-d:#0e2527;--mist:#efe2c8;--mist-soft:#cdbf9f;--line-d:rgba(251,243,228,.2);--serif:Fraunces,Georgia,serif;--sans:Figtree,system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--teal-d);color:var(--cream);font:16px/1.5 var(--sans);padding:18px}
+h1{font:560 1.5rem/1.15 var(--serif);margin:0 0 4px}
+h1 em{color:var(--amber-hi);font-weight:480}
+.sub{margin:0 0 16px;color:var(--mist);font-size:.92rem}
+.tiles{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(min(100%,230px),1fr))}
+.tile{background:rgba(251,243,228,.07);border:1px solid var(--line-d);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:8px}
+.tile h3{display:flex;gap:8px;align-items:center;margin:0;font:560 1.15rem var(--serif);color:var(--amber-hi)}
+.tile h3 svg{width:22px;height:22px;stroke:var(--amber-hi);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.big{font:560 2.3rem/1 var(--serif);letter-spacing:-.02em}
+.big small{display:block;font:400 .78rem/1.3 var(--sans);color:var(--mist-soft);letter-spacing:0;margin-top:5px}
+.meter{height:6px;border-radius:9px;background:rgba(251,243,228,.14);overflow:hidden}
+.meter i{display:block;height:100%;width:var(--w);background:linear-gradient(90deg,var(--amber),var(--amber-hi));border-radius:9px}
+.st{margin:0;font-size:.88rem}
+.chg{display:none}
+.tile .src{margin:auto 0 0;font-size:.74rem;line-height:1.35;color:var(--mist-soft)}
+a{color:var(--amber-hi)}
+.foot{margin-top:16px;font-size:.82rem;color:var(--mist-soft);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<h1>Where the gaps are <em>today</em></h1>
+<p class="sub">Six human needs, one sourced figure each. World aggregates, data retrieved {{RETRIEVED}}.</p>
+<div class="tiles">
+{{TILES}}
+</div>
+<p class="foot"><span>From <a href="https://leuklogic.com/needs/" target="_blank" rel="noopener">Abundance for All</a> by LeukLogic. Open data, World Bank (CC BY 4.0).</span><a href="https://leuklogic.com/needs/" target="_blank" rel="noopener">Sources and what could change</a></p>
+</body>
+</html>
