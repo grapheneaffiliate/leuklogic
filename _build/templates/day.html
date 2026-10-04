@@ -1,0 +1,57 @@
+title: Design your abundant day: make a card
+ogtitle: Design your abundant day
+desc: Pick the chores you would hand to robots and AI, pick what you would do with the time, and get a card to share. Made in your browser; nothing is uploaded.
+path: /day/
+og: day
+ogalt: Design your abundant day: what would you do with your time back? Image is AI-generated.
+css: <link rel="stylesheet" href="/css/day.css">
+js: /js/site.js /js/card.js /js/day.js
+---
+<section class="phead" style="--bg:url(/img/kf/K4.webp)">
+  <div class="wrap">
+    <p class="kick">Design your abundant day</p>
+    <h1>What would you do with <em>your time back?</em></h1>
+    <p class="lead">Three quick steps. You get a card in the colours of the film, ready for a feed or a story. Everything happens in your browser: nothing is uploaded, nothing is stored.</p>
+  </div>
+</section>
+
+<section class="sec day-app" aria-label="Card builder">
+  <div class="wrap day-layout">
+    <div class="controls">
+      <fieldset class="step">
+        <legend><span class="n">1</span> Hand these to robots and AI</legend>
+        <p class="hint">Choose any you would happily never do again.</p>
+        <div class="chips" id="chores"></div>
+      </fieldset>
+      <fieldset class="step">
+        <legend><span class="n">2</span> Spend the time on</legend>
+        <p class="hint">Choose what your freed-up hours are for.</p>
+        <div class="chips" id="times"></div>
+      </fieldset>
+      <fieldset class="step">
+        <legend><span class="n">3</span> Add your first name <span class="opt">(optional)</span></legend>
+        <div class="field"><label for="dname" class="sr">First name</label><input id="dname" type="text" maxlength="24" placeholder="e.g. Sam" autocomplete="given-name"></div>
+      </fieldset>
+      <p class="fine">Cards carry your words only, never numbers, and the art is AI-generated. Your choices live in this page's link, so a shared link redraws your card for whoever opens it.</p>
+    </div>
+
+    <div class="preview">
+      <div class="pv-in">
+        <div class="seg" role="radiogroup" aria-label="Card size">
+          <button type="button" role="radio" aria-checked="true" data-fmt="feed">Feed 1080 &times; 1350</button>
+          <button type="button" role="radio" aria-checked="false" data-fmt="story">Story 1080 &times; 1920</button>
+        </div>
+        <div class="cwrap" id="cwrap"><canvas id="card" width="1080" height="1350" role="img" aria-label="Your abundant-day card"></canvas></div>
+        <div class="btn-row act">
+          <button class="btn btn-p" id="share" type="button">Share my card</button>
+          <button class="btn btn-o" id="dl-feed" type="button">Download feed (PNG)</button>
+          <button class="btn btn-o" id="dl-story" type="button">Download story (PNG)</button>
+          <button class="btn btn-o" id="copy" type="button">Copy my link</button>
+          <button class="btn btn-o" id="reset" type="button">Start over</button>
+        </div>
+        <p class="status" id="status" role="status" aria-live="polite"></p>
+        <p class="fine">Share on <a id="s-x" href="#" rel="noopener" target="_blank">X</a> or <a id="s-fb" href="#" rel="noopener" target="_blank">Facebook</a> (link only; attach the downloaded card).</p>
+      </div>
+    </div>
+  </div>
+</section>

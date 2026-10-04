@@ -34,7 +34,8 @@
   function cleanName(s) {
     s = String(s || "").normalize ? String(s || "").normalize("NFC") : String(s || "");
     s = s.replace(/[^\p{L}\p{M}\s'.\-]/gu, "").replace(/\s+/g, " ").trim();
-    return s.slice(0, 24).trim();
+    if (s.length > 24) { var cut = s.slice(0, 24), sp = cut.lastIndexOf(" "); s = sp > 8 ? cut.slice(0, sp) : cut; }
+    return s.trim();
   }
   function encode(st) {
     var p = [];
@@ -109,7 +110,7 @@
   }
 
   function draw(ctx, st, H, im, key) {
-    var artH = Math.round(H * (H > 1500 ? 0.43 : 0.4)), panelTop = artH - 64;
+    var artH = Math.round(H * (H > 1500 ? 0.45 : 0.4)), panelTop = artH - 64;
     // art
     ctx.fillStyle = C.tealD; ctx.fillRect(0, 0, W, H);
     cover(ctx, im, 0, 0, W, artH + 40, FOCUS[key] || 0.5);
@@ -120,7 +121,7 @@
     glow.addColorStop(0, "rgba(255,214,150,.38)"); glow.addColorStop(1, "rgba(255,214,150,0)");
     ctx.fillStyle = glow; ctx.fillRect(0, 0, W, artH + 40);
     // top label (kept inside the story-safe zone on the tall card)
-    var tall = H > 1500, ty = tall ? 240 : 56, sb = tall ? 280 : 0;
+    var tall = H > 1500, ty = tall ? 240 : 56, sb = tall ? 250 : 0;
     ctx.save(); setLS(ctx, 4); ctx.font = "700 26px Figtree, sans-serif"; var lab = "ABUNDANCE FOR ALL", lw = ctx.measureText(lab).width + 64;
     rr(ctx, 56, ty, lw, 56, 28); ctx.fillStyle = "rgba(14,37,39,.62)"; ctx.fill();
     ctx.fillStyle = C.amber; ctx.beginPath(); ctx.arc(84, ty + 28, 8, 0, 7); ctx.fill();
@@ -128,11 +129,13 @@
     // panel
     ctx.save(); ctx.shadowColor = "rgba(14,37,39,.45)"; ctx.shadowBlur = 50; ctx.shadowOffsetY = -10;
     rr(ctx, 0, panelTop, W, H - panelTop + 80, 64); var pg = ctx.createLinearGradient(0, panelTop, 0, H);
-    pg.addColorStop(0, C.cream); pg.addColorStop(1, C.paper); ctx.fillStyle = pg; ctx.fill(); ctx.restore();
+    pg.addColorStop(0, C.cream); pg.addColorStop(0.7, C.paper); pg.addColorStop(1, "#ead2a4"); ctx.fillStyle = pg; ctx.fill(); ctx.restore();
     // content, shrinking until it fits above the footer
-    var ks = [1, 0.92, 0.85, 0.78, 0.7, 0.62], i, used;
-    for (i = 0; i < ks.length; i++) { used = content(ctx, st, H, panelTop, ks[i], false); if (used <= H - sb - 205) break; }
-    content(ctx, st, H, panelTop, ks[Math.min(i, ks.length - 1)], true);
+    var ks = [1.3, 1.22, 1.15, 1.08, 1, 0.92, 0.85, 0.78, 0.7, 0.62], i, used, limit = H - sb - 205;
+    for (i = 0; i < ks.length; i++) { used = content(ctx, st, H, panelTop, ks[i], false); if (used <= limit) break; }
+    i = Math.min(i, ks.length - 1);
+    var off = Math.max(0, Math.min(used === undefined ? 0 : (limit - used) * 0.45, 80));
+    content(ctx, st, H, panelTop + off, ks[i], true);
     // footer
     var fy = H - 100 - sb; ctx.strokeStyle = "rgba(42,29,18,.2)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(76, fy - 34); ctx.lineTo(W - 76, fy - 34); ctx.stroke();
     ctx.textBaseline = "alphabetic"; setLS(ctx, 0); ctx.fillStyle = C.ink; ctx.font = "700 32px Figtree, sans-serif"; ctx.fillText("What would yours be?", 76, fy + 12);
@@ -190,11 +193,16 @@
     });
     y += 22 * k;
     label("And I get my time back for");
-    var times = (st.t && st.t.length ? st.t : []).map(function (id) { return TM[id].phrase; }), phrase;
-    if (times.length > 5) phrase = times.slice(0, 5).join(", ") + ", and more"; else phrase = times.length ? list(times) : "the people and things I love";
+    var times = (st.t && st.t.length ? st.t : []).map(function (id) { return TM[id].phrase; });
     var fs = 74 * k; ctx.font = "italic 500 " + fs + "px Fraunces, Georgia, serif"; setLS(ctx, -0.5);
-    var lines = wrap(ctx, phrase, maxW);
-    if (lines.length > maxL) { lines = lines.slice(0, maxL); lines[maxL - 1] = lines[maxL - 1].replace(/[,\s]+$/, "") + " and more"; }
+    var lines, phrase, n = Math.min(times.length, 6), more = times.length > n;
+    do {
+      var part = times.slice(0, n);
+      phrase = !times.length ? "the people and things I love" : more ? part.join(", ") + ", and more" : list(part);
+      lines = wrap(ctx, phrase, maxW);
+      if (lines.length <= maxL || n <= 1) break;
+      n--; more = true;
+    } while (true);
     lines.forEach(function (ln) { if (doDraw) { ctx.fillStyle = C.teal; ctx.fillText(ln, padX, y + fs * 0.85); } y += fs * 1.12; });
     setLS(ctx, 0);
     return y;
