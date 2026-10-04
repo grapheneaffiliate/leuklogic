@@ -41,7 +41,7 @@ One disagreement, stated plainly: slums. WDI says 23.2% (2022); the UN-Habitat s
 | 2020 | AlphaFold 2 cracks protein folding: At the CASP14 competition, AlphaFold 2 predicts protein structures with far higher accuracy than any other entry. | [Wikipedia: AlphaFold](https://en.wikipedia.org/wiki/AlphaFold) |
 | 2022 | ChatGPT reaches the public: OpenAI releases ChatGPT on November 30, 2022. | [Wikipedia: ChatGPT](https://en.wikipedia.org/wiki/ChatGPT) |
 | 2024 | A Nobel Prize for predicting protein structures: The Nobel Prize in Chemistry goes in part to Demis Hassabis and John Jumper for an AI model that solved a 50-year-old problem. | [NobelPrize.org press release](https://www.nobelprize.org/prizes/chemistry/2024/press-release/) |
-| 2025 | Five million industrial robots at work: The International Federation of Robotics reports a record 5 million industrial robots operating in the world's factories. | [International Federation of Robotics, press release of Sep 24, 2026](https://ifr.org/ifr-press-releases/news/five-million-robots-now-operate-in-factories-globally) |
+| 2025 | Five million industrial robots at work: The International Federation of Robotics reports a record 5 million industrial robots operating in the world's factories. | [International Federation of Robotics (press release, Sep 24, 2026)](https://ifr.org/ifr-press-releases/news/five-million-robots-now-operate-in-factories-globally) |
 
 ## Dropped (not shown on the site)
 
