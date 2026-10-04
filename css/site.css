@@ -135,7 +135,7 @@ section{position:relative}
 .tile .src{margin-top:auto;font-size:.82rem;color:var(--mist-soft)}
 .needs-foot{margin-top:36px;display:flex;flex-wrap:wrap;gap:16px;align-items:center;color:var(--mist-soft);font-size:.92rem}
 /* DAY TEASER */
-.dayt{background:linear-gradient(160deg,#f6cf93 0%,#eaa860 55%,#c9743f 100%);color:var(--ink);overflow:hidden}
+.dayt{background:linear-gradient(160deg,#f6cf93 0%,#eaa860 55%,#d9863f 100%);color:var(--ink);overflow:hidden}
 .dayt .kick{color:#5c3206}
 .dayt .lead{color:#33220f}
 .day-grid{display:grid;gap:40px;align-items:center}

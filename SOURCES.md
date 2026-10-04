@@ -43,6 +43,13 @@ One disagreement, stated plainly: slums. WDI says 23.2% (2022); the UN-Habitat s
 | 2024 | A Nobel Prize for predicting protein structures: The Nobel Prize in Chemistry goes in part to Demis Hassabis and John Jumper for an AI model that solved a 50-year-old problem. | [NobelPrize.org press release](https://www.nobelprize.org/prizes/chemistry/2024/press-release/) |
 | 2025 | Five million industrial robots at work: The International Federation of Robotics reports a record 5 million industrial robots operating in the world's factories. | [International Federation of Robotics (press release, Sep 24, 2026)](https://ifr.org/ifr-press-releases/news/five-million-robots-now-operate-in-factories-globally) |
 
+## Arithmetic on sourced figures
+
+- Water tile: "about one person in four did not" is 100 minus 73.7 (26.3%), rounded in words.
+- Energy tile: "the rest, about 8%" is 100 minus 91.9.
+- Health tile meter: the bar is drawn as value divided by 10 so that per-1,000 sits on a percent scale; the printed number is the sourced one.
+
+
 ## Dropped (not shown on the site)
 
 - **673.2 million undernourished people, 2024 (FAO via OWID)** (verified): Verified in the OWID CSV, but the original data licence is CC BY-NC-SA 3.0 IGO (non-commercial). LeukLogic is a business, so the CC BY World Bank republication of the FAO prevalence is used instead.

@@ -24,6 +24,10 @@ a("\n## Milestones (homepage timeline)\n")
 a("| Year | Milestone | Source |\n|---|---|---|")
 for x in m["milestones"]:
     a(f"| {x['year']} | {x['title']}: {x['text']} | [{x['source_name']}]({x['source_url']}) |")
+a("\n## Arithmetic on sourced figures\n")
+a("- Water tile: \"about one person in four did not\" is 100 minus 73.7 (26.3%), rounded in words.")
+a("- Energy tile: \"the rest, about 8%\" is 100 minus 91.9.")
+a("- Health tile meter: the bar is drawn as value divided by 10 so that per-1,000 sits on a percent scale; the printed number is the sourced one.\n")
 a("\n## Dropped (not shown on the site)\n")
 for d in n["dropped"]:
     a(f"- **{d['figure']}** ({'verified' if d['verified'] else 'not verifiable at source'}): {d['reason']}")
