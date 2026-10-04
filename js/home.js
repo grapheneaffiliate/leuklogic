@@ -45,33 +45,28 @@
     if (pics.length) addEventListener("scroll", function () { if (!tick) { tick = true; requestAnimationFrame(par); } }, { passive: true });
   }
 
-  /* ---- films, driven by /films.json ---- */
+  /* ---- films: pre-rendered from /films.json at build time; a newer films.json is picked up at runtime ---- */
   var fm = $("#films-list");
-  function el(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
-  if (fm) fetch("/films.json").then(function (r) { return r.json(); }).then(function (d) {
-    fm.textContent = "";
-    d.films.forEach(function (f) {
-      var art = el("article", "film rv in");
-      var pl = el("div", "player");
-      pl.appendChild(el("span", "ailabel", "AI-generated film"));
-      var btn = el("button", "posterbtn", '<span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg></span>');
-      btn.type = "button"; btn.style.backgroundImage = "url(" + f.poster + ")"; btn.setAttribute("aria-label", "Play the film: " + f.title);
-      btn.addEventListener("click", function () {
-        var v = document.createElement("video"); v.controls = true; v.playsInline = true; v.preload = "auto"; v.poster = f.poster; v.setAttribute("aria-label", f.title);
-        v.innerHTML = '<source src="' + esc(f.mp4) + '" type="video/mp4">'; pl.replaceChild(v, btn); v.play().catch(function () {}); v.focus();
-      });
-      pl.appendChild(btn); art.appendChild(pl);
-      var tx = el("div", "txt");
-      tx.appendChild(el("p", "kick", esc(f.kind) + (f.duration ? " &middot; " + esc(f.duration) : "")));
-      tx.appendChild(el("h3", "", esc(f.title)));
-      tx.appendChild(el("p", "lead", esc(f.description)));
-      tx.appendChild(el("p", "meta", esc(f.aiLabel)));
-      var links = el("div", "links");
-      f.links.forEach(function (l, i) { var a = el("a", "btn " + (i ? "btn-g" : "btn-p"), esc(l.label)); a.href = l.url; a.rel = "noopener"; links.appendChild(a); });
-      tx.appendChild(links); art.appendChild(tx); fm.appendChild(art);
-    });
-  }).catch(function () { /* the noscript/static fallback links remain */ });
+  function playFilm(btn) {
+    var pl = btn.parentNode, v = document.createElement("video");
+    v.controls = true; v.playsInline = true; v.preload = "auto"; v.poster = btn.dataset.poster; v.setAttribute("aria-label", btn.dataset.title);
+    v.innerHTML = '<source src="' + esc(btn.dataset.mp4) + '" type="video/mp4">'; pl.replaceChild(v, btn); v.play().catch(function () {}); v.focus();
+  }
+  function wireFilms() { $$(".posterbtn", fm).forEach(function (b) { b.addEventListener("click", function () { playFilm(b); }); }); }
+  function filmHtml(f) {
+    var links = f.links.map(function (l, i) { return '<a class="btn ' + (i ? "btn-g" : "btn-p") + '" href="' + esc(l.url) + '" rel="noopener">' + esc(l.label) + "</a>"; }).join("");
+    return '<article class="film rv in" data-film="' + esc(f.id) + '"><div class="player"><span class="ailabel">AI-generated film</span>' +
+      '<button class="posterbtn" type="button" style="background-image:url(' + esc(f.poster) + ')" aria-label="Play the film: ' + esc(f.title) + '" data-mp4="' + esc(f.mp4) + '" data-poster="' + esc(f.poster) + '" data-title="' + esc(f.title) + '"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg></span></button></div>' +
+      '<div class="txt"><p class="kick">' + esc(f.kind) + " &middot; " + esc(f.duration) + "</p><h3>" + esc(f.title) + '</h3><p class="lead">' + esc(f.description) + '</p><p class="meta">' + esc(f.aiLabel) + '</p><div class="links">' + links + "</div></div></article>";
+  }
+  if (fm) {
+    wireFilms();
+    fetch("/films.json").then(function (r) { return r.json(); }).then(function (d) {
+      var ids = d.films.map(function (f) { return f.id; }).join(",");
+      if (ids !== fm.dataset.ids) { fm.innerHTML = d.films.map(filmHtml).join(""); fm.dataset.ids = ids; wireFilms(); }
+    }).catch(function () { /* the pre-rendered films stay */ });
+  }
 
   /* ---- Design-your-day teaser: the same renderer as /day/, cycling three example cards ---- */
   var mc = $("#minicard");

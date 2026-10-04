@@ -5,7 +5,7 @@ path: /day/
 og: day
 ogalt: Design your abundant day: what would you do with your time back? Image is AI-generated.
 css: <link rel="stylesheet" href="/css/day.css">
-js: /js/site.js /js/card.js /js/day.js
+js: /js/site.js /js/options.js /js/card.js /js/day.js
 ---
 <section class="phead" style="--bg:url(/img/kf/K4.webp)">
   <div class="wrap">
@@ -21,12 +21,16 @@ js: /js/site.js /js/card.js /js/day.js
       <fieldset class="step">
         <legend><span class="n">1</span> Hand these to robots and AI</legend>
         <p class="hint">Choose any you would happily never do again.</p>
-        <div class="chips" id="chores"></div>
+        <div class="chips" id="chores">
+{{CHORE_CHIPS}}
+        </div>
       </fieldset>
       <fieldset class="step">
         <legend><span class="n">2</span> Spend the time on</legend>
         <p class="hint">Choose what your freed-up hours are for.</p>
-        <div class="chips" id="times"></div>
+        <div class="chips t" id="times">
+{{TIME_CHIPS}}
+        </div>
       </fieldset>
       <fieldset class="step">
         <legend><span class="n">3</span> Add your first name <span class="opt">(optional)</span></legend>

@@ -4,7 +4,7 @@ desc: We believe we should build superintelligence and robotics to provide every
 path: /
 og: home
 ld: video
-js: /js/site.js /js/card.js /js/home.js
+js: /js/site.js /js/options.js /js/card.js /js/home.js
 ---
 <section class="hero" id="top" aria-labelledby="h1">
   <div class="hero-media" aria-hidden="true">
@@ -82,8 +82,8 @@ js: /js/site.js /js/card.js /js/home.js
       <h2 id="h-films">Watch the vision.</h2>
       <p class="lead">Short films about a world we believe is worth building. They are made with AI tools, and labelled that way every time they appear.</p>
     </div>
-    <div id="films-list">
-      <noscript><p><a href="https://www.youtube.com/shorts/Bwn8CDZL6IU" rel="noopener">Watch film V01 on YouTube Shorts</a> or <a href="https://www.facebook.com/profile.php?id=61595238625290" rel="noopener">follow on Facebook</a>.</p></noscript>
+    <div id="films-list" data-ids="{{FILM_IDS}}">
+{{FILMS}}
     </div>
   </div>
 </section>

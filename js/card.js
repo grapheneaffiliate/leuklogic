@@ -3,25 +3,9 @@
    No numbers are ever drawn on a card. Art is the film's own keyframes (AI-generated, labelled on the card). */
 (function () {
   "use strict";
-  var CHORES = [
-    ["laundry", "Laundry and folding", "laundry"], ["cook", "Cooking and dishes", "cooking and dishes"],
-    ["clean", "Cleaning the house", "cleaning"], ["yard", "Yard work and mowing", "yard work"],
-    ["groceries", "Grocery runs", "grocery runs"], ["paperwork", "Paperwork and forms", "paperwork"],
-    ["taxes", "Taxes and bookkeeping", "taxes"], ["email", "Email and scheduling", "email and scheduling"],
-    ["drive", "Long commutes and driving", "long drives"], ["repair", "Repairs and maintenance", "repairs"],
-    ["haul", "Heavy lifting and moving", "heavy lifting"], ["hold", "Waiting on hold", "waiting on hold"],
-    ["busywork", "Data entry and busywork", "busywork"], ["grow", "Growing and harvesting food", "harvesting"],
-    ["build", "Building and roofing", "building"], ["shop", "Comparing prices and shopping", "price comparing"]
-  ].map(function (a) { return { id: a[0], label: a[1], short: a[2] }; });
-  var TIMES = [
-    ["family", "Time with family", "family", "K4"], ["friends", "Time with friends", "friends", "K4"],
-    ["create", "Making art", "making art", "K3"], ["music", "Playing music", "music", "K4"],
-    ["faith", "Faith and worship", "faith and worship", "K5"], ["serve", "Serving others", "serving others", "K5"],
-    ["teach", "Teaching and mentoring", "teaching and mentoring", "K5"], ["learn", "Learning something new", "learning", "K2"],
-    ["rest", "Rest", "rest", "K6"], ["explore", "Exploring the world", "exploring", "K1"],
-    ["outdoors", "The outdoors", "the outdoors", "K1"], ["play", "Play", "play", "K4"],
-    ["invent", "Inventing and tinkering", "inventing", "K2"], ["garden", "Gardening", "gardening", "K1"]
-  ].map(function (a) { return { id: a[0], label: a[1], phrase: a[2], art: a[3] }; });
+  var OPT = window.AbundanceOptions || { chores: [], times: [] };
+  var CHORES = OPT.chores.map(function (a) { return { id: a[0], label: a[1], short: a[2] }; });
+  var TIMES = OPT.times.map(function (a) { return { id: a[0], label: a[1], phrase: a[2], art: a[3] }; });
   var FOCUS = { K1: 0.55, K2: 0.35, K3: 0.62, K4: 0.55, K5: 0.55, K6: 0.6 };
   var C = { cream: "#fbf3e4", paper: "#f3e6cc", ink: "#2a1d12", soft: "#5a4838", amber: "#e8a23b", amberInk: "#8a4f0b",
     terra: "#9a4522", teal: "#1b4a4d", tealD: "#0e2527", mist: "#efe2c8" };

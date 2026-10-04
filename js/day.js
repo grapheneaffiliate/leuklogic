@@ -9,20 +9,19 @@
   var canvas = $("#card"), status = $("#status"), nameIn = $("#dname"), draw = 0, timer = 0;
   var SIZES = { feed: [1080, 1350], story: [1080, 1920] };
 
-  function chips(host, list, key, cls) {
-    list.forEach(function (it) {
-      var b = document.createElement("button"); b.type = "button"; b.className = "chip " + (cls || ""); b.textContent = it.label; b.dataset.id = it.id;
-      b.setAttribute("aria-pressed", state[key].indexOf(it.id) >= 0 ? "true" : "false");
+  function hydrate(host, list, key) {
+    var btns = [].slice.call(host.querySelectorAll(".chip"));
+    btns.forEach(function (b) {
+      b.classList.add(key);
+      b.setAttribute("aria-pressed", state[key].indexOf(b.dataset.id) >= 0 ? "true" : "false");
       b.addEventListener("click", function () {
         var on = b.getAttribute("aria-pressed") !== "true"; b.setAttribute("aria-pressed", on ? "true" : "false");
-        state[key] = list.map(function (x) { return x.id; }).filter(function (id) { var el = host.querySelector('[data-id="' + id + '"]'); return el && el.getAttribute("aria-pressed") === "true"; });
+        state[key] = list.map(function (x) { return x.id; }).filter(function (id) { return btns.some(function (x) { return x.dataset.id === id && x.getAttribute("aria-pressed") === "true"; }); });
         changed();
       });
-      host.appendChild(b);
     });
   }
-  chips($("#chores"), A.CHORES, "c", "c"); chips($("#times"), A.TIMES, "t", "t");
-  document.getElementById("times").classList.add("t");
+  hydrate($("#chores"), A.CHORES, "c"); hydrate($("#times"), A.TIMES, "t");
   nameIn.value = state.n;
   nameIn.addEventListener("input", function () { state.n = A.cleanName(nameIn.value); changed(); });
 
