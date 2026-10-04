@@ -1,0 +1,105 @@
+{
+  "title": "How far we have come",
+  "retrieved": "2026-10-04",
+  "milestones": [
+    {
+      "year": 1956,
+      "title": "The field gets its name",
+      "text": "A summer workshop at Dartmouth, widely seen as the founding event of artificial intelligence as a field.",
+      "source_url": "https://en.wikipedia.org/wiki/Dartmouth_workshop",
+      "source_name": "Wikipedia: Dartmouth workshop",
+      "kind": "ai",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "year": 1961,
+      "title": "The first industrial robot goes to work",
+      "text": "Unimate takes a job on a General Motors assembly line in Ewing Township, New Jersey.",
+      "source_url": "https://en.wikipedia.org/wiki/Unimate",
+      "source_name": "Wikipedia: Unimate",
+      "kind": "robotics",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "year": 1997,
+      "title": "A computer beats the world chess champion",
+      "text": "IBM's Deep Blue defeats Garry Kasparov in a six-game rematch.",
+      "source_url": "https://en.wikipedia.org/wiki/Deep_Blue_(chess_computer)",
+      "source_name": "Wikipedia: Deep Blue",
+      "kind": "ai",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "year": 2011,
+      "title": "A machine wins at Jeopardy!",
+      "text": "IBM's Watson beats champions Brad Rutter and Ken Jennings at the quiz show.",
+      "source_url": "https://en.wikipedia.org/wiki/Watson_(computer)",
+      "source_name": "Wikipedia: Watson",
+      "kind": "ai",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "year": 2012,
+      "title": "Deep learning takes off",
+      "text": "AlexNet wins the ImageNet image-recognition contest with a top-5 error rate of 15.3%.",
+      "source_url": "https://en.wikipedia.org/wiki/AlexNet",
+      "source_name": "Wikipedia: AlexNet",
+      "kind": "ai",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "year": 2016,
+      "title": "AlphaGo beats a Go champion",
+      "text": "DeepMind's AlphaGo wins four of five games against Lee Sedol in Seoul.",
+      "source_url": "https://en.wikipedia.org/wiki/AlphaGo_versus_Lee_Sedol",
+      "source_name": "Wikipedia: AlphaGo versus Lee Sedol",
+      "kind": "ai",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "year": 2017,
+      "title": "The transformer",
+      "text": "The paper \"Attention Is All You Need\" introduces the architecture behind today's large language models.",
+      "source_url": "https://en.wikipedia.org/wiki/Attention_Is_All_You_Need",
+      "source_name": "Wikipedia: Attention Is All You Need",
+      "kind": "ai",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "year": 2020,
+      "title": "AlphaFold 2 cracks protein folding",
+      "text": "At the CASP14 competition, AlphaFold 2 predicts protein structures with far higher accuracy than any other entry.",
+      "source_url": "https://en.wikipedia.org/wiki/AlphaFold",
+      "source_name": "Wikipedia: AlphaFold",
+      "kind": "ai",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "year": 2022,
+      "title": "ChatGPT reaches the public",
+      "text": "OpenAI releases ChatGPT on November 30, 2022.",
+      "source_url": "https://en.wikipedia.org/wiki/ChatGPT",
+      "source_name": "Wikipedia: ChatGPT",
+      "kind": "ai",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "year": 2024,
+      "title": "A Nobel Prize for predicting protein structures",
+      "text": "The Nobel Prize in Chemistry goes in part to Demis Hassabis and John Jumper for an AI model that solved a 50-year-old problem.",
+      "source_url": "https://www.nobelprize.org/prizes/chemistry/2024/press-release/",
+      "source_name": "NobelPrize.org press release",
+      "kind": "ai",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "year": 2025,
+      "title": "Five million industrial robots at work",
+      "text": "The International Federation of Robotics reports a record 5 million industrial robots operating in the world's factories.",
+      "source_url": "https://ifr.org/ifr-press-releases/news/five-million-robots-now-operate-in-factories-globally",
+      "source_name": "International Federation of Robotics, press release of Sep 24, 2026",
+      "kind": "robotics",
+      "retrieved": "2026-10-04"
+    }
+  ]
+}
