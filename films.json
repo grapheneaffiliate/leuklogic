@@ -1,0 +1,20 @@
+{
+  "films": [
+    {
+      "id": "v01",
+      "title": "What if nobody ever had to go without?",
+      "kind": "Short film",
+      "duration": "0:37",
+      "durationIso": "PT37S",
+      "uploadDate": "2026-10-04",
+      "description": "Food, a home, medicine, clean water: every one of them comes down to work, energy and knowing how. A short film about what could change if superintelligence brought the knowing how, robotics the work, and clean energy powered both.",
+      "aiLabel": "Made with AI tools (visuals and narration). This is a vision, not footage of real events.",
+      "mp4": "/media/film-v01.mp4",
+      "poster": "/media/film-v01-poster.webp",
+      "links": [
+        { "label": "Watch on YouTube Shorts", "url": "https://www.youtube.com/shorts/Bwn8CDZL6IU" },
+        { "label": "Follow on Facebook", "url": "https://www.facebook.com/profile.php?id=61595238625290" }
+      ]
+    }
+  ]
+}
