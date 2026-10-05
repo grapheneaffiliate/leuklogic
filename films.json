@@ -1,6 +1,50 @@
 {
   "films": [
     {
+      "id": "v03",
+      "title": "If Superintelligence Studied a Forest First",
+      "kind": "Forest School for AI · Lesson 1",
+      "duration": "0:30",
+      "durationIso": "PT30S",
+      "uploadDate": "2026-10-05",
+      "description": "Imagine teaching superintelligence its first lesson in a forest, not a data center: nothing is wasted, and the strongest system is the most connected. Abundance that is composted, cycled and shared.",
+      "aiLabel": "Made with AI tools (visuals and narration). This is a vision, not footage of real events.",
+      "mp4": "/media/film-v03.mp4",
+      "poster": "/media/film-v03-poster.webp",
+      "links": [
+        {
+          "label": "Watch on YouTube Shorts",
+          "url": "https://www.youtube.com/shorts/uuVVXuSmK9U"
+        },
+        {
+          "label": "Follow on Facebook",
+          "url": "https://www.facebook.com/profile.php?id=61595238625290"
+        }
+      ]
+    },
+    {
+      "id": "v02",
+      "title": "Imagine a Tuesday you don't have to work",
+      "kind": "Short film",
+      "duration": "0:31",
+      "durationIso": "PT31S",
+      "uploadDate": "2026-10-04",
+      "description": "What would you do with a Tuesday that is yours? Fish with your kid, finally paint, help a neighbour, sit quietly. A short film about the time robotics and AI could give back.",
+      "aiLabel": "Made with AI tools (visuals and narration). This is a vision, not footage of real events.",
+      "mp4": "/media/film-v02.mp4",
+      "poster": "/media/film-v02-poster.webp",
+      "links": [
+        {
+          "label": "Watch on YouTube Shorts",
+          "url": "https://www.youtube.com/shorts/RBH8FHG8RL0"
+        },
+        {
+          "label": "Follow on Facebook",
+          "url": "https://www.facebook.com/profile.php?id=61595238625290"
+        }
+      ]
+    },
+    {
       "id": "v01",
       "title": "What if nobody ever had to go without?",
       "kind": "Short film",
@@ -12,8 +56,14 @@
       "mp4": "/media/film-v01.mp4",
       "poster": "/media/film-v01-poster.webp",
       "links": [
-        { "label": "Watch on YouTube Shorts", "url": "https://www.youtube.com/shorts/Bwn8CDZL6IU" },
-        { "label": "Follow on Facebook", "url": "https://www.facebook.com/profile.php?id=61595238625290" }
+        {
+          "label": "Watch on YouTube Shorts",
+          "url": "https://www.youtube.com/shorts/Bwn8CDZL6IU"
+        },
+        {
+          "label": "Follow on Facebook",
+          "url": "https://www.facebook.com/profile.php?id=61595238625290"
+        }
       ]
     }
   ]

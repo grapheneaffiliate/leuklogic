@@ -221,3 +221,11 @@ footer .tiny{margin-top:44px;padding-top:22px;border-top:1px solid var(--line-d)
 .phead em{color:var(--amber-hi)}
 .phead .lead{margin:0}
 .phead .ai-note{font-size:.84rem;color:var(--mist-soft);margin-top:16px}
+/* Forest School for AI (campaign series section) */
+.forest{background:#14201a}
+.forest .wrap{display:grid;gap:clamp(1.5rem,4vw,3.5rem);grid-template-columns:repeat(auto-fit,minmax(min(100%,22rem),1fr));align-items:start}
+.forest h3{font-size:clamp(1.25rem,1rem + 1vw,1.6rem);margin:0 0 .8rem}
+.forest .lessons{list-style:none;margin:0 0 1.2rem;padding:0;display:grid;gap:.7rem}
+.forest .lessons li{padding:.85rem 1rem .85rem 2.6rem;border-radius:.8rem;background:rgba(255,255,255,.05);position:relative}
+.forest .lessons li::before{content:"";position:absolute;left:1rem;top:1.15rem;width:.7rem;height:.7rem;border-radius:50%;background:var(--amber)}
+.forest .meta{color:var(--mist-soft);font-size:.95rem}
