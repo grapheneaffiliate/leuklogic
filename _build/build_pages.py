@@ -148,7 +148,7 @@ def head(m):
            "description": "LeukLogic publishes Abundance for All, a mission site arguing that we should build superintelligence and robotics to provide all needs and reasonable wants for humanity. It also builds small software for businesses.",
            "sameAs": ["https://www.facebook.com/profile.php?id=61595238625290"]}]
     if "video" in m.get("ld", ""):
-        f = films[0]
+      for f in films:
         ld.append({"@context": "https://schema.org", "@type": "VideoObject", "name": f["title"], "description": f["description"] + " " + f["aiLabel"],
                    "thumbnailUrl": SITE + f["poster"], "uploadDate": f["uploadDate"], "duration": f["durationIso"], "contentUrl": SITE + f["mp4"],
                    "url": f["links"][0]["url"], "publisher": {"@id": SITE + "/#org"}, "isFamilyFriendly": True, "inLanguage": "en"})

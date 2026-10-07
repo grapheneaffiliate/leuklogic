@@ -1,70 +1,136 @@
 {
-  "films": [
+ "films": [
+  {
+   "id": "v06",
+   "title": "Robots Plant the Food Forest, Grandma Picks Free Fruit",
+   "kind": "Forest School for AI · Lesson 3",
+   "duration": "0:31",
+   "durationIso": "PT31S",
+   "uploadDate": "2026-10-07",
+   "description": "Robots turn a bare slope into a food forest: canopy trees, fruiting shrubs, strawberries as ground cover, swales soaking up the rain. Years later, a grandmother walks up the hill and fills her basket. Plant for people you'll never meet.",
+   "aiLabel": "Made with AI tools (visuals and narration). This is a vision, not footage of real events.",
+   "mp4": "/media/film-v06.mp4",
+   "poster": "/media/film-v06-poster.webp",
+   "links": [
     {
-      "id": "v03",
-      "title": "If Superintelligence Studied a Forest First",
-      "kind": "Forest School for AI · Lesson 1",
-      "duration": "0:30",
-      "durationIso": "PT30S",
-      "uploadDate": "2026-10-05",
-      "description": "Imagine teaching superintelligence its first lesson in a forest, not a data center: nothing is wasted, and the strongest system is the most connected. Abundance that is composted, cycled and shared.",
-      "aiLabel": "Made with AI tools (visuals and narration). This is a vision, not footage of real events.",
-      "mp4": "/media/film-v03.mp4",
-      "poster": "/media/film-v03-poster.webp",
-      "links": [
-        {
-          "label": "Watch on YouTube Shorts",
-          "url": "https://www.youtube.com/shorts/uuVVXuSmK9U"
-        },
-        {
-          "label": "Follow on Facebook",
-          "url": "https://www.facebook.com/profile.php?id=61595238625290"
-        }
-      ]
+     "label": "Watch on YouTube Shorts",
+     "url": "https://www.youtube.com/shorts/ctAoBHuGFJ8"
     },
     {
-      "id": "v02",
-      "title": "Imagine a Tuesday you don't have to work",
-      "kind": "Short film",
-      "duration": "0:31",
-      "durationIso": "PT31S",
-      "uploadDate": "2026-10-04",
-      "description": "What would you do with a Tuesday that is yours? Fish with your kid, finally paint, help a neighbour, sit quietly. A short film about the time robotics and AI could give back.",
-      "aiLabel": "Made with AI tools (visuals and narration). This is a vision, not footage of real events.",
-      "mp4": "/media/film-v02.mp4",
-      "poster": "/media/film-v02-poster.webp",
-      "links": [
-        {
-          "label": "Watch on YouTube Shorts",
-          "url": "https://www.youtube.com/shorts/RBH8FHG8RL0"
-        },
-        {
-          "label": "Follow on Facebook",
-          "url": "https://www.facebook.com/profile.php?id=61595238625290"
-        }
-      ]
-    },
-    {
-      "id": "v01",
-      "title": "What if nobody ever had to go without?",
-      "kind": "Short film",
-      "duration": "0:37",
-      "durationIso": "PT37S",
-      "uploadDate": "2026-10-04",
-      "description": "Food, a home, medicine, clean water: every one of them comes down to work, energy and knowing how. A short film about what could change if superintelligence brought the knowing how, robotics the work, and clean energy powered both.",
-      "aiLabel": "Made with AI tools (visuals and narration). This is a vision, not footage of real events.",
-      "mp4": "/media/film-v01.mp4",
-      "poster": "/media/film-v01-poster.webp",
-      "links": [
-        {
-          "label": "Watch on YouTube Shorts",
-          "url": "https://www.youtube.com/shorts/Bwn8CDZL6IU"
-        },
-        {
-          "label": "Follow on Facebook",
-          "url": "https://www.facebook.com/profile.php?id=61595238625290"
-        }
-      ]
+     "label": "Follow on Facebook",
+     "url": "https://www.facebook.com/profile.php?id=61595238625290"
     }
-  ]
+   ]
+  },
+  {
+   "id": "v05",
+   "title": "Your Job Was Never the Point",
+   "kind": "Short film",
+   "duration": "0:31",
+   "durationIso": "PT31S",
+   "uploadDate": "2026-10-05",
+   "description": "Work is not your purpose in life. The people who thrive own things: land, machines, a say in the rules. What if we owned them together? Community land, shared robots, local power, food forests, rules written in the open.",
+   "aiLabel": "Made with AI tools (visuals and narration). This is a vision, not footage of real events.",
+   "mp4": "/media/film-v05.mp4",
+   "poster": "/media/film-v05-poster.webp",
+   "links": [
+    {
+     "label": "Watch on YouTube Shorts",
+     "url": "https://www.youtube.com/shorts/5C4yGn5CjpY"
+    },
+    {
+     "label": "Follow on Facebook",
+     "url": "https://www.facebook.com/profile.php?id=61595238625290"
+    }
+   ]
+  },
+  {
+   "id": "v04",
+   "title": "Robot Gardener Makes a Rookie Mistake",
+   "kind": "Forest School for AI · Lesson 2",
+   "duration": "0:30",
+   "durationIso": "PT30S",
+   "uploadDate": "2026-10-06",
+   "description": "A robot goes to pull the comfrey and an elder gardener stops it: gardeners chop its leaves to feed the soil. Don't fight the land; work with it.",
+   "aiLabel": "Made with AI tools (visuals and narration). This is a vision, not footage of real events.",
+   "mp4": "/media/film-v04.mp4",
+   "poster": "/media/film-v04-poster.webp",
+   "links": [
+    {
+     "label": "Watch on YouTube Shorts",
+     "url": "https://www.youtube.com/shorts/L5w9WQkMk0I"
+    },
+    {
+     "label": "Follow on Facebook",
+     "url": "https://www.facebook.com/profile.php?id=61595238625290"
+    }
+   ]
+  },
+  {
+   "id": "v03",
+   "title": "If Superintelligence Studied a Forest First",
+   "kind": "Forest School for AI · Lesson 1",
+   "duration": "0:30",
+   "durationIso": "PT30S",
+   "uploadDate": "2026-10-05",
+   "description": "Imagine teaching superintelligence its first lesson in a forest, not a data center: nothing is wasted, and the strongest system is the most connected. Abundance that is composted, cycled and shared.",
+   "aiLabel": "Made with AI tools (visuals and narration). This is a vision, not footage of real events.",
+   "mp4": "/media/film-v03.mp4",
+   "poster": "/media/film-v03-poster.webp",
+   "links": [
+    {
+     "label": "Watch on YouTube Shorts",
+     "url": "https://www.youtube.com/shorts/uuVVXuSmK9U"
+    },
+    {
+     "label": "Follow on Facebook",
+     "url": "https://www.facebook.com/profile.php?id=61595238625290"
+    }
+   ]
+  },
+  {
+   "id": "v02",
+   "title": "Imagine a Tuesday you don't have to work",
+   "kind": "Short film",
+   "duration": "0:31",
+   "durationIso": "PT31S",
+   "uploadDate": "2026-10-04",
+   "description": "What would you do with a Tuesday that is yours? Fish with your kid, finally paint, help a neighbour, sit quietly. A short film about the time robotics and AI could give back.",
+   "aiLabel": "Made with AI tools (visuals and narration). This is a vision, not footage of real events.",
+   "mp4": "/media/film-v02.mp4",
+   "poster": "/media/film-v02-poster.webp",
+   "links": [
+    {
+     "label": "Watch on YouTube Shorts",
+     "url": "https://www.youtube.com/shorts/RBH8FHG8RL0"
+    },
+    {
+     "label": "Follow on Facebook",
+     "url": "https://www.facebook.com/profile.php?id=61595238625290"
+    }
+   ]
+  },
+  {
+   "id": "v01",
+   "title": "What if nobody ever had to go without?",
+   "kind": "Short film",
+   "duration": "0:37",
+   "durationIso": "PT37S",
+   "uploadDate": "2026-10-04",
+   "description": "Food, a home, medicine, clean water: every one of them comes down to work, energy and knowing how. A short film about what could change if superintelligence brought the knowing how, robotics the work, and clean energy powered both.",
+   "aiLabel": "Made with AI tools (visuals and narration). This is a vision, not footage of real events.",
+   "mp4": "/media/film-v01.mp4",
+   "poster": "/media/film-v01-poster.webp",
+   "links": [
+    {
+     "label": "Watch on YouTube Shorts",
+     "url": "https://www.youtube.com/shorts/Bwn8CDZL6IU"
+    },
+    {
+     "label": "Follow on Facebook",
+     "url": "https://www.facebook.com/profile.php?id=61595238625290"
+    }
+   ]
+  }
+ ]
 }
