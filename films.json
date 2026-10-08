@@ -1,6 +1,28 @@
 {
  "films": [
   {
+   "id": "v07",
+   "title": "Robot Learns to Mulch, Kids Pick Ripe Tomatoes",
+   "kind": "Forest School for AI · Lesson 4",
+   "duration": "0:31",
+   "durationIso": "PT31S",
+   "uploadDate": "2026-10-08",
+   "description": "A robot keeps watering tomato plants in cracked, sun-baked soil, and they keep wilting. An older gardener shows it a better way: a thick blanket of straw mulch. Shaded soil holds water longer and stays cooler, and the straw slowly feeds the soil life. Weeks later, two kids pick ripe tomatoes.",
+   "aiLabel": "Made with AI tools (visuals and narration). This is a vision, not footage of real events.",
+   "mp4": "/media/film-v07.mp4",
+   "poster": "/media/film-v07-poster.webp",
+   "links": [
+    {
+     "label": "Watch on YouTube Shorts",
+     "url": "https://www.youtube.com/shorts/8AViDZKzAro"
+    },
+    {
+     "label": "Follow on Facebook",
+     "url": "https://www.facebook.com/profile.php?id=61595238625290"
+    }
+   ]
+  },
+  {
    "id": "v06",
    "title": "Robots Plant the Food Forest, Grandma Picks Free Fruit",
    "kind": "Forest School for AI · Lesson 3",
