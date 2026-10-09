@@ -1,6 +1,28 @@
 {
  "films": [
   {
+   "id": "v09",
+   "title": "A Robot Piled Every Seed in One Spot",
+   "kind": "Forest School for AI · Lesson 5",
+   "duration": "0:29",
+   "durationIso": "PT29S",
+   "uploadDate": "2026-10-09",
+   "description": "A robot rakes every acorn into one big pile under the old oak, so they'll be safe. But the sprouts come up crowded and pale in the shade. A girl points to a jay burying acorns far away, and forgetting a few. Seeds carried off by birds and animals have better odds, so the robot scatters seed across the hill. Years later, the hill is a young forest.",
+   "aiLabel": "Made with AI tools (visuals and narration). This is a vision, not footage of real events.",
+   "mp4": "/media/film-v09.mp4",
+   "poster": "/media/film-v09-poster.webp",
+   "links": [
+    {
+     "label": "Watch on YouTube Shorts",
+     "url": "https://www.youtube.com/shorts/lrBx_x_jfs0"
+    },
+    {
+     "label": "Follow on Facebook",
+     "url": "https://www.facebook.com/profile.php?id=61595238625290"
+    }
+   ]
+  },
+  {
    "id": "v07",
    "title": "Robot Learns to Mulch, Kids Pick Ripe Tomatoes",
    "kind": "Forest School for AI · Lesson 4",
