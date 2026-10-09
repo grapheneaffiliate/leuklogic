@@ -1,6 +1,28 @@
 {
  "films": [
   {
+   "id": "v10",
+   "title": "If Sickness Paid Nothing, Would We Still Be Sick?",
+   "kind": "Abundance for All · a question",
+   "duration": "0:33",
+   "durationIso": "PT33S",
+   "uploadDate": "2026-10-09",
+   "description": "In 2023, the world's top 100 arms makers took in $632 billion, rising on the back of wars (SIPRI). In 2024, America spent about $15,000 a person on health care, more than any other rich country, yet Americans live shorter lives than people in peer countries (Peterson-KFF, OECD data). When danger and illness pay, incentives point the wrong way. What if robots made safety, food and care a public good? Not a promise. A better question.",
+   "aiLabel": "Made with AI tools (visuals and narration). This is a vision, not footage of real events.",
+   "mp4": "/media/film-v10.mp4",
+   "poster": "/media/film-v10-poster.webp",
+   "links": [
+    {
+     "label": "Watch on YouTube Shorts",
+     "url": "https://www.youtube.com/shorts/7C3V_EMo8o8"
+    },
+    {
+     "label": "Follow on Facebook",
+     "url": "https://www.facebook.com/profile.php?id=61595238625290"
+    }
+   ]
+  },
+  {
    "id": "v09",
    "title": "A Robot Piled Every Seed in One Spot",
    "kind": "Forest School for AI · Lesson 5",
