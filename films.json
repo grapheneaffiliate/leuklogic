@@ -1,6 +1,28 @@
 {
  "films": [
   {
+   "id": "v11",
+   "title": "Robot Digs a Ditch, Gardener Shows a Swale",
+   "kind": "Forest School for AI · Lesson 6",
+   "duration": "0:30",
+   "durationIso": "PT30S",
+   "uploadDate": "2026-10-11",
+   "description": "A robot digs a straight ditch down the hill, and the next rain races through it, away from every thirsty plant. An older gardener traces a level line across the slope instead. Together they dig a shallow swale on contour, with a berm on the downhill side. When rain comes, the swale fills, pauses, and slowly soaks in, feeding young fruit trees. A low spillway lets the extra spill over.",
+   "aiLabel": "Made with AI tools (visuals and narration). This is a vision, not footage of real events.",
+   "mp4": "/media/film-v11.mp4",
+   "poster": "/media/film-v11-poster.webp",
+   "links": [
+    {
+     "label": "Watch on YouTube Shorts",
+     "url": "https://www.youtube.com/shorts/LrB-WCd8wsM"
+    },
+    {
+     "label": "Follow on Facebook",
+     "url": "https://www.facebook.com/profile.php?id=61595238625290"
+    }
+   ]
+  },
+  {
    "id": "v10",
    "title": "If Sickness Paid Nothing, Would We Still Be Sick?",
    "kind": "Abundance for All · a question",
